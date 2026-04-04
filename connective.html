@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tissue Level Trivia – Chapter 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Share+Tech+Mono&family=Exo+2:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #04060f;
+    --surface: #0a0e1f;
+    --card: #0d1228;
+    --border: #1a2560;
+    --accent: #00e5ff;
+    --accent2: #7b2fff;
+    --accent3: #ff4fa3;
+    --gold: #ffd700;
+    --green: #00ff9f;
+    --red: #ff3b5c;
+    --text: #cfe8ff;
+    --muted: #5577aa;
+    --glow: 0 0 12px rgba(0,229,255,0.5);
+    --glow2: 0 0 16px rgba(123,47,255,0.6);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image:
+      radial-gradient(ellipse at 20% 20%, rgba(123,47,255,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(0,229,255,0.06) 0%, transparent 60%);
+  }
+
+  /* ── STARS ── */
+  .stars {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 40%, rgba(255,255,255,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 10% 80%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 15%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 55% 55%, rgba(255,255,255,0.2) 0%, transparent 100%);
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; position: relative; z-index: 1; }
+  .screen.active { display: flex; flex-direction: column; align-items: center; }
+
+  /* ══ TITLE SCREEN ══ */
+  #title-screen {
+    min-height: 100vh;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .title-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    border: 1px solid var(--accent);
+    padding: 0.3rem 1rem;
+    border-radius: 2px;
+    box-shadow: var(--glow);
+    animation: pulse-border 2s infinite;
+  }
+
+  @keyframes pulse-border {
+    0%, 100% { box-shadow: var(--glow); }
+    50% { box-shadow: 0 0 24px rgba(0,229,255,0.8); }
+  }
+
+  .title-main {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2rem, 6vw, 4rem);
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 30px rgba(0,229,255,0.6), 0 0 60px rgba(123,47,255,0.4);
+    line-height: 1.1;
+  }
+
+  .title-main span { color: var(--accent); }
+
+  .title-sub {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1rem, 3vw, 1.6rem);
+    color: var(--accent2);
+    letter-spacing: 2px;
+    text-shadow: var(--glow2);
+  }
+
+  .title-desc {
+    max-width: 520px;
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  .mode-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    width: 100%;
+    max-width: 700px;
+  }
+
+  .mode-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem 1rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-align: center;
+  }
+
+  .mode-card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--glow);
+    transform: translateY(-3px);
+  }
+
+  .mode-card.selected {
+    border-color: var(--accent);
+    background: rgba(0,229,255,0.07);
+    box-shadow: var(--glow);
+  }
+
+  .mode-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+  .mode-name { font-family: 'Orbitron', monospace; font-size: 0.85rem; font-weight: 700; color: var(--accent); }
+  .mode-desc { font-size: 0.78rem; color: var(--muted); margin-top: 0.3rem; }
+
+  .btn-primary {
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--bg);
+    background: var(--accent);
+    border: none;
+    padding: 1rem 3rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-transform: uppercase;
+    box-shadow: 0 0 20px rgba(0,229,255,0.4);
+  }
+
+  .btn-primary:hover {
+    background: #fff;
+    box-shadow: 0 0 30px rgba(0,229,255,0.8);
+    transform: scale(1.03);
+  }
+
+  .btn-secondary {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--accent);
+    background: transparent;
+    border: 1px solid var(--accent);
+    padding: 0.7rem 2rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-transform: uppercase;
+  }
+
+  .btn-secondary:hover {
+    background: rgba(0,229,255,0.1);
+    box-shadow: var(--glow);
+  }
+
+  /* ══ BOARD SCREEN ══ */
+  #board-screen {
+    padding: 1.5rem 1rem;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    gap: 1rem;
+  }
+
+  .board-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .score-display {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.4rem;
+    color: var(--gold);
+    text-shadow: 0 0 12px rgba(255,215,0,0.5);
+  }
+
+  .score-label { font-size: 0.6rem; color: var(--muted); display: block; letter-spacing: 3px; }
+
+  .board-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(0.9rem, 2.5vw, 1.3rem);
+    color: var(--accent);
+    text-align: center;
+  }
+
+  .progress-wrap { display: flex; align-items: center; gap: 0.5rem; }
+  .progress-bar {
+    width: 120px;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 3px;
+    transition: width 0.5s;
+  }
+  .progress-text { font-size: 0.75rem; color: var(--muted); font-family: 'Share Tech Mono', monospace; }
+
+  /* JEOPARDY GRID */
+  .jeopardy-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .cat-header {
+    background: linear-gradient(135deg, var(--accent2), #4a0faa);
+    border-radius: 6px;
+    padding: 0.7rem 0.5rem;
+    text-align: center;
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(0.55rem, 1.2vw, 0.75rem);
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 1px;
+    line-height: 1.3;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .j-cell {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(0.85rem, 2vw, 1.3rem);
+    font-weight: 700;
+    color: var(--gold);
+    text-shadow: 0 0 8px rgba(255,215,0,0.5);
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .j-cell::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,229,255,0.05), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .j-cell:hover:not(.used) {
+    border-color: var(--gold);
+    box-shadow: 0 0 16px rgba(255,215,0,0.3);
+    transform: scale(1.03);
+  }
+
+  .j-cell:hover:not(.used)::before { opacity: 1; }
+
+  .j-cell.used {
+    background: rgba(255,255,255,0.02);
+    border-color: rgba(255,255,255,0.05);
+    color: rgba(255,255,255,0.1);
+    cursor: default;
+  }
+
+  .j-cell.used::after {
+    content: '✓';
+    font-size: 1.2rem;
+    color: var(--green);
+    opacity: 0.3;
+    font-family: sans-serif;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.show { display: flex; }
+
+  .modal-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 600px;
+    width: 100%;
+    position: relative;
+    box-shadow: 0 0 40px rgba(0,229,255,0.15), 0 20px 60px rgba(0,0,0,0.5);
+    animation: modal-in 0.3s ease;
+  }
+
+  @keyframes modal-in {
+    from { transform: scale(0.85); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .modal-points {
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    color: var(--gold);
+    letter-spacing: 3px;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .modal-category {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent2);
+    text-align: center;
+    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+  }
+
+  .modal-question {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 1.5rem;
+    min-height: 60px;
+  }
+
+  .choices-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.7rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .choice-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.8rem 1rem;
+    color: var(--text);
+    cursor: pointer;
+    font-family: 'Exo 2', sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    transition: all 0.2s;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .choice-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    background: rgba(0,229,255,0.07);
+    box-shadow: var(--glow);
+  }
+
+  .choice-btn.correct {
+    border-color: var(--green);
+    background: rgba(0,255,159,0.1);
+    color: var(--green);
+    box-shadow: 0 0 16px rgba(0,255,159,0.3);
+  }
+
+  .choice-btn.wrong {
+    border-color: var(--red);
+    background: rgba(255,59,92,0.1);
+    color: var(--red);
+  }
+
+  .choice-btn:disabled { cursor: default; }
+
+  .feedback-banner {
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    display: none;
+  }
+
+  .feedback-banner.correct {
+    background: rgba(0,255,159,0.08);
+    border: 1px solid rgba(0,255,159,0.3);
+    color: var(--green);
+    display: block;
+  }
+
+  .feedback-banner.wrong {
+    background: rgba(255,59,92,0.08);
+    border: 1px solid rgba(255,59,92,0.3);
+    color: #ff8fa3;
+    display: block;
+  }
+
+  .modal-footer {
+    display: flex;
+    justify-content: center;
+  }
+
+  /* ══ RESULT SCREEN ══ */
+  #result-screen {
+    min-height: 100vh;
+    justify-content: center;
+    padding: 2rem;
+    gap: 1.5rem;
+    text-align: center;
+  }
+
+  .result-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    font-weight: 900;
+    color: var(--gold);
+    text-shadow: 0 0 30px rgba(255,215,0,0.6);
+  }
+
+  .result-score {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 40px rgba(0,229,255,0.5);
+  }
+
+  .result-grade {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 480px;
+    line-height: 1.7;
+  }
+
+  .stats-row {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .stat-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    min-width: 110px;
+  }
+
+  .stat-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+
+  .stat-lbl {
+    font-size: 0.7rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 0.2rem;
+  }
+
+  .confetti-piece {
+    position: fixed;
+    top: -10px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: confetti-fall linear forwards;
+    pointer-events: none;
+    z-index: 200;
+  }
+
+  @keyframes confetti-fall {
+    to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .jeopardy-grid { grid-template-columns: repeat(5, 1fr); gap: 0.3rem; }
+    .j-cell { height: 52px; font-size: 0.8rem; }
+    .cat-header { font-size: 0.5rem; min-height: 50px; padding: 0.5rem 0.3rem; }
+    .choices-grid { grid-template-columns: 1fr; }
+    .modal-box { padding: 1.3rem; }
+  }
+
+  .dna-line {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.3;
+  }
+</style>
+</head>
+<body>
+<div class="stars"></div>
+
+<!-- ══ TITLE ══ -->
+<div id="title-screen" class="screen active">
+  <div class="title-badge">🧬 AP Anatomy &amp; Physiology I</div>
+  <div class="title-main">TISSUE<br><span>TRIVIA</span></div>
+  <div class="title-sub">Chapter 4 · The Tissue Level</div>
+  <div class="dna-line"></div>
+  <p class="title-desc">Test your knowledge of epithelial tissue, connective tissue, muscle, nervous tissue, membranes, and tissue repair. Select a game mode below, then click a point value on the board.</p>
+
+  <div style="font-family:'Orbitron',monospace;font-size:0.75rem;color:var(--muted);letter-spacing:2px;">SELECT MODE</div>
+  <div class="mode-grid">
+    <div class="mode-card selected" data-mode="jeopardy" onclick="selectMode(this)">
+      <div class="mode-icon">🎯</div>
+      <div class="mode-name">Jeopardy</div>
+      <div class="mode-desc">Pick categories &amp; point values on a classic board</div>
+    </div>
+    <div class="mode-card" data-mode="speedrun" onclick="selectMode(this)">
+      <div class="mode-icon">⚡</div>
+      <div class="mode-name">Speed Run</div>
+      <div class="mode-desc">20 rapid-fire questions against the clock</div>
+    </div>
+    <div class="mode-card" data-mode="survival" onclick="selectMode(this)">
+      <div class="mode-icon">💀</div>
+      <div class="mode-name">Survival</div>
+      <div class="mode-desc">3 lives — how far can you go?</div>
+    </div>
+  </div>
+
+  <button class="btn-primary" onclick="startGame()">LAUNCH GAME →</button>
+  <p style="font-size:0.75rem;color:var(--muted);font-family:'Share Tech Mono',monospace;">25 questions · Chapter 4 content</p>
+</div>
+
+<!-- ══ BOARD ══ -->
+<div id="board-screen" class="screen">
+  <div class="board-header">
+    <div>
+      <span class="score-label">SCORE</span>
+      <span class="score-display" id="score-display">$0</span>
+    </div>
+    <div class="board-title" id="board-mode-title">JEOPARDY BOARD</div>
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+      <span class="progress-text" id="progress-text">0/25</span>
+    </div>
+  </div>
+
+  <!-- speed/survival HUD (hidden in jeopardy) -->
+  <div id="extra-hud" style="display:none;gap:1.5rem;align-items:center;justify-content:center;width:100%;">
+    <div id="timer-display" style="font-family:'Orbitron',monospace;font-size:1.8rem;color:var(--accent);text-shadow:var(--glow);">60</div>
+    <div id="lives-display" style="font-size:1.4rem;letter-spacing:4px;"></div>
+  </div>
+
+  <div class="jeopardy-grid" id="jeopardy-grid"></div>
+</div>
+
+<!-- ══ RESULT ══ -->
+<div id="result-screen" class="screen">
+  <div class="title-badge">GAME OVER</div>
+  <div class="result-title" id="result-emoji">🏆 EXCELLENT!</div>
+  <div class="result-score" id="result-score">$0</div>
+  <div class="stats-row" id="stats-row"></div>
+  <p class="result-grade" id="result-grade"></p>
+  <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
+    <button class="btn-primary" onclick="restartGame()">PLAY AGAIN</button>
+    <button class="btn-secondary" onclick="goTitle()">CHANGE MODE</button>
+  </div>
+</div>
+
+<!-- ══ MODAL ══ -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <div class="modal-points" id="modal-points"></div>
+    <div class="modal-category" id="modal-category"></div>
+    <div class="modal-question" id="modal-question"></div>
+    <div class="choices-grid" id="choices-grid"></div>
+    <div class="feedback-banner" id="feedback-banner"></div>
+    <div class="modal-footer">
+      <button class="btn-primary" id="modal-next-btn" onclick="closeModal()" style="display:none">CONTINUE →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ─────────────────────────────────────────────
+   QUESTION BANK  (25 questions, 5 categories)
+───────────────────────────────────────────── */
+const CATEGORIES = [
+  "EPITHELIAL TISSUE",
+  "CONNECTIVE TISSUE",
+  "MUSCLE & NERVE",
+  "MEMBRANES",
+  "REPAIR & AGING"
+];
+
+const QUESTIONS = {
+  "EPITHELIAL TISSUE": [
+    {
+      q: "Which surface of epithelial tissue faces outward (toward a space or environment)?",
+      choices: ["Basal surface","Apical surface","Lateral surface","Medial surface"],
+      ans: 1,
+      explain: "The apical surface faces outward or inward toward a space, like the inside of your stomach. The basal surface anchors to the basement membrane."
+    },
+    {
+      q: "What type of epithelium lines blood vessels and is specialized for diffusion and absorption?",
+      choices: ["Simple columnar","Stratified squamous","Simple squamous","Transitional"],
+      ans: 2,
+      explain: "Simple squamous epithelium — thin, flat cells — lines blood vessels (endothelium) and body cavities, allowing efficient exchange of gases and nutrients."
+    },
+    {
+      q: "Which epithelial type is found in the urinary bladder and can stretch without tearing?",
+      choices: ["Pseudostratified columnar","Stratified cuboidal","Simple cuboidal","Transitional"],
+      ans: 3,
+      explain: "Transitional epithelium stretches and recoils without damage — like a balloon repeatedly inflating and deflating."
+    },
+    {
+      q: "An exocrine gland differs from an endocrine gland because it:",
+      choices: ["Releases hormones into blood","Has no duct","Releases secretions through ducts onto surfaces","Is always found in the brain"],
+      ans: 2,
+      explain: "Exocrine glands (like sweat and salivary glands) use ducts to deliver secretions to surfaces. Endocrine glands release hormones directly into the bloodstream."
+    },
+    {
+      q: "Which term describes epithelial tissue's property of regenerating quickly due to active cell division?",
+      choices: ["Avascularity","Polarity","Regeneration","Cellularity"],
+      ans: 2,
+      explain: "Epithelial cells regenerate quickly — especially in high-wear areas like skin and the gut lining — due to constant cell division."
+    }
+  ],
+
+  "CONNECTIVE TISSUE": [
+    {
+      q: "What are the THREE basic components of connective tissue?",
+      choices: [
+        "Neurons, myocytes, adipocytes",
+        "Specialized cells, extracellular protein fibers, ground substance",
+        "Blood, lymph, cartilage",
+        "Collagen, elastin, keratin"
+      ],
+      ans: 1,
+      explain: "Connective tissue consists of specialized cells, extracellular protein fibers, and ground substance. Fibers + ground substance = the matrix."
+    },
+    {
+      q: "Areolar tissue and adipose tissue are both examples of which category?",
+      choices: ["Dense connective tissue","Fluid connective tissue","Loose connective tissue","Supporting connective tissue"],
+      ans: 2,
+      explain: "Loose connective tissue has more ground substance and fewer fibers. Areolar tissue acts like bubble wrap; adipose tissue stores energy as fat."
+    },
+    {
+      q: "Which connective tissue type provides strength in ONE direction, like a strong rope?",
+      choices: ["Elastic tissue","Dense irregular connective tissue","Dense regular connective tissue","Reticular tissue"],
+      ans: 2,
+      explain: "Dense regular connective tissue has parallel fibers that handle tension in one direction — found in tendons (muscle to bone) and ligaments (bone to bone)."
+    },
+    {
+      q: "What are FASCIAE?",
+      choices: [
+        "Types of epithelial membranes",
+        "Layers of connective tissue surrounding organs and muscles",
+        "Fluid-filled spaces inside joints",
+        "Specialized nerve cells"
+      ],
+      ans: 1,
+      explain: "Fasciae are connective tissue layers — superficial, deep, and subserous — that surround and support organs, muscles, and structures like cling wrap."
+    },
+    {
+      q: "Brown adipose tissue is unique because it:",
+      choices: [
+        "Is found only in adults",
+        "Generates heat (thermogenesis), found mainly in infants",
+        "Stores the most energy of any tissue",
+        "Is a type of muscle tissue"
+      ],
+      ans: 1,
+      explain: "Brown fat is found mainly in infants and acts as a built-in space heater, generating heat through thermogenesis to keep newborns warm."
+    }
+  ],
+
+  "MUSCLE & NERVE": [
+    {
+      q: "Which type of muscle tissue is INVOLUNTARY and keeps your heart beating?",
+      choices: ["Skeletal muscle","Smooth muscle","Cardiac muscle","Elastic muscle"],
+      ans: 2,
+      explain: "Cardiac muscle is involuntary and found exclusively in the heart, producing the rhythmic contractions that pump blood."
+    },
+    {
+      q: "Smooth muscle lines hollow organs like the stomach. Which best describes its control?",
+      choices: ["Voluntary","Involuntary","Semi-voluntary","Reflex-only"],
+      ans: 1,
+      explain: "Smooth muscle is involuntary — you don't consciously decide to digest food. It lines hollow organs and controls flow through them."
+    },
+    {
+      q: "Nervous tissue carries electrical signals. What is the analogy used in the lecture notes?",
+      choices: ["The body's postal service","The body's Wi-Fi network","The body's plumbing system","The body's immune system"],
+      ans: 1,
+      explain: "The lecture compares nervous tissue to a Wi-Fi network — transmitting messages rapidly to control everything from reflexes to complex thought."
+    },
+    {
+      q: "Which tissue types have the MOST LIMITED ability to regenerate after injury?",
+      choices: [
+        "Epithelial and connective tissue",
+        "Connective and muscle tissue",
+        "Muscle and nervous tissue",
+        "Epithelial and nervous tissue"
+      ],
+      ans: 2,
+      explain: "Muscle and nervous tissues have limited repair capabilities because specialized cells (like neurons) do not divide, unlike epithelial and connective cells."
+    },
+    {
+      q: "Histology is best defined as:",
+      choices: [
+        "The study of bones",
+        "The study of organs",
+        "The study of tissues",
+        "The study of cells"
+      ],
+      ans: 2,
+      explain: "Histology is the microscopic study of tissues. Histologists are like detectives uncovering how tissues work together to support life."
+    }
+  ],
+
+  "MEMBRANES": [
+    {
+      q: "Which membrane lines passageways open to the outside and keeps them moist?",
+      choices: ["Serous membrane","Synovial membrane","Cutaneous membrane","Mucous membrane"],
+      ans: 3,
+      explain: "Mucous membranes line passageways open to the environment (digestive, respiratory) and secrete mucus to keep surfaces moist."
+    },
+    {
+      q: "The PLEURA is an example of which membrane type?",
+      choices: ["Mucous","Serous","Cutaneous","Synovial"],
+      ans: 1,
+      explain: "Serous membranes (pleura for lungs, pericardium for heart, peritoneum for abdomen) secrete watery transudate fluid to reduce friction between organs."
+    },
+    {
+      q: "Synovial membranes are unique because they:",
+      choices: [
+        "Contain epithelium and connective tissue like other membranes",
+        "Are made of connective tissue only — no true epithelium",
+        "Are found lining the lungs",
+        "Prevent water loss from skin"
+      ],
+      ans: 1,
+      explain: "Synovial membranes line joint cavities and are made of connective tissue only (no epithelium). They produce synovial fluid to lubricate and cushion joints."
+    },
+    {
+      q: "The cutaneous membrane (skin) is composed of:",
+      choices: [
+        "Simple squamous epithelium only",
+        "Keratinized stratified squamous epithelium + underlying connective tissue",
+        "Transitional epithelium + adipose tissue",
+        "Pseudostratified epithelium + reticular tissue"
+      ],
+      ans: 1,
+      explain: "Skin (cutaneous membrane) is keratinized stratified squamous epithelium over connective tissue — our toughest protective armor against the environment."
+    },
+    {
+      q: "Serous membranes secrete a watery fluid called:",
+      choices: ["Mucus","Synovia","Transudate","Lymph"],
+      ans: 2,
+      explain: "Serous membranes secrete transudate — a watery fluid that acts like oil in an engine, preventing friction between organs as they move."
+    }
+  ],
+
+  "REPAIR & AGING": [
+    {
+      q: "What is the FIRST response the body mounts after tissue injury?",
+      choices: ["Regeneration","Scarring","Inflammation","Apoptosis"],
+      ans: 2,
+      explain: "Inflammation is the immediate defense — isolating the injury, removing debris, and preparing the area for repair. Redness, heat, swelling, and pain are hallmarks."
+    },
+    {
+      q: "Which cells produce scar tissue (collagen framework) during the regeneration phase?",
+      choices: ["Macrophages","Adipocytes","Fibroblasts","Neurons"],
+      ans: 2,
+      explain: "Fibroblasts are the builders of scar tissue, producing a dense collagen scaffold to stabilize the injured area during healing."
+    },
+    {
+      q: "In aging, bones losing calcium leads to which condition?",
+      choices: ["Arthritis","Osteoporosis","Tendinitis","Sclerosis"],
+      ans: 1,
+      explain: "Osteoporosis results from bones losing calcium with age, making them more brittle and prone to fractures from minor falls."
+    },
+    {
+      q: "Which lifestyle factor is mentioned as helping maintain muscle mass and bone strength with age?",
+      choices: ["Reducing sleep","Regular exercise","High-protein supplements only","Avoiding sunlight"],
+      ans: 1,
+      explain: "Regular exercise is a key lifestyle choice to slow tissue deterioration — it maintains muscle mass, bone strength, and overall tissue health."
+    },
+    {
+      q: "Chronic inflammation (like in arthritis) is problematic because:",
+      choices: [
+        "It speeds up tissue regeneration too much",
+        "It creates too many fibroblasts",
+        "The inflammatory process persists, causing further damage instead of healing",
+        "It prevents scar tissue formation"
+      ],
+      ans: 2,
+      explain: "In chronic conditions, inflammation never fully resolves — like a construction site where workers never finish, leaving the area in constant disrepair."
+    }
+  ]
+};
+
+/* ─────────────────────────────────────────────
+   GAME STATE
+───────────────────────────────────────────── */
+const POINT_VALUES = [100, 200, 300, 400, 500];
+let gameMode = 'jeopardy';
+let score = 0;
+let answered = 0;
+let correct = 0;
+let wrong = 0;
+let lives = 3;
+let timer = null;
+let timeLeft = 90;
+let currentQ = null;
+let currentCell = null;
+let used = {}; // track used cells
+let speedQueue = [];
+let speedIndex = 0;
+
+function selectMode(el) {
+  document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  gameMode = el.dataset.mode;
+}
+
+function startGame() {
+  score = 0; answered = 0; correct = 0; wrong = 0; lives = 3; used = {};
+  showScreen('board-screen');
+  buildBoard();
+  updateScore();
+  updateProgress();
+
+  const hud = document.getElementById('extra-hud');
+  if (gameMode === 'jeopardy') {
+    hud.style.display = 'none';
+    document.getElementById('board-mode-title').textContent = 'JEOPARDY BOARD';
+  } else if (gameMode === 'speedrun') {
+    hud.style.display = 'flex';
+    document.getElementById('lives-display').textContent = '';
+    document.getElementById('board-mode-title').textContent = 'SPEED RUN';
+    timeLeft = 90;
+    updateTimerDisplay();
+    startTimer();
+    buildSpeedQueue();
+  } else {
+    hud.style.display = 'flex';
+    document.getElementById('board-mode-title').textContent = 'SURVIVAL MODE';
+    updateLives();
+    buildSpeedQueue();
+  }
+}
+
+function buildBoard() {
+  const grid = document.getElementById('jeopardy-grid');
+  grid.innerHTML = '';
+  // headers
+  CATEGORIES.forEach(cat => {
+    const h = document.createElement('div');
+    h.className = 'cat-header';
+    h.textContent = cat;
+    grid.appendChild(h);
+  });
+  // cells
+  POINT_VALUES.forEach((pts, ri) => {
+    CATEGORIES.forEach((cat, ci) => {
+      const cell = document.createElement('div');
+      cell.className = 'j-cell';
+      cell.dataset.cat = cat;
+      cell.dataset.pts = pts;
+      cell.dataset.qi = ri;
+      cell.textContent = `$${pts}`;
+      if (used[`${cat}-${ri}`]) cell.classList.add('used');
+      cell.addEventListener('click', () => openQuestion(cell));
+      grid.appendChild(cell);
+    });
+  });
+}
+
+function buildSpeedQueue() {
+  speedQueue = [];
+  CATEGORIES.forEach(cat => {
+    QUESTIONS[cat].forEach((q, i) => {
+      speedQueue.push({ cat, q, pts: POINT_VALUES[i], qi: i });
+    });
+  });
+  // shuffle
+  for (let i = speedQueue.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [speedQueue[i], speedQueue[j]] = [speedQueue[j], speedQueue[i]];
+  }
+  speedIndex = 0;
+}
+
+function openQuestion(cell) {
+  if (gameMode === 'jeopardy') {
+    const cat = cell.dataset.cat;
+    const qi = parseInt(cell.dataset.qi);
+    const pts = parseInt(cell.dataset.pts);
+    if (used[`${cat}-${qi}`]) return;
+    currentCell = cell;
+    showModal(cat, QUESTIONS[cat][qi], pts, qi);
+  } else {
+    // speed/survival: click = next question
+    nextSpeedQuestion();
+  }
+}
+
+function nextSpeedQuestion() {
+  if (gameMode !== 'jeopardy') {
+    if (speedIndex >= speedQueue.length) { endGame(); return; }
+    const item = speedQueue[speedIndex++];
+    showModal(item.cat, item.q, item.pts, item.qi);
+  }
+}
+
+function showModal(cat, q, pts, qi) {
+  currentQ = { cat, q, pts, qi };
+  document.getElementById('modal-points').textContent = `$${pts}`;
+  document.getElementById('modal-category').textContent = cat;
+  document.getElementById('modal-question').textContent = q.q;
+  document.getElementById('feedback-banner').className = 'feedback-banner';
+  document.getElementById('feedback-banner').textContent = '';
+  document.getElementById('modal-next-btn').style.display = 'none';
+
+  const grid = document.getElementById('choices-grid');
+  grid.innerHTML = '';
+  q.choices.forEach((ch, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = ch;
+    btn.onclick = () => answerQuestion(i, btn);
+    grid.appendChild(btn);
+  });
+
+  document.getElementById('modal').classList.add('show');
+}
+
+function answerQuestion(chosen, btn) {
+  const q = currentQ.q;
+  const correct_idx = q.ans;
+  const isCorrect = chosen === correct_idx;
+  answered++;
+
+  // disable all buttons
+  document.querySelectorAll('.choice-btn').forEach((b, i) => {
+    b.disabled = true;
+    if (i === correct_idx) b.classList.add('correct');
+    else if (b === btn && !isCorrect) b.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('feedback-banner');
+  if (isCorrect) {
+    score += currentQ.pts;
+    correct++;
+    fb.className = 'feedback-banner correct';
+    fb.textContent = `✅ Correct! +$${currentQ.pts} — ${q.explain}`;
+  } else {
+    wrong++;
+    if (gameMode === 'survival') {
+      lives--;
+      updateLives();
+    }
+    fb.className = 'feedback-banner wrong';
+    fb.textContent = `❌ Not quite! ${q.explain}`;
+  }
+
+  updateScore();
+  updateProgress();
+
+  if (gameMode === 'jeopardy' && currentCell) {
+    used[`${currentQ.cat}-${currentQ.qi}`] = true;
+    currentCell.classList.add('used');
+    currentCell.textContent = '';
+  }
+
+  document.getElementById('modal-next-btn').style.display = 'inline-block';
+
+  // survival check
+  if (gameMode === 'survival' && lives <= 0) {
+    document.getElementById('modal-next-btn').textContent = 'END GAME';
+    document.getElementById('modal-next-btn').onclick = () => { closeModal(); endGame(); };
+  }
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+  document.getElementById('modal-next-btn').onclick = closeModal;
+  document.getElementById('modal-next-btn').textContent = 'CONTINUE →';
+
+  if (gameMode === 'survival' && lives <= 0) { endGame(); return; }
+
+  // check board complete in jeopardy
+  if (gameMode === 'jeopardy') {
+    const total = CATEGORIES.length * POINT_VALUES.length;
+    if (answered >= total) endGame();
+  }
+
+  // speed/survival auto-prompt next
+  if (gameMode === 'speedrun' || gameMode === 'survival') {
+    if (speedIndex >= speedQueue.length) endGame();
+    // board still visible for clicking
+  }
+}
+
+function startTimer() {
+  clearInterval(timer);
+  timer = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft <= 0) { clearInterval(timer); endGame(); }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const el = document.getElementById('timer-display');
+  el.textContent = timeLeft;
+  el.style.color = timeLeft <= 10 ? 'var(--red)' : 'var(--accent)';
+}
+
+function updateLives() {
+  document.getElementById('lives-display').textContent = '❤️'.repeat(Math.max(0,lives)) + '🖤'.repeat(Math.max(0, 3 - lives));
+}
+
+function updateScore() {
+  document.getElementById('score-display').textContent = `$${score.toLocaleString()}`;
+}
+
+function updateProgress() {
+  const total = CATEGORIES.length * POINT_VALUES.length;
+  const pct = (answered / total) * 100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = `${answered}/${total}`;
+}
+
+function endGame() {
+  clearInterval(timer);
+  document.getElementById('modal').classList.remove('show');
+  showScreen('result-screen');
+
+  const pct = answered > 0 ? Math.round((correct / answered) * 100) : 0;
+  let emoji, grade;
+  if (pct >= 90) { emoji = '🏆 OUTSTANDING!'; grade = "You've mastered the tissue level of organization. Your anatomy professor would be proud!"; }
+  else if (pct >= 75) { emoji = '🌟 GREAT WORK!'; grade = "Solid understanding of tissue types and functions. Review a few tricky concepts and you're set!"; }
+  else if (pct >= 60) { emoji = '📚 KEEP STUDYING!'; grade = "You've got the basics down — revisit connective tissue subtypes and membrane functions for the exam."; }
+  else { emoji = '🔬 STUDY UP!'; grade = "Don't worry — tissues are complex! Go back to the lecture notes, focus on the four tissue types, and try again."; }
+
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-score').textContent = `$${score.toLocaleString()}`;
+  document.getElementById('result-grade').textContent = grade;
+
+  const statsRow = document.getElementById('stats-row');
+  statsRow.innerHTML = `
+    <div class="stat-box"><div class="stat-num" style="color:var(--green)">${correct}</div><div class="stat-lbl">Correct</div></div>
+    <div class="stat-box"><div class="stat-num" style="color:var(--red)">${wrong}</div><div class="stat-lbl">Missed</div></div>
+    <div class="stat-box"><div class="stat-num" style="color:var(--accent)">${pct}%</div><div class="stat-lbl">Accuracy</div></div>
+  `;
+
+  if (pct >= 75) launchConfetti();
+}
+
+function restartGame() {
+  startGame();
+}
+
+function goTitle() {
+  clearInterval(timer);
+  showScreen('title-screen');
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function launchConfetti() {
+  const colors = ['#00e5ff','#7b2fff','#ff4fa3','#ffd700','#00ff9f'];
+  for (let i = 0; i < 60; i++) {
+    setTimeout(() => {
+      const c = document.createElement('div');
+      c.className = 'confetti-piece';
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.background = colors[Math.floor(Math.random() * colors.length)];
+      c.style.animationDuration = (2 + Math.random() * 3) + 's';
+      c.style.width = c.style.height = (6 + Math.random() * 8) + 'px';
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 5000);
+    }, i * 50);
+  }
+}
+
+// Board clicks in speed/survival mode
+document.getElementById('jeopardy-grid').addEventListener('click', (e) => {
+  if (gameMode !== 'jeopardy') nextSpeedQuestion();
+});
+</script>
+</body>
+</html>

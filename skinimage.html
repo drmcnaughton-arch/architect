@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anatomy Quiz Prototype</title>
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding: 20px; background: #f0f2f5; }
+        
+        /* The container keeps the labels relative to the image */
+        #quiz-viewport {
+            position: relative;
+            display: inline-block;
+            margin: 20px auto;
+            border: 3px solid #333;
+            background: #fff;
+            line-height: 0; /* Removes bottom gap under image */
+        }
+
+        #quiz-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* The Drop Zones (The 'Gray Boxes' in your image) */
+        .drop-zone {
+            position: absolute;
+            width: 80px; 
+            height: 30px;
+            border: 2px dashed #999;
+            background: rgba(255, 255, 255, 0.7);
+            transform: translate(-50%, -50%); /* Centers the box on the coordinates */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #666;
+            transition: background 0.3s;
+            pointer-events: all;
+        }
+
+        .drop-zone.active { border-color: #007bff; background: rgba(0, 123, 255, 0.1); }
+        .drop-zone.caught { border: none; background: #28a745; color: white; font-weight: bold; }
+
+        /* The Draggable Labels */
+        .label-bank {
+            margin-top: 20px;
+            padding: 15px;
+            background: #ddd;
+            border-radius: 10px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .drag-item {
+            padding: 10px 15px;
+            background: #003366; /* Your WIT Blue */
+            color: white;
+            border-radius: 5px;
+            cursor: grab;
+            touch-action: none; /* Required for mobile/tablet */
+            z-index: 100;
+        }
+
+        #completion-msg {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #d4edda;
+            color: #155724;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>A&P Practice: Scaling & Snapping</h2>
+    <p>Drag the labels to the correct targets on the image.</p>
+
+    <div id="quiz-viewport">
+        <img src="https://via.placeholder.com/600x400/cccccc/ffffff?text=Your+Anatomy+Image+Here" id="quiz-image">
+
+        <div class="drop-zone" data-correct="Epidermis" style="top: 20%; left: 20%;">Target 1</div>
+        <div class="drop-zone" data-correct="Dermis" style="top: 50%; left: 50%;">Target 2</div>
+        <div class="drop-zone" data-correct="Hypodermis" style="top: 80%; left: 80%;">Target 3</div>
+    </div>
+
+    <div class="label-bank">
+        <div class="drag-item" data-id="Epidermis">Epidermis</div>
+        <div class="drag-item" data-id="Dermis">Dermis</div>
+        <div class="drag-item" data-id="Hypodermis">Hypodermis</div>
+    </div>
+
+    <div id="completion-msg">
+        <h3>Success!</h3>
+        <p>Your Completion Code: <strong>ANAT-QUIZ-PRO-26</strong></p>
+    </div>
+
+    <script>
+        let correctCount = 0;
+        const totalTargets = 3;
+
+        // Initialize the dragging behavior
+        interact('.drag-item').draggable({
+            listeners: {
+                move (event) {
+                    const target = event.target;
+                    // Keep track of the relative movement
+                    const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+                    const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+                    target.style.transform = `translate(${x}px, ${y}px)`;
+                    target.setAttribute('data-x', x);
+                    target.setAttribute('data-y', y);
+                }
+            }
+        });
+
+        // Initialize the drop zone behavior
+        interact('.drop-zone').dropzone({
+            accept: '.drag-item',
+            overlap: 0.5,
+            ondragenter: (event) => event.target.classList.add('active'),
+            ondragleave: (event) => event.target.classList.remove('active'),
+            ondrop: function (event) {
+                const draggableElement = event.relatedTarget;
+                const dropzoneElement = event.target;
+
+                // Logic check: Does the label match the zone?
+                if (draggableElement.getAttribute('data-id') === dropzoneElement.getAttribute('data-correct')) {
+                    dropzoneElement.classList.add('caught');
+                    dropzoneElement.innerHTML = draggableElement.innerHTML;
+                    draggableElement.style.display = 'none'; // "Consumes" the label
+                    correctCount++;
+                    if (correctCount === totalTargets) {
+                        document.getElementById('completion-msg').style.display = 'block';
+                    }
+                } else {
+                    // Snap back if wrong
+                    draggableElement.style.transform = 'translate(0px, 0px)';
+                    draggableElement.setAttribute('data-x', 0);
+                    draggableElement.setAttribute('data-y', 0);
+                    dropzoneElement.classList.remove('active');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

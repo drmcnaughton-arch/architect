@@ -3,150 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anatomy Quiz Prototype</title>
+    <title>Dr. McNaughton's Skin Anatomy Quiz</title>
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; text-align: center; padding: 20px; background: #f0f2f5; }
+        :root { --wit-blue: #003366; --wit-gold: #ffcc00; }
+        body { font-family: 'Segoe UI', sans-serif; text-align: center; background: #f4f7f6; margin: 0; padding: 20px; }
         
-        /* The container keeps the labels relative to the image */
-        #quiz-viewport {
+        #quiz-container {
             position: relative;
             display: inline-block;
             margin: 20px auto;
-            border: 3px solid #333;
-            background: #fff;
-            line-height: 0; /* Removes bottom gap under image */
+            background: white;
+            padding: 10px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            line-height: 0;
         }
 
-        #quiz-image {
-            max-width: 100%;
+        #skin-image {
+            max-width: 900px; /* Fixed max width for better desktop control */
+            width: 100%;
             height: auto;
-            display: block;
+            border-radius: 4px;
         }
 
-        /* The Drop Zones (The 'Gray Boxes' in your image) */
+        /* Drop Zones (The Targets) */
         .drop-zone {
             position: absolute;
-            width: 80px; 
-            height: 30px;
-            border: 2px dashed #999;
-            background: rgba(255, 255, 255, 0.7);
-            transform: translate(-50%, -50%); /* Centers the box on the coordinates */
+            width: 12%; 
+            height: 4%;
+            border: 2px dashed #bbb;
+            background: rgba(255, 255, 255, 0.6);
+            transform: translate(-50%, -50%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 12px;
-            color: #666;
-            transition: background 0.3s;
+            font-size: 11px;
+            font-weight: bold;
+            color: #777;
+            border-radius: 4px;
             pointer-events: all;
+            z-index: 5;
         }
 
-        .drop-zone.active { border-color: #007bff; background: rgba(0, 123, 255, 0.1); }
-        .drop-zone.caught { border: none; background: #28a745; color: white; font-weight: bold; }
+        .drop-zone.active { border-color: var(--wit-gold); background: rgba(255, 204, 0, 0.2); }
+        .drop-zone.correct { 
+            border: 2px solid #28a745; 
+            background: #28a745; 
+            color: white; 
+            font-size: 13px;
+        }
 
-        /* The Draggable Labels */
+        /* Label Bank */
         .label-bank {
-            margin-top: 20px;
-            padding: 15px;
-            background: #ddd;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #e9ecef;
             border-radius: 10px;
             display: flex;
-            gap: 10px;
+            flex-wrap: wrap;
+            gap: 12px;
             justify-content: center;
         }
 
         .drag-item {
-            padding: 10px 15px;
-            background: #003366; /* Your WIT Blue */
+            padding: 10px 18px;
+            background: var(--wit-blue);
             color: white;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: grab;
-            touch-action: none; /* Required for mobile/tablet */
+            touch-action: none;
+            user-select: none;
+            font-size: 14px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             z-index: 100;
         }
 
-        #completion-msg {
+        #feedback {
             display: none;
-            margin-top: 20px;
-            padding: 20px;
+            margin-top: 30px;
+            padding: 25px;
             background: #d4edda;
-            color: #155724;
-            border-radius: 8px;
+            border: 2px solid #c3e6cb;
+            border-radius: 10px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
     </style>
 </head>
 <body>
 
-    <h2>A&P Practice: Scaling & Snapping</h2>
-    <p>Drag the labels to the correct targets on the image.</p>
+    <h2>Anatomy & Physiology: Skin Structure</h2>
+    <p>Drag the labels into the matching boxes on the diagram.</p>
 
-    <div id="quiz-viewport">
-        <img src="5.1 Structure of the skin.jpg" id="quiz-image" alt="Skin Structure">
-        
-        <div class="drop-zone" data-correct="Epidermis" style="top: 20%; left: 20%;">Target 1</div>
-        <div class="drop-zone" data-correct="Dermis" style="top: 50%; left: 50%;">Target 2</div>
-        <div class="drop-zone" data-correct="Hypodermis" style="top: 80%; left: 80%;">Target 3</div>
+    <div id="quiz-container">
+        <img src="5.1 Structure of the skin.jpg" id="skin-image" alt="Skin Diagram">
+
+        <div class="drop-zone" data-correct="Hair Shaft" style="top: 13%; left: 21%;">?</div>
+        <div class="drop-zone" data-correct="Epidermis" style="top: 25%; left: 88%;">?</div>
+        <div class="drop-zone" data-correct="Dermis" style="top: 51%; left: 88%;">?</div>
+        <div class="drop-zone" data-correct="Hypodermis" style="top: 76%; left: 88%;">?</div>
+        <div class="drop-zone" data-correct="Arrector Pili" style="top: 49%; left: 35%;">?</div>
+        <div class="drop-zone" data-correct="Sebaceous Gland" style="top: 58%; left: 21%;">?</div>
+        <div class="drop-zone" data-correct="Sweat Gland" style="top: 83%; left: 74%;">?</div>
+        <div class="drop-zone" data-correct="Lamellar Corpuscle" style="top: 83%; left: 55%;">?</div>
+        <div class="drop-zone" data-correct="Adipose Tissue" style="top: 93%; left: 45%;">?</div>
     </div>
 
-    <div class="label-bank">
+    <div class="label-bank" id="bank">
         <div class="drag-item" data-id="Epidermis">Epidermis</div>
         <div class="drag-item" data-id="Dermis">Dermis</div>
         <div class="drag-item" data-id="Hypodermis">Hypodermis</div>
+        <div class="drag-item" data-id="Hair Shaft">Hair Shaft</div>
+        <div class="drag-item" data-id="Arrector Pili">Arrector Pili</div>
+        <div class="drag-item" data-id="Sebaceous Gland">Sebaceous Gland</div>
+        <div class="drag-item" data-id="Sweat Gland">Sweat Gland</div>
+        <div class="drag-item" data-id="Lamellar Corpuscle">Lamellar Corpuscle</div>
+        <div class="drag-item" data-id="Adipose Tissue">Adipose Tissue</div>
     </div>
 
-    <div id="completion-msg">
-        <h3>Success!</h3>
-        <p>Your Completion Code: <strong>ANAT-QUIZ-PRO-26</strong></p>
+    <div id="feedback">
+        <h3 style="color: #155724;">Great Job, Professor!</h3>
+        <p>You have correctly identified the structures of the integumentary system.</p>
+        <div style="background: #fff; padding: 10px; border: 1px solid #ccc; display: inline-block;">
+            Completion Code: <strong id="code-text">SKIN-ALLEY-2026</strong>
+        </div>
+        <button onclick="copyCode()" style="margin-left: 10px; padding: 8px; cursor: pointer;">Copy Code</button>
     </div>
 
     <script>
-        let correctCount = 0;
-        const totalTargets = 3;
+        let score = 0;
+        const total = 9;
 
-        // Initialize the dragging behavior
         interact('.drag-item').draggable({
             listeners: {
                 move (event) {
-                    const target = event.target;
-                    // Keep track of the relative movement
-                    const x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
-                    const y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-
-                    target.style.transform = `translate(${x}px, ${y}px)`;
-                    target.setAttribute('data-x', x);
-                    target.setAttribute('data-y', y);
+                    const t = event.target;
+                    const x = (parseFloat(t.getAttribute('data-x')) || 0) + event.dx;
+                    const y = (parseFloat(t.getAttribute('data-y')) || 0) + event.dy;
+                    t.style.transform = `translate(${x}px, ${y}px)`;
+                    t.setAttribute('data-x', x);
+                    t.setAttribute('data-y', y);
                 }
             }
         });
 
-        // Initialize the drop zone behavior
         interact('.drop-zone').dropzone({
             accept: '.drag-item',
-            overlap: 0.5,
-            ondragenter: (event) => event.target.classList.add('active'),
-            ondragleave: (event) => event.target.classList.remove('active'),
+            overlap: 0.3,
+            ondragenter: (e) => e.target.classList.add('active'),
+            ondragleave: (e) => e.target.classList.remove('active'),
             ondrop: function (event) {
-                const draggableElement = event.relatedTarget;
-                const dropzoneElement = event.target;
+                const label = event.relatedTarget;
+                const zone = event.target;
 
-                // Logic check: Does the label match the zone?
-                if (draggableElement.getAttribute('data-id') === dropzoneElement.getAttribute('data-correct')) {
-                    dropzoneElement.classList.add('caught');
-                    dropzoneElement.innerHTML = draggableElement.innerHTML;
-                    draggableElement.style.display = 'none'; // "Consumes" the label
-                    correctCount++;
-                    if (correctCount === totalTargets) {
-                        document.getElementById('completion-msg').style.display = 'block';
-                    }
+                if (label.getAttribute('data-id') === zone.getAttribute('data-correct')) {
+                    zone.classList.add('correct');
+                    zone.innerHTML = label.innerHTML;
+                    label.style.display = 'none';
+                    score++;
+                    if (score === total) document.getElementById('feedback').style.display = 'block';
                 } else {
-                    // Snap back if wrong
-                    draggableElement.style.transform = 'translate(0px, 0px)';
-                    draggableElement.setAttribute('data-x', 0);
-                    draggableElement.setAttribute('data-y', 0);
-                    dropzoneElement.classList.remove('active');
+                    label.style.transform = 'translate(0px, 0px)';
+                    label.setAttribute('data-x', 0);
+                    label.setAttribute('data-y', 0);
                 }
+                zone.classList.remove('active');
             }
         });
+
+        function copyCode() {
+            const code = document.getElementById('code-text').innerText;
+            navigator.clipboard.writeText(code);
+            alert("Completion code copied!");
+        }
     </script>
 </body>
 </html>

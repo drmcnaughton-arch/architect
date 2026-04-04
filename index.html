@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Tissue Architect: Chapter 4</title>
+    <style>
+        :root {
+            --parchment: #f4ece1;
+            --ink: #3b2f2f;
+            --accent: #8c2d2d;
+            --graph: rgba(59, 47, 47, 0.05);
+        }
+
+        body {
+            background-color: var(--parchment);
+            background-image: 
+                linear-gradient(var(--graph) 1px, transparent 1px),
+                linear-gradient(90px, var(--graph) 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--ink);
+            font-family: 'Georgia', serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            margin: 0;
+        }
+
+        #game-container {
+            max-width: 800px;
+            width: 100%;
+            border: 2px solid var(--ink);
+            padding: 40px;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.1);
+            background: var(--parchment);
+            position: relative;
+        }
+
+        h1 {
+            font-variant: small-caps;
+            border-bottom: 2px solid var(--ink);
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .level-description {
+            font-style: italic;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            background: transparent;
+            border: 1px solid var(--ink);
+            padding: 15px;
+            font-family: 'Georgia', serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        button:hover {
+            background: var(--ink);
+            color: var(--parchment);
+        }
+
+        #feedback {
+            margin-top: 30px;
+            padding: 20px;
+            border: 1px dashed var(--accent);
+            display: none;
+            line-height: 1.5;
+        }
+
+        .success { color: #2d5a27; border-color: #2d5a27 !important; }
+        .failure { color: var(--accent); }
+
+        #progress-bar {
+            width: 100%;
+            height: 5px;
+            background: #ddd;
+            margin-bottom: 20px;
+        }
+
+        #progress-fill {
+            height: 100%;
+            background: var(--ink);
+            width: 0%;
+            transition: width 0.5s;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="progress-bar"><div id="progress-fill"></div></div>
+    <h1>The Tissue Architect</h1>
+    <div id="level-title"><h3>Level 1: The Resilient Barrier</h3></div>
+    <div id="level-description" class="level-description">
+        Project: The Cutaneous Membrane. <br>
+        Requirement: Must protect the body surface from mechanical stresses, abrasion, and dehydration. [cite: 56, 59]
+    </div>
+
+    <div class="options-grid" id="options">
+        </div>
+
+    <div id="feedback"></div>
+</div>
+
+<script>
+    const levels = [
+        {
+            title: "Level 1: The Resilient Barrier",
+            desc: "Project: The Cutaneous Membrane (Skin). <br>Requirement: Construct a surface that protects against mechanical stresses and prevents water loss. [cite: 27, 60]",
+            options: [
+                { text: "Simple Squamous", correct: false, feedback: "Failure: Too thin. A single layer would provide no protection against abrasion. [cite: 26]" },
+                { text: "Stratified Squamous (Keratinized)", correct: true, feedback: "Success: Correct! Multiple layers protect against stress, and keratin provides water resistance. [cite: 27]" },
+                { text: "Transitional Epithelium", correct: false, feedback: "Failure: This tissue is designed for stretching (like the bladder), not external protection. [cite: 28]" },
+                { text: "Simple Columnar", correct: false, feedback: "Failure: Typically used for absorption in the gut, not for rugged skin protection. [cite: 29]" }
+            ]
+        },
+        {
+            title: "Level 2: The Expandable Reservoir",
+            desc: "Project: The Urinary Bladder. <br>Requirement: Construct a lining that tolerates repeated cycles of stretching and recoiling without damage. [cite: 28]",
+            options: [
+                { text: "Simple Cuboidal", correct: false, feedback: "Failure: Rigid boxy cells are better for secretion, not high-volume stretching. [cite: 25]" },
+                { text: "Stratified Squamous", correct: false, feedback: "Failure: While tough, these layers don't allow for the necessary expansion and recoil. [cite: 27]" },
+                { text: "Transitional Epithelium", correct: true, feedback: "Success: Correct! These cells change appearance as stretching occurs to prevent damage. [cite: 28]" },
+                { text: "Pseudostratified Columnar", correct: false, feedback: "Failure: These are usually ciliated for moving mucus in the respiratory tract. [cite: 29]" }
+            ]
+        },
+        {
+            title: "Level 3: The Gas Exchange Surface",
+            desc: "Project: Lung Alveoli. <br>Requirement: Construct a membrane where the primary goal is rapid absorption and diffusion of gases. [cite: 27]",
+            options: [
+                { text: "Simple Squamous", correct: true, feedback: "Success: Correct! The thin, flat shape allows for the shortest possible diffusion distance. [cite: 27]" },
+                { text: "Stratified Squamous", correct: false, feedback: "Failure: Too thick! Oxygen would not be able to diffuse quickly enough to sustain life. [cite: 27]" },
+                { text: "Simple Columnar", correct: false, feedback: "Failure: These tall cells are excellent for secretion/absorption in the gut, but too bulky for lung diffusion. [cite: 29]" },
+                { text: "Hyaline Cartilage", correct: false, feedback: "Failure: Cartilage is a supporting tissue, not a thin exchange membrane. [cite: 51, 52]" }
+            ]
+        }
+    ];
+
+    let currentLevel = 0;
+
+    function loadLevel() {
+        const level = levels[currentLevel];
+        document.getElementById('level-title').innerHTML = `<h3>${level.title}</h3>`;
+        document.getElementById('level-description').innerHTML = level.desc;
+        document.getElementById('progress-fill').style.width = `${(currentLevel / levels.length) * 100}%`;
+        
+        const optionsContainer = document.getElementById('options');
+        optionsContainer.innerHTML = '';
+        
+        level.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.innerText = opt.text;
+            btn.onclick = () => handleChoice(opt);
+            optionsContainer.appendChild(btn);
+        });
+
+        document.getElementById('feedback').style.display = 'none';
+    }
+
+    function handleChoice(opt) {
+        const feedbackDiv = document.getElementById('feedback');
+        feedbackDiv.innerHTML = opt.feedback;
+        feedbackDiv.style.display = 'block';
+        feedbackDiv.className = opt.correct ? 'success' : 'failure';
+
+        if (opt.correct) {
+            if (currentLevel < levels.length - 1) {
+                const nextBtn = document.createElement('button');
+                nextBtn.innerText = "Proceed to Next Blueprint →";
+                nextBtn.style.marginTop = "15px";
+                nextBtn.style.display = "block";
+                nextBtn.onclick = () => {
+                    currentLevel++;
+                    loadLevel();
+                };
+                feedbackDiv.appendChild(nextBtn);
+            } else {
+                feedbackDiv.innerHTML += "<br><strong>Master Architect Status Achieved! You have successfully organized the tissue levels. [cite: 1]</strong>";
+                document.getElementById('progress-fill').style.width = `100%`;
+            }
+        }
+    }
+
+    loadLevel();
+</script>
+
+</body>
+</html>

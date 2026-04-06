@@ -3,252 +3,319 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Predation Arcade: 50-Gate Challenge</title>
+    <title>Accessible Predation Arcade</title>
     <style>
         :root {
-            --neon-cyan: #00f2ff;
-            --neon-pink: #ff00e5;
-            --dark-bg: #0a0b10;
-            --card-bg: #1a1c26;
+            --dark-bg: #121212;
+            --card-bg: #1e1e1e;
+            --neon-cyan: #00e5ff;
+            --neon-pink: #ff00d4;
+            --text-main: #ffffff;
+            --focus-outline: #ffffff;
         }
 
         body {
             background-color: var(--dark-bg);
-            color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-main);
+            font-family: Arial, sans-serif; /* High legibility font */
+            line-height: 1.6;
+            margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin: 0;
+        }
+
+        .skip-link {
+            position: absolute;
+            left: -10000px;
+            top: auto;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+        .skip-link:focus {
+            position: static;
+            width: auto;
+            height: auto;
+            background: var(--neon-pink);
+            color: black;
+            padding: 10px;
         }
 
         header {
             text-align: center;
-            padding: 30px;
-            background: linear-gradient(180deg, #161822 0%, var(--dark-bg) 100%);
+            padding: 20px;
+            border-bottom: 3px solid var(--neon-cyan);
             width: 100%;
-            border-bottom: 2px solid var(--neon-cyan);
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
         }
 
-        h1 { margin: 0; font-size: 2.5em; letter-spacing: 4px; text-transform: uppercase; text-shadow: 0 0 10px var(--neon-cyan); }
-        .game-info { color: var(--neon-pink); font-weight: bold; letter-spacing: 2px; margin-top: 5px; }
-
-        #board {
+        #game-board {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 10px;
             padding: 20px;
-            max-width: 1400px;
+            max-width: 1000px;
             width: 95%;
         }
 
-        .category-header {
+        .cat-label {
             text-align: center;
             font-weight: bold;
-            font-size: 0.9em;
             color: var(--neon-cyan);
-            padding: 15px 5px;
+            padding: 10px;
+            border-bottom: 2px solid #444;
             text-transform: uppercase;
-            border-bottom: 2px solid #333;
-            background: rgba(0, 242, 255, 0.05);
         }
 
-        .cell {
+        .quiz-cell {
             background: var(--card-bg);
-            border: 1px solid #333;
-            height: 60px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.2em;
-            font-weight: bold;
+            border: 2px solid #444;
             color: var(--neon-pink);
+            height: 60px;
+            font-size: 1.3em;
+            font-weight: bold;
             cursor: pointer;
-            transition: all 0.2s ease;
-            border-radius: 4px;
+            border-radius: 5px;
+            transition: 0.2s;
         }
 
-        .cell:hover {
-            transform: translateY(-3px);
-            border-color: var(--neon-pink);
-            background: #252839;
+        .quiz-cell:hover, .quiz-cell:focus {
+            background: #333;
+            border-color: var(--neon-cyan);
+            outline: 3px solid var(--focus-outline);
         }
 
-        .cell.viewed { opacity: 0.15; cursor: default; transform: none; }
+        .quiz-cell[aria-disabled="true"] {
+            opacity: 0.2;
+            cursor: not-allowed;
+        }
 
-        #modal {
+        /* Modal / Dialog Styling */
+        #dialog-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.98);
-            z-index: 100;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-            padding: 40px;
-            box-sizing: border-box;
         }
 
-        #modal-content { max-width: 900px; text-align: center; }
-        #question-text { font-size: 2em; margin-bottom: 30px; color: #fff; }
-        #answer-text { font-size: 1.8em; color: var(--neon-cyan); display: none; margin-bottom: 30px; padding: 20px; border: 1px solid var(--neon-cyan); border-radius: 10px; }
-        
-        .score-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
+        #question-dialog {
             background: var(--card-bg);
-            padding: 15px 25px;
-            border: 2px solid var(--neon-pink);
-            border-radius: 8px;
-            font-size: 1.2em;
-            z-index: 50;
+            padding: 30px;
+            border: 4px solid var(--neon-cyan);
+            max-width: 600px;
+            width: 90%;
+            border-radius: 10px;
+            text-align: center;
         }
 
-        button {
-            background: transparent;
+        .answer-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .opt-btn {
+            background: #2a2a2a;
+            color: white;
             border: 2px solid var(--neon-cyan);
-            color: var(--neon-cyan);
-            padding: 12px 24px;
+            padding: 15px;
+            font-size: 1.1em;
             cursor: pointer;
-            text-transform: uppercase;
-            font-weight: bold;
-            margin: 5px;
+            border-radius: 8px;
         }
 
-        button:hover { background: var(--neon-cyan); color: var(--dark-bg); }
+        .opt-btn:focus {
+            background: var(--neon-cyan);
+            color: black;
+            outline: 4px solid white;
+        }
+
+        .score-display {
+            background: var(--card-bg);
+            padding: 15px;
+            border: 2px solid var(--neon-pink);
+            margin: 20px;
+            font-size: 1.5em;
+        }
+
+        #announcer {
+            position: absolute;
+            left: -10000px;
+        }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>PREDATION ARCADE</h1>
-    <div class="game-info">BIOLOGY CHAPTER 14 // 50-QUESTION MODE</div>
-</header>
+    <a class="skip-link" href="#game-board">Skip to Game Board</a>
 
-<div class="score-container">SCORE: $<span id="score">0</span></div>
+    <header>
+        <h1>Predation Arcade: Chapter 14</h1>
+        <p>Use Tab to navigate and Enter to select questions.</p>
+    </header>
 
-<div id="board">
-    <div class="category-header">Forms of Predation</div>
-    <div class="category-header">Lotka-Volterra Lab</div>
-    <div class="category-header">Responses & Dynamics</div>
-    <div class="category-header">Evolutionary Arms Race</div>
-    <div class="category-header">The Smart Predator</div>
-</div>
+    <section class="score-display" aria-label="Current Score">
+        SCORE: $<span id="score-val">0</span>
+    </section>
 
-<div id="modal">
-    <div id="modal-content">
-        <div id="question-text">Question?</div>
-        <div id="answer-text">Answer!</div>
-        <div>
-            <button id="reveal-btn" onclick="reveal()">Reveal</button>
-            <button onclick="closeModal(true)">Correct</button>
-            <button onclick="closeModal(false)">Incorrect</button>
+    <div id="announcer" aria-live="assertive"></div>
+
+    <main id="game-board" role="grid" aria-label="Jeopardy Board">
+        <div role="columnheader" class="cat-label">Forms</div>
+        <div role="columnheader" class="cat-label">Equations</div>
+        <div role="columnheader" class="cat-label">Dynamics</div>
+        <div role="columnheader" class="cat-label">Defenses</div>
+        <div role="columnheader" class="cat-label">Sustainability</div>
+
+        </main>
+
+    <div id="dialog-overlay" role="dialog" aria-labelledby="q-title" aria-modal="true">
+        <div id="question-dialog">
+            <h2 id="q-title">Question</h2>
+            <div id="question-text" style="font-size: 1.4em; margin-bottom: 20px;"></div>
+            
+            <div class="answer-options" id="options-container" role="radiogroup" aria-label="Select an answer">
+                </div>
+
+            <button id="close-btn" style="margin-top:30px; display:none; padding:10px 20px;" onclick="closeDialog()">Return to Board</button>
         </div>
     </div>
-</div>
 
 <script>
-    const gameData = [
+    const questions = [
         // Category 0: Forms
-        {v:100, c:0, q:"Heterotrophs that consume animal tissue.", a:"What are Carnivores?"},
-        {v:200, c:0, q:"Heterotrophs that consume plant or algal tissue.", a:"What are Herbivores?"},
-        {v:300, c:0, q:"This group is excluded from the definition of predation because they eat dead organic matter.", a:"What are Scavengers or Decomposers?"},
-        {v:400, c:0, q:"A predator that kills its prey immediately upon capture.", a:"What is a True Predator?"},
-        {v:500, c:0, q:"Herbivores that consume only part of a plant without killing it are often called these two terms.", a:"What are Grazers and Browsers?"},
-        {v:600, c:0, q:"These function as true predators because they kill the 'prey' by consuming the entire embryo.", a:"What are Seed Predators?"},
-        {v:700, c:0, q:"An organism that lives on or in a host, drawing nutrients but usually not killing it.", a:"What is a Parasite?"},
-        {v:800, c:0, q:"This organism lays eggs in or on a host, and its larvae eventually consume and kill the host.", a:"What is a Parasitoid?"},
-        {v:900, c:0, q:"Zooplankton that consume phytoplankton are known as this.", a:"What are Planktivores?"},
-        {v:1000, c:0, q:"Predation is described as this type of interaction because it influences the fitness of both populations.", a:"What is a Direct Interaction?"},
+        {v:100, c:0, q:"True or False: The definition of predation excludes scavengers and decomposers.", a:"True", d:["False"]},
+        {v:200, c:0, q:"Heterotrophs that consume only animal tissue are known as...", a:"Carnivores", d:["Herbivores", "Omnivores", "Detritivores"]},
+        {v:300, c:0, q:"Which type of predator kills its prey immediately upon capture?", a:"True Predator", d:["Parasite", "Parasitoid", "Grazer"]},
+        {v:400, c:0, q:"Herbivores like cattle that eat grass are functionally classified as...", a:"Grazers", d:["Browsers", "Planktivores", "Carnivores"]},
+        {v:500, c:0, q:"Organisms that consume the entire plant embryo within a seed are...", a:"Seed Predators", d:["Browsers", "Parasites", "Decomposers"]},
+        {v:600, c:0, q:"This organism lives in or on a host, drawing nutrients without immediately killing it.", a:"Parasite", d:["True Predator", "Scavenger", "Omnivore"]},
+        {v:700, c:0, q:"An organism whose larvae eventually consume and kill the host.", a:"Parasitoid", d:["Endoparasite", "Ectoparasite", "Commensal"]},
+        {v:800, c:0, q:"Small organisms that consume phytoplankton are called...", a:"Planktivores", d:["Granivores", "Frugivores", "Browsers"]},
+        {v:900, c:0, q:"Predation is a direct interaction that affects the ______ of both populations.", a:"Fitness", d:["Coloration", "Geography", "Taxonomy"]},
+        {v:1000, c:0, q:"Heterotrophs that consume both plant and animal tissue.", a:"Omnivores", d:["Carnivores", "Herbivores", "Planktivores"]},
 
-        // Category 1: Lotka-Volterra
-        {v:100, c:1, q:"The 'r' in the prey equation represents this rate.", a:"What is Per Capita Growth Rate?"},
-        {v:200, c:1, q:"In the equation dN/dt = rN - (cN)P, this term represents the total rate of predation.", a:"What is (cN)P?"},
-        {v:300, c:1, q:"The 'c' in the equation represents this efficiency.", a:"What is Capture Efficiency?"},
-        {v:400, c:1, q:"Predator population growth is dependent on this, which is the ability to turn food into offspring.", a:"What is Birth Efficiency (b)?"},
-        {v:500, c:1, q:"This variable represents the predator's per capita death rate.", a:"What is d?"},
-        {v:600, c:1, q:"The prey population is stable when the number of predators equals this value.", a:"What is r/c?"},
-        {v:700, c:1, q:"When plotted, the predator and prey populations show this distinct temporal relationship.", a:"What is a Cycle (or Lag)?"},
-        {v:800, c:1, q:"The diagonal line on a graph where population growth is zero is called this.", a:"What is a Zero-Growth Isocline?"},
-        {v:900, c:1, q:"The Lotka-Volterra model assumes this type of 'response' from predators to prey density.", a:"What is a Linear (Type I) Response?"},
-        {v:1000, c:1, q:"If 'c' increases, the prey isocline moves in this direction on the graph.", a:"What is Downward?"},
+        // Category 1: Equations (Lotka-Volterra)
+        {v:100, c:1, q:"In the prey equation, 'r' stands for...", a:"Per capita growth rate", d:["Capture efficiency", "Death rate", "Carrying capacity"]},
+        {v:200, c:1, q:"In the term (cN)P, 'c' represents...", a:"Capture efficiency", d:["Carrying capacity", "Consumption energy", "Clumping"]},
+        {v:300, c:1, q:"The term (cN)P represents the total rate of...", a:"Predation", d:["Birth", "Migration", "Excretion"]},
+        {v:400, c:1, q:"Variable 'b' represents the efficiency of turning food into...", a:"Offspring", d:["Heat", "Waste", "Movement"]},
+        {v:500, c:1, q:"Variable 'd' represents the predator's per capita...", a:"Death rate", d:["Dispersal rate", "Density", "Digestion time"]},
+        {v:600, c:1, q:"Predator population growth is zero when prey density (N) equals...", a:"d / bc", d:["r / c", "K", "r / b"]},
+        {v:700, c:1, q:"Prey population growth is zero when predator density (P) equals...", a:"r / c", d:["d / bc", "K", "b / r"]},
+        {v:800, c:1, q:"Lotka-Volterra models assume which type of functional response?", a:"Type I", d:["Type II", "Type III", "S-Shaped"]},
+        {v:900, c:1, q:"The populations move in a 'lagged' fashion, resulting in a...", a:"Cycle", d:["Straight line", "Square", "Random walk"]},
+        {v:1000, c:1, q:"Lines on a graph where population growth is zero are called...", a:"Zero-growth isoclines", d:["Equilibrium slopes", "Asymptotes", "Log-lines"]},
 
-        // Category 2: Responses
-        {v:100, c:2, q:"The relationship between the per capita rate of consumption and prey density.", a:"What is a Functional Response?"},
-        {v:200, c:2, q:"This response type shows a linear increase in consumption up to a maximum.", a:"What is Type I?"},
-        {v:300, c:2, q:"The most common response, where consumption rate decelerates as prey density increases.", a:"What is Type II?"},
-        {v:400, c:2, q:"This response type is S-shaped (Sigmoidal).", a:"What is Type III?"},
-        {v:500, c:2, q:"The time a predator spends 'processing' a prey item.", a:"What is Handling Time?"},
-        {v:600, c:2, q:"This describes predators moving toward areas of high prey density.", a:"What is the Aggregative Response?"},
-        {v:700, c:2, q:"The increase in predator reproduction due to increased prey consumption.", a:"What is the Numerical Response?"},
-        {v:800, c:2, q:"Predators often ignore rare prey until they develop this mental shortcut.", a:"What is a Search Image?"},
-        {v:900, c:2, q:"In Type II, this factor limits the predator's ability to eat more at high densities.", a:"What is Handling Time?"},
-        {v:1000, c:2, q:"This occurs when prey take refuge in areas where they are safe from predators.", a:"What is a Prey Refuge?"},
+        // Category 2: Dynamics
+        {v:100, c:2, q:"The relationship between consumption rate and prey density.", a:"Functional Response", d:["Numerical Response", "Total Response", "Aggregative Response"]},
+        {v:200, c:2, q:"Response type where consumption is linear until a maximum.", a:"Type I", d:["Type II", "Type III", "Sigmoid"]},
+        {v:300, c:2, q:"The most common response, where rate decelerates due to handling.", a:"Type II", d:["Type I", "Type III", "Exponential"]},
+        {v:400, c:2, q:"The sigmoidal (S-shaped) functional response.", a:"Type III", d:["Type I", "Type II", "Hyperbolic"]},
+        {v:500, c:2, q:"Time spent catching, killing, and eating one prey item.", a:"Handling time", d:["Search time", "Foraging time", "Refuge time"]},
+        {v:600, c:2, q:"Movement of predators into areas of high prey density.", a:"Aggregative response", d:["Numerical response", "Functional response", "Kin selection"]},
+        {v:700, c:2, q:"Increased predator reproduction following increased food intake.", a:"Numerical response", d:["Functional response", "Total response", "Isocline response"]},
+        {v:800, c:2, q:"A mental shortcut used by predators to spot common prey.", a:"Search image", d:["Cryptic map", "Refuge logic", "Aposematism"]},
+        {v:900, c:2, q:"A safe place where prey cannot be reached by predators.", a:"Prey refuge", d:["Search image", "Trench", "Boundary"]},
+        {v:1000, c:2, q:"In Type II, what factor limits consumption at high prey density?", a:"Handling time", d:["Prey birth rate", "Search time", "Ambush time"]},
 
         // Category 3: Defenses
-        {v:100, c:3, q:"Armor, shells, and quills are examples of this type of defense.", a:"What are Structural (or Mechanical) Defenses?"},
-        {v:200, c:3, q:"The scientific term for camouflage or blending into the background.", a:"What is Cryptic Coloration?"},
-        {v:300, c:3, q:"Bright, bold warning colors signaling toxicity.", a:"What is Aposematism?"},
-        {v:400, c:3, q:"When a harmless species looks like a toxic one.", a:"What is Batesian Mimicry?"},
-        {v:500, c:3, q:"When many unpalatable species share the same color pattern.", a:"What is Müllerian Mimicry?"},
-        {v:600, c:3, q:"Plant compounds like lignin and tannins that reduce digestibility are called these.", a:"What are Quantitative Inhibitors?"},
-        {v:700, c:3, q:"Toxins like alkaloids and cyanogenic glycosides in plants are called these.", a:"What are Qualitative Inhibitors?"},
-        {v:800, c:3, q:"These defenses are only produced by a plant when it is being attacked.", a:"What are Induced Defenses?"},
-        {v:900, c:3, q:"The 'flashing' of a white tail by a deer is an example of this defense.", a:"What is a Behavioral Defense (Warning Signal)?"},
-        {v:1000, c:3, q:"Pheromones released by injured animals to warn others are called this.", a:"What are Alarm Pheromones?"},
+        {v:100, c:3, q:"Armor, shells, and quills are examples of _______ defenses.", a:"Mechanical", d:["Chemical", "Behavioral", "Cryptic"]},
+        {v:200, c:3, q:"Coloration that helps an animal blend into its background.", a:"Cryptic Coloration", d:["Aposematism", "Mimicry", "Disruptive"]},
+        {v:300, c:3, q:"Bold warning colors on toxic animals.", a:"Aposematism", d:["Crypsis", "Shadowing", "Counter-shading"]},
+        {v:400, c:3, q:"A harmless species looking like a toxic one.", a:"Batesian Mimicry", d:["Müllerian Mimicry", "Aggressive Mimicry", "Sematism"]},
+        {v:500, c:3, q:"Two or more toxic species sharing the same pattern.", a:"Müllerian Mimicry", d:["Batesian Mimicry", "Cryptic Mimicry", "Inductive Mimicry"]},
+        {v:600, c:3, q:"Plant toxins like alkaloids are _______ inhibitors.", a:"Qualitative", d:["Quantitative", "Induced", "Constitutive"]},
+        {v:700, c:3, q:"Plant compounds like tannins that slow digestion are _______ inhibitors.", a:"Quantitative", d:["Qualitative", "Cyanogenic", "Alkaloid"]},
+        {v:800, c:3, q:"Defenses triggered only after an attack occurs.", a:"Induced defenses", d:["Constitutive defenses", "Passive defenses", "Fixed defenses"]},
+        {v:900, c:3, q:"Chemicals released by injured animals to warn others.", a:"Alarm pheromones", d:["Kairomones", "Hormones", "Enzymes"]},
+        {v:1000, c:3, q:"Flashing a white tail by a deer is which type of defense?", a:"Behavioral", d:["Structural", "Chemical", "Mimicry"]},
 
-        // Category 4: Smart Predator
-        {v:100, c:4, q:"The highest number of individuals that can be harvested without causing a population crash.", a:"What is Maximum Sustainable Yield?"},
-        {v:200, c:4, q:"MSY is typically found at this point on a population growth curve.", a:"What is Half of the Carrying Capacity (K/2)?"},
-        {v:300, c:4, q:"This fish population famously collapsed in the 1940s-50s due to overfishing and ENSO.", a:"What is the Pacific Sardine?"},
-        {v:400, c:4, q:"Over-exploitation often shifts the population toward these age classes.", a:"What are Younger Age Classes?"},
-        {v:500, c:4, q:"This force often drives managers to maintain high yields even when populations are declining.", a:"What is Economic Pressure?"},
-        {v:600, c:4, q:"Sustainable yield requires a detailed understanding of this ratio within a population.", a:"What is the Sex Ratio?"},
-        {v:700, c:4, q:"Environmental uncertainties like these can interrupt normal reproduction patterns.", a:"What is Climate Variation (or ENSO)?"},
-        {v:800, c:4, q:"Why is focusing only on the current yield considered short-sighted?", a:"What is it leads to long-term population collapse (and economic loss)?"},
-        {v:900, c:4, q:"Sustainable harvest requires understanding reproduction that is dependent on these two factors.", a:"What are Size and Age?"},
-        {v:1000, c:4, q:"This term describes a predator that understands the dynamics and limits of its prey population.", a:"What is a Smart Predator?"}
+        // Category 4: Sustainability
+        {v:100, c:4, q:"The highest harvest possible without a population crash.", a:"Maximum Sustainable Yield", d:["Carrying Capacity", "Minimal Yield", "Biomass Peak"]},
+        {v:200, c:4, q:"Mathematically, MSY occurs at which population point?", a:"K / 2", d:["K", "K / 4", "0.1 K"]},
+        {v:300, c:4, q:"Which fish population crashed in the 1940s due to overfishing?", a:"Pacific Sardine", d:["Atlantic Cod", "Sockeye Salmon", "Bluefin Tuna"]},
+        {v:400, c:4, q:"Heavy exploitation often shifts the population to _______ age classes.", a:"Younger", d:["Older", "Sterile", "Non-reproductive"]},
+        {v:500, c:4, q:"Sustainable harvest requires understanding the _____ ratio.", a:"Sex", d:["Height", "Weight", "Latitude"]},
+        {v:600, c:4, q:"What climate event contributed to the Sardine collapse?", a:"ENSO (El Niño)", d:["Tsunami", "Drought", "Polar Vortex"]},
+        {v:700, c:4, q:"Pressure to increase yield for money is known as _______ pressure.", a:"Economic", d:["Genetic", "Atmospheric", "Social"]},
+        {v:800, c:4, q:"True or False: It is easy to harvest only those individuals who would die naturally.", a:"False", d:["True"]},
+        {v:900, c:4, q:"A 'Smart Predator' bases harvest on understanding population _______.", a:"Dynamics", d:["Taxonomy", "Names", "Locations"]},
+        {v:1000, c:4, q:"After the Sardine population crashed, did it recover quickly?", a:"No", d:["Yes"]},
     ];
 
-    let currentScore = 0;
-    let activeVal = 0;
-    const board = document.getElementById('board');
+    let score = 0;
+    const board = document.getElementById('game-board');
+    const announcer = document.getElementById('announcer');
+    let lastFocusedElement;
 
-    // Generate cells
-    for(let i=1; i<=10; i++) {
-        for(let j=0; j<5; j++) {
-            const item = gameData.find(d => d.v === i*100 && d.c === j);
-            const cell = document.createElement('div');
-            cell.className = 'cell';
-            cell.innerText = `$${item.v}`;
-            cell.onclick = () => {
-                if(cell.classList.contains('viewed')) return;
-                activeVal = item.v;
-                document.getElementById('question-text').innerText = item.q;
-                document.getElementById('answer-text').innerText = item.a;
-                document.getElementById('answer-text').style.display = 'none';
-                document.getElementById('reveal-btn').style.display = 'inline-block';
-                document.getElementById('modal').style.display = 'flex';
-                cell.classList.add('viewed');
-            };
-            board.appendChild(cell);
+    // Build the accessible board
+    for (let row = 1; row <= 10; row++) {
+        for (let col = 0; col < 5; col++) {
+            const q = questions.find(item => item.v === row * 100 && item.c === col);
+            const btn = document.createElement('button');
+            btn.className = 'quiz-cell';
+            btn.setAttribute('aria-label', `Category ${col + 1}, ${q.v} dollars`);
+            btn.innerText = `$${q.v}`;
+            btn.onclick = () => openQuestion(q, btn);
+            board.appendChild(btn);
         }
     }
 
-    function reveal() {
-        document.getElementById('answer-text').style.display = 'block';
-        document.getElementById('reveal-btn').style.display = 'none';
+    function openQuestion(q, btn) {
+        if (btn.getAttribute('aria-disabled') === 'true') return;
+        lastFocusedElement = btn;
+        
+        document.getElementById('q-title').innerText = `Question for $${q.v}`;
+        document.getElementById('question-text').innerText = q.q;
+        
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+        
+        const choices = [q.a, ...q.d].sort(() => Math.random() - 0.5);
+        
+        choices.forEach(choice => {
+            const opt = document.createElement('button');
+            opt.className = 'opt-btn';
+            opt.innerText = choice;
+            opt.onclick = () => evaluateAnswer(choice, q.a, q.v, opt);
+            container.appendChild(opt);
+        });
+
+        document.getElementById('dialog-overlay').style.display = 'flex';
+        document.getElementById('close-btn').style.display = 'none';
+        container.querySelector('button').focus();
     }
 
-    function closeModal(win) {
-        if(win) currentScore += activeVal;
-        else currentScore -= activeVal;
-        document.getElementById('score').innerText = currentScore;
-        document.getElementById('modal').style.display = 'none';
+    function evaluateAnswer(choice, correct, value, btn) {
+        const allBtns = document.querySelectorAll('.opt-btn');
+        allBtns.forEach(b => b.disabled = true);
+
+        if (choice === correct) {
+            score += value;
+            announcer.innerText = "Correct! Your score is now " + score;
+            btn.style.background = "#2e7d32";
+        } else {
+            score -= value;
+            announcer.innerText = "Incorrect. The correct answer was " + correct + ". Your score is now " + score;
+            btn.style.background = "#c62828";
+        }
+
+        document.getElementById('score-val').innerText = score;
+        document.getElementById('close-btn').style.display = 'block';
+        document.getElementById('close-btn').focus();
+        
+        lastFocusedElement.setAttribute('aria-disabled', 'true');
+        lastFocusedElement.style.opacity = "0.2";
+    }
+
+    function closeDialog() {
+        document.getElementById('dialog-overlay').style.display = 'none';
+        lastFocusedElement.focus();
     }
 </script>
-
 </body>
 </html>

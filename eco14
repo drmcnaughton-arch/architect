@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Eco-Evolve: The Apex Balance</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e0f7fa; color: #333; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        #game-container { background: white; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); padding: 30px; max-width: 800px; width: 100%; border: 4px solid #00acc1; }
+        .avatar-box { display: flex; align-items: center; background: #b2ebf2; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 10px solid #00838f; }
+        .avatar { font-size: 50px; margin-right: 20px; }
+        .equation { background: #f1f8e9; padding: 10px; border-radius: 5px; font-family: 'Courier New', monospace; font-weight: bold; text-align: center; margin: 10px 0; border: 1px dashed #689f38; }
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .slider-group { background: #fafafa; padding: 10px; border-radius: 8px; border: 1px solid #ddd; }
+        label { font-weight: bold; color: #007c91; display: block; margin-bottom: 5px; }
+        input[type=range] { width: 100%; }
+        #graph-area { height: 200px; width: 100%; background: #000; margin: 20px 0; border-radius: 5px; position: relative; overflow: hidden; }
+        .bar { position: absolute; bottom: 0; transition: height 0.3s; width: 45%; }
+        #prey-bar { left: 5%; background-color: #4caf50; }
+        #pred-bar { right: 5%; background-color: #f44336; }
+        .status-text { text-align: center; font-weight: bold; font-size: 1.2em; }
+        button { background: #00838f; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 1em; margin-top: 10px; }
+        button:hover { background: #005662; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div class="avatar-box">
+        <div class="avatar">🦎</div>
+        <div>
+            <strong>Apex says:</strong>
+            <p id="apex-dialogue">Welcome, Biologist! Let's balance this ecosystem. Use the sliders to adjust the variables of the Lotka-Volterra model. Don't let either population go extinct!</p>
+        </div>
+    </div>
+
+    <div class="status-text">
+        Prey (N): <span id="prey-count" style="color: #2e7d32;">50</span> | 
+        Predator (P): <span id="pred-count" style="color: #c62828;">10</span>
+    </div>
+
+    <div id="graph-area">
+        <div id="prey-bar" class="bar" style="height: 50%;"></div>
+        <div id="pred-bar" class="bar" style="height: 10%;"></div>
+    </div>
+
+    <div class="equation">
+        Prey Growth: dN/dt = <span style="color:blue">r</span>N - (<span style="color:orange">c</span>N)P <br>
+        Predator Growth: dP/dt = <span style="color:purple">b</span>(cN)P - <span style="color:red">d</span>P
+    </div>
+
+    <div class="controls">
+        <div class="slider-group">
+            <label>Prey Birth Rate (r)</label>
+            <input type="range" id="r-slider" min="0.01" max="0.2" step="0.01" value="0.1">
+            <small>How fast prey multiply naturally[cite: 279].</small>
+        </div>
+        <div class="slider-group">
+            <label>Capture Efficiency (c)</label>
+            <input type="range" id="c-slider" min="0.001" max="0.05" step="0.001" value="0.01">
+            <small>Predator's hunting skill[cite: 286].</small>
+        </div>
+        <div class="slider-group">
+            <label>Birth Efficiency (b)</label>
+            <input type="range" id="b-slider" min="0.01" max="0.5" step="0.01" value="0.1">
+            <small>Energy from food turned into babies[cite: 319].</small>
+        </div>
+        <div class="slider-group">
+            <label>Predator Death Rate (d)</label>
+            <input type="range" id="d-slider" min="0.01" max="0.2" step="0.01" value="0.1">
+            <small>Natural mortality of predators[cite: 312].</small>
+        </div>
+    </div>
+
+    <div style="text-align: center;">
+        <button onclick="resetGame()">Reset Ecosystem</button>
+    </div>
+</div>
+
+<script>
+    let N = 50; // Initial Prey
+    let P = 10; // Initial Predator
+    
+    function updateEcosystem() {
+        // Get current slider values
+        let r = parseFloat(document.getElementById('r-slider').value);
+        let c = parseFloat(document.getElementById('c-slider').value);
+        let b = parseFloat(document.getElementById('b-slider').value);
+        let d = parseFloat(document.getElementById('d-slider').value);
+
+        // Lotka-Volterra Equations
+        let dN = (r * N) - (c * N * P);
+        let dP = (b * (c * N) * P) - (d * P);
+
+        // Apply change
+        N += dN;
+        P += dP;
+
+        // Prevent negative populations
+        if (N < 0) N = 0;
+        if (P < 0) P = 0;
+
+        // Update Visuals
+        document.getElementById('prey-count').innerText = Math.round(N);
+        document.getElementById('pred-count').innerText = Math.round(P);
+        document.getElementById('prey-bar').style.height = Math.min(N, 100) + '%';
+        document.getElementById('pred-bar').style.height = Math.min(P, 100) + '%';
+
+        // Apex Feedback
+        let dialogue = document.getElementById('apex-dialogue');
+        if (N === 0) {
+            dialogue.innerText = "Oh no! The prey are gone. The predators will starve soon! Click reset.";
+        } else if (P === 0) {
+            dialogue.innerText = "The predators are extinct! The prey will grow out of control!";
+        } else if (N > 80 && P < 20) {
+            dialogue.innerText = "Warning: The prey population is exploding. We need more efficient predators (c)!";
+        } else if (P > 50) {
+            dialogue.innerText = "Too many predators! They're eating the prey faster than they can reproduce!";
+        } else {
+            dialogue.innerText = "Balance is key! Watch how the cycles lag behind each other.";
+        }
+    }
+
+    // Run simulation step every 500ms
+    setInterval(updateEcosystem, 500);
+
+    function resetGame() {
+        N = 50;
+        P = 10;
+    }
+</script>
+
+</body>
+</html>

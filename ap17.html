@@ -1,0 +1,2141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Special Senses – Interactive Study Tool</title>
+<meta name="description" content="Interactive study tool for The Special Senses covering olfaction, gustation, vision, equilibrium, and hearing.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  /* ===================== CSS VARIABLES ===================== */
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1e2633;
+    --surface3: #252d3a;
+    --border: rgba(99,179,237,0.15);
+    --primary: #63b3ed;
+    --primary-glow: rgba(99,179,237,0.2);
+    --accent: #68d391;
+    --accent2: #f6ad55;
+    --accent3: #fc8181;
+    --accent4: #b794f4;
+    --text: #e2e8f0;
+    --text-muted: #8899aa;
+    --text-dim: #4a5568;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    --font-head: 'Sora', sans-serif;
+    --font-body: 'Lora', serif;
+  }
+
+  /* ===================== RESET & BASE ===================== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  /* ===================== SKIP LINK (ADA) ===================== */
+  .skip-link {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    background: var(--primary);
+    color: #000;
+    padding: 10px 20px;
+    font-family: var(--font-head);
+    font-weight: 700;
+    z-index: 9999;
+    border-radius: 0 0 var(--radius-sm) 0;
+    transition: top 0.2s;
+  }
+  .skip-link:focus { top: 0; }
+
+  /* ===================== HEADER ===================== */
+  header {
+    background: linear-gradient(135deg, #0d1117 0%, #1a1f2e 50%, #0d1117 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 32px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-icon {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, var(--primary), var(--accent4));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .logo-text h1 {
+    font-family: var(--font-head);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .logo-text span {
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  /* ===================== PROGRESS BAR ===================== */
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .progress-label {
+    font-family: var(--font-head);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .progress-bar-outer {
+    width: 160px;
+    height: 8px;
+    background: var(--surface3);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .progress-bar-inner {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 99px;
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+
+  /* ===================== NAV TABS ===================== */
+  nav[role="tablist"] {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 32px 0;
+    display: flex;
+    gap: 4px;
+  }
+
+  .tab-btn {
+    font-family: var(--font-head);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 10px 22px;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+    background: var(--surface2);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tab-btn:hover {
+    color: var(--text);
+    background: var(--surface3);
+  }
+
+  .tab-btn[aria-selected="true"] {
+    background: var(--surface);
+    color: var(--primary);
+    border-color: var(--border);
+    border-bottom-color: var(--surface);
+    margin-bottom: -1px;
+    z-index: 1;
+  }
+
+  .tab-btn:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  /* ===================== MAIN CONTENT ===================== */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px 60px;
+    border-top: 1px solid var(--border);
+  }
+
+  .tab-panel {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .tab-panel[aria-hidden="false"] { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===================== SECTION SELECTOR ===================== */
+  .section-nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 24px 0 20px;
+  }
+
+  .section-btn {
+    font-family: var(--font-head);
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 7px 16px;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .section-btn:hover, .section-btn.active {
+    background: var(--primary-glow);
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  .section-btn:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  /* ===================== STUDY NOTES ===================== */
+  .notes-grid {
+    display: grid;
+    gap: 20px;
+  }
+
+  .note-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .note-card:hover { border-color: var(--primary); }
+
+  .note-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px;
+    cursor: pointer;
+    gap: 12px;
+    background: var(--surface2);
+  }
+
+  .note-header:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: -2px;
+  }
+
+  .note-title-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .note-icon {
+    font-size: 1.4rem;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+  }
+
+  .note-title {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .note-subtitle {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: 2px;
+  }
+
+  .note-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: var(--font-head);
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 99px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .tag-high { background: rgba(252,129,129,0.15); color: var(--accent3); border: 1px solid rgba(252,129,129,0.3); }
+  .tag-key { background: rgba(104,211,145,0.15); color: var(--accent); border: 1px solid rgba(104,211,145,0.3); }
+  .tag-path { background: rgba(183,148,244,0.15); color: var(--accent4); border: 1px solid rgba(183,148,244,0.3); }
+
+  .chevron {
+    color: var(--text-muted);
+    transition: transform 0.25s ease;
+    flex-shrink: 0;
+    font-size: 0.9rem;
+  }
+
+  .note-card.open .chevron { transform: rotate(180deg); }
+
+  .note-body {
+    display: none;
+    padding: 20px 22px 22px;
+    border-top: 1px solid var(--border);
+  }
+
+  .note-card.open .note-body { display: block; }
+
+  .note-body ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .note-body li {
+    padding-left: 20px;
+    position: relative;
+    color: var(--text);
+    font-size: 0.95rem;
+  }
+
+  .note-body li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  .note-body strong {
+    color: var(--accent2);
+  }
+
+  .note-body em {
+    color: var(--accent4);
+    font-style: italic;
+  }
+
+  .mnemonic-box {
+    margin-top: 16px;
+    padding: 14px 18px;
+    background: rgba(183,148,244,0.08);
+    border: 1px solid rgba(183,148,244,0.25);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--accent4);
+  }
+
+  .mnemonic-label {
+    font-family: var(--font-head);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent4);
+    margin-bottom: 6px;
+  }
+
+  .mnemonic-text {
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+
+  .key-box {
+    margin-top: 16px;
+    padding: 14px 18px;
+    background: rgba(104,211,145,0.06);
+    border: 1px solid rgba(104,211,145,0.2);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--accent);
+  }
+
+  .key-label {
+    font-family: var(--font-head);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+
+  .key-text { font-size: 0.88rem; color: var(--text); }
+
+  /* ===================== FLASHCARDS ===================== */
+  .flashcard-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 24px 0 20px;
+  }
+
+  .fc-counter {
+    font-family: var(--font-head);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  .fc-counter span {
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  .fc-filter-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    font-family: var(--font-head);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .filter-btn:hover, .filter-btn.active { background: var(--primary-glow); border-color: var(--primary); color: var(--primary); }
+  .filter-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  .card-arena {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .flashcard-wrap {
+    width: 100%;
+    max-width: 640px;
+    perspective: 1200px;
+  }
+
+  .flashcard {
+    width: 100%;
+    min-height: 300px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    border-radius: var(--radius);
+  }
+
+  .flashcard.flipped { transform: rotateY(180deg); }
+
+  .card-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 36px;
+    text-align: center;
+    border: 1px solid var(--border);
+    min-height: 300px;
+  }
+
+  .card-front {
+    background: linear-gradient(145deg, var(--surface), var(--surface2));
+  }
+
+  .card-back {
+    background: linear-gradient(145deg, #0e1f2f, #122030);
+    border-color: var(--primary);
+    transform: rotateY(180deg);
+  }
+
+  .card-category {
+    font-family: var(--font-head);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--primary);
+    margin-bottom: 16px;
+    padding: 4px 12px;
+    background: var(--primary-glow);
+    border-radius: 99px;
+  }
+
+  .card-image {
+    font-size: 4rem;
+    margin-bottom: 16px;
+    line-height: 1;
+  }
+
+  .card-q {
+    font-family: var(--font-head);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.45;
+  }
+
+  .card-hint {
+    margin-top: 14px;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  .card-a {
+    font-size: 1rem;
+    color: var(--text);
+    line-height: 1.65;
+  }
+
+  .card-a strong { color: var(--accent2); }
+
+  .card-flip-hint {
+    position: absolute;
+    bottom: 14px;
+    right: 18px;
+    font-family: var(--font-head);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+  }
+
+  .fc-nav {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .fc-nav-btn {
+    font-family: var(--font-head);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 10px 24px;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    background: var(--surface2);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .fc-nav-btn:hover:not(:disabled) { background: var(--surface3); border-color: var(--primary); color: var(--primary); }
+  .fc-nav-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .fc-nav-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  .confidence-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  .conf-btn {
+    font-family: var(--font-head);
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .conf-btn:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+
+  .conf-easy { background: rgba(104,211,145,0.15); color: var(--accent); border: 1px solid rgba(104,211,145,0.4); }
+  .conf-easy:hover { background: rgba(104,211,145,0.3); }
+  .conf-medium { background: rgba(246,173,85,0.15); color: var(--accent2); border: 1px solid rgba(246,173,85,0.4); }
+  .conf-medium:hover { background: rgba(246,173,85,0.3); }
+  .conf-hard { background: rgba(252,129,129,0.15); color: var(--accent3); border: 1px solid rgba(252,129,129,0.4); }
+  .conf-hard:hover { background: rgba(252,129,129,0.3); }
+
+  .bookmark-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 8px 16px;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-family: var(--font-head);
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+  }
+
+  .bookmark-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+  .bookmark-btn.bookmarked { background: rgba(246,173,85,0.15); border-color: var(--accent2); color: var(--accent2); }
+  .bookmark-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  /* ===================== PRACTICE QUIZ ===================== */
+  .quiz-start {
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  .quiz-start h2 {
+    font-family: var(--font-head);
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .quiz-start p {
+    color: var(--text-muted);
+    max-width: 460px;
+    margin: 0 auto 32px;
+  }
+
+  .start-btn {
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 14px 36px;
+    background: linear-gradient(135deg, var(--primary), var(--accent4));
+    color: #000;
+    border: none;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .start-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(99,179,237,0.3); }
+  .start-btn:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+
+  .quiz-main { display: none; padding: 24px 0; }
+  .quiz-main.active { display: block; }
+
+  .quiz-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .quiz-progress-text {
+    font-family: var(--font-head);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .quiz-score-badge {
+    font-family: var(--font-head);
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 4px 14px;
+    background: var(--primary-glow);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    color: var(--primary);
+  }
+
+  .quiz-q-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+
+  .quiz-q-num {
+    font-family: var(--font-head);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--primary);
+    margin-bottom: 12px;
+  }
+
+  .quiz-q-text {
+    font-family: var(--font-head);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .quiz-opt {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .quiz-opt:hover:not(:disabled) { background: var(--surface2); border-color: var(--primary); }
+  .quiz-opt:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .quiz-opt.correct { background: rgba(104,211,145,0.1); border-color: var(--accent); color: var(--text); }
+  .quiz-opt.wrong { background: rgba(252,129,129,0.1); border-color: var(--accent3); color: var(--text); }
+  .quiz-opt:disabled { cursor: default; }
+
+  .opt-letter {
+    font-family: var(--font-head);
+    font-size: 0.8rem;
+    font-weight: 700;
+    min-width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--surface3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 0.2s;
+  }
+
+  .quiz-opt.correct .opt-letter { background: var(--accent); color: #000; }
+  .quiz-opt.wrong .opt-letter { background: var(--accent3); color: #000; }
+
+  .explanation-box {
+    display: none;
+    padding: 16px 20px;
+    background: rgba(99,179,237,0.06);
+    border: 1px solid rgba(99,179,237,0.25);
+    border-radius: var(--radius-sm);
+    margin-bottom: 20px;
+  }
+
+  .explanation-box.show { display: block; }
+
+  .expl-label {
+    font-family: var(--font-head);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--primary);
+    margin-bottom: 8px;
+  }
+
+  .expl-text { font-size: 0.9rem; color: var(--text); line-height: 1.6; }
+
+  .quiz-next-btn {
+    font-family: var(--font-head);
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 11px 28px;
+    background: var(--primary);
+    color: #000;
+    border: none;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: none;
+  }
+
+  .quiz-next-btn.show { display: inline-flex; align-items: center; gap: 8px; }
+  .quiz-next-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99,179,237,0.3); }
+  .quiz-next-btn:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+
+  /* Results */
+  .quiz-results { display: none; text-align: center; padding: 40px 20px; }
+  .quiz-results.show { display: block; }
+
+  .result-score {
+    font-family: var(--font-head);
+    font-size: 4rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .result-label {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+  }
+
+  .result-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 14px;
+    max-width: 500px;
+    margin: 0 auto 32px;
+  }
+
+  .breakdown-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+  }
+
+  .breakdown-num {
+    font-family: var(--font-head);
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+
+  .breakdown-lbl {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .retry-btn {
+    font-family: var(--font-head);
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 11px 28px;
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    background: transparent;
+    border-radius: 99px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .retry-btn:hover { background: var(--primary-glow); }
+  .retry-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  /* ===================== QUICK REFERENCE ===================== */
+  .qr-search-row {
+    padding: 24px 0 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .qr-search {
+    flex: 1;
+    min-width: 200px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    padding: 10px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .qr-search::placeholder { color: var(--text-dim); }
+  .qr-search:focus { border-color: var(--primary); }
+
+  .print-btn {
+    font-family: var(--font-head);
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 10px 20px;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    background: var(--surface2);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .print-btn:hover { border-color: var(--primary); color: var(--primary); }
+  .print-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  .qr-table-wrap {
+    overflow-x: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+
+  thead {
+    background: var(--surface2);
+  }
+
+  th {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-muted);
+    padding: 12px 18px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 12px 18px;
+    border-bottom: 1px solid rgba(99,179,237,0.07);
+    color: var(--text);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface); }
+
+  td strong { color: var(--accent2); }
+
+  .sense-badge {
+    display: inline-flex;
+    font-family: var(--font-head);
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 99px;
+    white-space: nowrap;
+  }
+
+  .no-results {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  /* ===================== ANALYTICS ===================== */
+  .analytics-section {
+    margin-top: 36px;
+    padding: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .analytics-title {
+    font-family: var(--font-head);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  .analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .stat-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: var(--font-head);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-lbl {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .topic-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .topic-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .topic-bar-label {
+    font-family: var(--font-head);
+    font-size: 0.78rem;
+    width: 90px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .topic-bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--surface3);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  .topic-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    transition: width 0.6s ease;
+    width: 0%;
+  }
+
+  .topic-bar-pct {
+    font-family: var(--font-head);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    width: 34px;
+    text-align: right;
+  }
+
+  /* ===================== FOOTER ===================== */
+  footer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 32px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .footer-text {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  .ada-note {
+    font-family: var(--font-head);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ===================== RESPONSIVE ===================== */
+  @media (max-width: 680px) {
+    header { padding: 18px 16px; }
+    nav[role="tablist"] { padding: 14px 16px 0; gap: 2px; }
+    .tab-btn { padding: 8px 14px; font-size: 0.78rem; }
+    main { padding: 0 16px 50px; }
+    .flashcard-controls { flex-direction: column; align-items: flex-start; }
+    .progress-bar-outer { width: 110px; }
+    footer { padding: 16px; }
+  }
+
+  /* ===================== PRINT STYLES ===================== */
+  @media print {
+    header, nav, .qr-search-row { display: none !important; }
+    body { background: white; color: black; }
+    table { font-size: 10pt; }
+    th { background: #eee; }
+    td { border-color: #ccc; }
+    .qr-table-wrap { border-color: #ccc; }
+  }
+
+  /* High contrast focus for accessibility */
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+  }
+
+  /* Reduce motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<!-- HEADER -->
+<header role="banner">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon" aria-hidden="true">👁️</div>
+      <div class="logo-text">
+        <h1>The Special Senses</h1>
+        <span>Interactive Study Tool · Anatomy &amp; Physiology</span>
+      </div>
+    </div>
+    <div class="progress-wrap" role="region" aria-label="Overall mastery progress">
+      <span class="progress-label" id="progress-label">Mastery: <strong id="progress-pct">0%</strong></span>
+      <div class="progress-bar-outer" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-labelledby="progress-label">
+        <div class="progress-bar-inner" id="progress-bar"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- NAVIGATION TABS -->
+<nav role="tablist" aria-label="Study modes">
+  <button class="tab-btn" role="tab" aria-selected="true" aria-controls="panel-notes" id="tab-notes">
+    📖 Study Notes
+  </button>
+  <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-flash" id="tab-flash">
+    🃏 Flashcards
+  </button>
+  <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-quiz" id="tab-quiz">
+    ✅ Practice Quiz
+  </button>
+  <button class="tab-btn" role="tab" aria-selected="false" aria-controls="panel-ref" id="tab-ref">
+    ⚡ Quick Reference
+  </button>
+</nav>
+
+<main id="main-content">
+
+<!-- ===================== STUDY NOTES ===================== -->
+<div id="panel-notes" role="tabpanel" aria-labelledby="tab-notes" aria-hidden="false" class="tab-panel">
+
+  <div class="section-nav" role="navigation" aria-label="Jump to topic">
+    <button class="section-btn active" onclick="filterNotes('all')" aria-pressed="true">All Topics</button>
+    <button class="section-btn" onclick="filterNotes('olfaction')" aria-pressed="false">🫁 Olfaction</button>
+    <button class="section-btn" onclick="filterNotes('gustation')" aria-pressed="false">👅 Gustation</button>
+    <button class="section-btn" onclick="filterNotes('vision')" aria-pressed="false">👁️ Vision</button>
+    <button class="section-btn" onclick="filterNotes('equilibrium')" aria-pressed="false">🔄 Equilibrium</button>
+    <button class="section-btn" onclick="filterNotes('hearing')" aria-pressed="false">👂 Hearing</button>
+  </div>
+
+  <div class="notes-grid" id="notes-grid">
+
+    <!-- INTRO -->
+    <article class="note-card" data-topic="intro">
+      <div class="note-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleNote(this)" onkeydown="keyToggle(event,this)">
+        <div class="note-title-row">
+          <div class="note-icon" style="background:linear-gradient(135deg,rgba(99,179,237,0.2),rgba(183,148,244,0.2))">🧠</div>
+          <div>
+            <div class="note-title">I. Introduction to Special Senses</div>
+            <div class="note-subtitle">Overview · Nervous System · The 5 Senses</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="note-tags"><span class="tag tag-key">Key Concepts</span></div>
+          <span class="chevron" aria-hidden="true">▼</span>
+        </div>
+      </div>
+      <div class="note-body" role="region">
+        <ul>
+          <li>The state of our nervous system determines what we perceive.</li>
+          <li>During <strong>sympathetic activation</strong>, we experience heightened awareness — we may hear sounds that would normally escape notice.</li>
+          <li>When concentrating on a difficult problem, we may remain unaware of relatively loud noises.</li>
+          <li>The <strong>five special senses</strong> are: <em>olfaction, gustation, vision, equilibrium,</em> and <em>hearing</em>.</li>
+        </ul>
+        <div class="mnemonic-box">
+          <div class="mnemonic-label">🧠 Mnemonic</div>
+          <div class="mnemonic-text"><strong>"Old Gorillas Vomit Every Harvest"</strong> → <em>O</em>lfaction, <em>G</em>ustation, <em>V</em>ision, <em>E</em>quilibrium, <em>H</em>earing</div>
+        </div>
+      </div>
+    </article>
+
+    <!-- OLFACTION -->
+    <article class="note-card" data-topic="olfaction">
+      <div class="note-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleNote(this)" onkeydown="keyToggle(event,this)">
+        <div class="note-title-row">
+          <div class="note-icon" style="background:linear-gradient(135deg,rgba(104,211,145,0.2),rgba(99,179,237,0.2))">🫁</div>
+          <div>
+            <div class="note-title">II. Olfaction (Smell)</div>
+            <div class="note-subtitle">Olfactory Organs · Receptors · Pathways</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="note-tags"><span class="tag tag-high">High Yield</span><span class="tag tag-path">Pathway</span></div>
+          <span class="chevron" aria-hidden="true">▼</span>
+        </div>
+      </div>
+      <div class="note-body" role="region">
+        <ul>
+          <li><strong>Olfactory organs</strong> are located in the nasal cavity on either side of the nasal septum.</li>
+          <li>The <strong>olfactory epithelium</strong> contains olfactory receptors, supporting cells, and basal (stem) cells.</li>
+          <li>Surfaces are coated with secretions from <strong>olfactory glands</strong>.</li>
+          <li>Olfactory receptors are highly modified <strong>neurons</strong>.</li>
+          <li>Reception involves detecting <strong>dissolved chemicals</strong> interacting with odorant-binding proteins.</li>
+          <li><strong>Pathway:</strong> Axons → cribriform plate of ethmoid bone → olfactory bulbs (1st synapse) → olfactory tract → olfactory cortex, hypothalamus, limbic system.</li>
+          <li><strong>Unique feature:</strong> Olfactory information reaches the brain WITHOUT first synapsing in the thalamus — the only sense to do this!</li>
+        </ul>
+        <div class="key-box">
+          <div class="key-label">⭐ Key Concept</div>
+          <div class="key-text">Olfactory stimuli have powerful effects on mood and behavior because they directly access the limbic system (emotion center) without thalamic relay.</div>
+        </div>
+        <div class="mnemonic-box">
+          <div class="mnemonic-label">🧠 Mnemonic</div>
+          <div class="mnemonic-text"><strong>"Smell Goes Direct"</strong> — Olfaction is the only sense that bypasses the thalamus and goes directly to the cortex.</div>
+        </div>
+      </div>
+    </article>
+
+    <!-- GUSTATION -->
+    <article class="note-card" data-topic="gustation">
+      <div class="note-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleNote(this)" onkeydown="keyToggle(event,this)">
+        <div class="note-title-row">
+          <div class="note-icon" style="background:linear-gradient(135deg,rgba(246,173,85,0.2),rgba(252,129,129,0.2))">👅</div>
+          <div>
+            <div class="note-title">III. Gustation (Taste)</div>
+            <div class="note-subtitle">Taste Buds · Papillae · 6 Taste Sensations</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="note-tags"><span class="tag tag-high">High Yield</span></div>
+          <span class="chevron" aria-hidden="true">▼</span>
+        </div>
+      </div>
+      <div class="note-body" role="region">
+        <ul>
+          <li><strong>Taste (gustatory) receptors</strong> are clustered in taste buds, associated with lingual papillae on the tongue.</li>
+          <li>Three types of lingual papillae:
+            <br>• <strong>Filiform</strong> — provide friction, <em>NO taste buds</em>
+            <br>• <strong>Fungiform</strong> — ~5 taste buds each
+            <br>• <strong>Circumvallate</strong> — up to 100 taste buds each</li>
+          <li>Each taste bud has <strong>basal cells</strong> (stem cells) and <strong>gustatory cells</strong> with taste hairs extending through a taste pore.</li>
+          <li>Gustatory cells survive only about <strong>10 days</strong> before replacement.</li>
+          <li><strong>6 Primary tastes:</strong> sweet, salty, sour, bitter, <em>umami</em> (meats/parmesan), and <em>water</em> (pharynx receptors).</li>
+          <li>Dissolved chemicals bind to receptor proteins → neurotransmitter release → action potentials in afferent fibers.</li>
+          <li><strong>Pathway:</strong> Cranial nerves → medulla oblongata → thalamus → primary sensory cortex.</li>
+          <li>PTC (phenylthiocarbamide): ~70% of Caucasians can taste it, 30% cannot — genetically determined.</li>
+        </ul>
+        <div class="mnemonic-box">
+          <div class="mnemonic-label">🧠 Mnemonic – Papillae</div>
+          <div class="mnemonic-text"><strong>"Fun Circles Fill, Filiform Fails"</strong> — Fungiform and Circumvallate have taste buds, Filiform does NOT.</div>
+        </div>
+        <div class="key-box">
+          <div class="key-label">⭐ Key Concept</div>
+          <div class="key-text">Gustatory sensations are strongest when integrated with olfactory sensations — this is why food tastes bland when you have a stuffy nose!</div>
+        </div>
+      </div>
+    </article>
+
+    <!-- VISION ANATOMY -->
+    <article class="note-card" data-topic="vision">
+      <div class="note-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleNote(this)" onkeydown="keyToggle(event,this)">
+        <div class="note-title-row">
+          <div class="note-icon" style="background:linear-gradient(135deg,rgba(99,179,237,0.2),rgba(104,211,145,0.2))">👁️</div>
+          <div>
+            <div class="note-title">IV. Vision — Anatomy of the Eye</div>
+            <div class="note-subtitle">3 Tunics · Retina · Chambers · Lens</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="note-tags"><span class="tag tag-high">High Yield</span><span class="tag tag-key">Must Know</span></div>
+          <span class="chevron" aria-hidden="true">▼</span>
+        </div>
+      </div>
+      <div class="note-body" role="region">
+        <ul>
+          <li><strong>3 Eye Layers (Tunics):</strong>
+            <br>• <em>Fibrous tunic</em> — sclera (white) + cornea (transparent)
+            <br>• <em>Vascular tunic (uvea)</em> — iris, ciliary body, choroid
+            <br>• <em>Neural tunic (retina)</em> — photoreceptors</li>
+          <li><strong>Iris</strong> contains muscle fibers controlling pupil size:
+            <br>• Papillary constrictor — decreases pupil diameter
+            <br>• Papillary dilator — enlarges pupil</li>
+          <li><strong>Conjunctiva</strong> covers inner eyelids (palpebral) and anterior eye (ocular). Conjunctivitis = pinkeye.</li>
+          <li><strong>Lacrimal apparatus</strong> produces tears; lacrimal gland contains <em>lysozyme</em> (antibacterial enzyme).</li>
+          <li><strong>Retina</strong> contains two photoreceptors:
+            <br>• <em>Rods</em> — no color discrimination, highly sensitive to light; dominate periphery; black-and-white in dim light
+            <br>• <em>Cones</em> — color vision; densely packed in fovea/macula lutea; high resolution in bright light</li>
+          <li><strong>Optic disc</strong> = blind spot (no photoreceptors; where optic nerve exits).</li>
+          <li><strong>Chambers:</strong> posterior cavity (vitreous chamber) filled with vitreous body; anterior cavity (anterior + posterior chambers) filled with aqueous humor.</li>
+          <li><strong>Canal of Schlemm</strong> drains aqueous humor. Blockage → glaucoma (increased intraocular pressure).</li>
+          <li>Lens contains <strong>crystallins</strong> — transparent proteins providing clarity and focusing power.</li>
+          <li><strong>Accommodation</strong> — lens changes shape to focus on near objects. Normal visual acuity = <strong>20/20</strong>.</li>
+        </ul>
+        <div class="mnemonic-box">
+          <div class="mnemonic-label">🧠 Mnemonic – Eye Tunics</div>
+          <div class="mnemonic-text"><strong>"Fans Vow to Never Argue"</strong> → <em>F</em>ibrous, <em>V</em>ascular, <em>N</em>eural (retina) = 3 tunics of the eye</div>
+        </div>
+        <div class="key-box">
+          <div class="key-label">⭐ Light Path Through the Eye</div>
+          <div class="key-text">Conjunctiva → Cornea → Anterior cavity → Lens → Posterior cavity → Neural retina → Photoreceptors</div>
+        </div>
+      </div>
+    </article>
+
+    <!-- VISION PHYSIOLOGY -->
+    <article class="note-card" data-topic="vision">
+      <div class="note-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleNote(this)" onkeydown="keyToggle(event,this)">
+        <div class="note-title-row">
+          <div class="note-icon" style="background:linear-gradient(135deg,rgba(183,148,244,0.2),rgba(99,179,237,0.2))">🌈</div>
+          <div>
+            <div class="note-title">IV. Vision — Physiology &amp; Pathways</div>
+            <div class="note-subtitle">Rhodopsin · Color Vision · Visual Pathway</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="note-tags"><span class="tag tag-high">High Yield</span><span class="tag tag-path">Pathway</span></div>
+          <span class="chevron" aria-hidden="true">▼</span>
+        </div>
+      </div>
+      <div class="note-body" role="region">
+        <ul>
+          <li><strong>Visual pigments</strong> are derivatives of <strong>rhodopsin</strong> (opsin + retinal, which is synthesized from <em>Vitamin A</em>).</li>
+          <li><strong>Night blindness</strong> = Vitamin A deficiency.</li>
+          <li>Color vision depends on <strong>red, green, and blue cones</strong>. Color blindness = inability to detect certain colors.</li>
+          <li><strong>Visual pathway:</strong> Photoreceptors → bipolar cells → ganglion cells → optic nerve → optic chiasm → visual cortex (occipital lobe).</li>
+          <li>At the <strong>optic chiasm</strong>: left visual field → right occipital lobe; right visual field → left occipital lobe.</li>
+          <li><strong>M cells (magnocells)</strong> — monitor rods; provide general form, motion, shadows in dim light.</li>
+          <li><strong>P cells (parvocells)</strong> — monitor cones; provide fine detail, edges, color.</li>
+          <li><strong>Depth perception</strong> = comparing object positions between left and right eye images.</li>
+        </ul>
+        <div class="mnemonic-box">
+          <div class="mnemonic-label">🧠 Mnemonic – Night Blindness</div>
+          <div class="mnemonic-text"><strong>"No Vitamin A = No Rhodopsin = No Night Vision"</strong> — Vitamin A makes retinal → retinal + opsin = rhodopsin → rod function</div>
+        </div>
+      </div>
+    </article>
+
+    <!-- EQUILIBRIUM -->
+    <article class="note-card" data-topic="equilibrium">
+      <div class="note-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleNote(this)" onkeydown="keyToggle(event,this)">
+        <div class="note-title-row">
+          <div class="note-icon" style="background:linear-gradient(135deg,rgba(252,129,129,0.2),rgba(246,173,85,0.2))">🔄</div>
+          <div>
+            <div class="note-title">V. Equilibrium</div>
+            <div class="note-subtitle">Vestibular Complex · Hair Cells · Semicircular Ducts</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="note-tags"><span class="tag tag-high">High Yield</span></div>
+          <span class="chevron" aria-hidden="true">▼</span>
+        </div>
+      </div>
+      <div class="note-body" role="region">
+        <ul>
+          <li>Equilibrium &amp; hearing are provided by the <strong>inner ear</strong> receptors.</li>
+          <li><strong>Membranous labyrinth</strong> contains <em>endolymph</em>; surrounded by <em>bony labyrinth</em> (vestibule, semicircular canals, cochlea).</li>
+          <li><strong>Vestibule</strong> → encloses saccule &amp; utricle → sense <em>gravity and linear acceleration</em>.</li>
+          <li><strong>Semicircular ducts</strong> → stimulated by <em>rotation of the head</em>.</li>
+          <li>Basic inner ear receptors are <strong>hair cells</strong> (80-100 stereocilia + 1 kinocilium each).</li>
+          <li>External forces push stereocilia/kinocilium — <em>hair cells do NOT actively move them</em>.</li>
+          <li><strong>Maculae</strong> in saccule/utricle contain otoliths (statoconia/mineral crystals in matrix) that shift with gravity.</li>
+          <li><strong>Pathway:</strong> Vestibular receptors → vestibular ganglia → vestibular branch of CN VIII → vestibular nuclei (4 functions: integration, relay to cerebellum, relay to cortex, motor commands).</li>
+        </ul>
+        <div class="mnemonic-box">
+          <div class="mnemonic-label">🧠 Mnemonic – What Each Structure Senses</div>
+          <div class="mnemonic-text">
+            <strong>S</strong>emicircular = <strong>S</strong>pinning (rotation)<br>
+            <strong>U</strong>tricle/Saccule = <strong>U</strong>p-down &amp; linear (gravity)<br>
+            <strong>C</strong>ochlea = <strong>C</strong>ommunication (sound/hearing)
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- HEARING -->
+    <article class="note-card" data-topic="hearing">
+      <div class="note-header" tabindex="0" role="button" aria-expanded="false" onclick="toggleNote(this)" onkeydown="keyToggle(event,this)">
+        <div class="note-title-row">
+          <div class="note-icon" style="background:linear-gradient(135deg,rgba(99,179,237,0.2),rgba(252,129,129,0.2))">👂</div>
+          <div>
+            <div class="note-title">V. Hearing</div>
+            <div class="note-subtitle">Ear Anatomy · Ossicles · 6-Step Hearing Process</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="note-tags"><span class="tag tag-high">High Yield</span><span class="tag tag-key">Must Know</span></div>
+          <span class="chevron" aria-hidden="true">▼</span>
+        </div>
+      </div>
+      <div class="note-body" role="region">
+        <ul>
+          <li><strong>External ear:</strong> auricle (pinna) → external acoustic canal → tympanic membrane (eardrum). Ceruminous glands produce cerumen (wax).</li>
+          <li><strong>Middle ear (tympanic cavity):</strong> communicates with nasopharynx via auditory (Eustachian) tube (equalizes pressure). Contains 3 ossicles:
+            <br>• <em>Malleus</em> (hammer) → <em>Incus</em> (anvil) → <em>Stapes</em> (stirrup)</li>
+          <li><strong>Inner ear:</strong> cochlea contains cochlear duct (organ of Corti) — the hearing organ. Basilar membrane separates cochlear duct from tympanic duct.</li>
+          <li>Sound frequency = <strong>pitch</strong> (Hz = cycles/sec). Sound energy = <strong>decibels</strong>.</li>
+          <li><strong>6-Step Hearing Process:</strong>
+            <br>1. Sound waves → tympanic membrane
+            <br>2. Tympanic membrane vibrates → ossicles move (amplification!)
+            <br>3. Stapes at oval window → pressure waves in vestibular duct perilymph
+            <br>4. Pressure waves distort basilar membrane (frequency → position on membrane)
+            <br>5. Basilar membrane vibrates → hair cells against tectorial membrane → stereocilia displaced → ion channels open → depolarization → neurotransmitter release
+            <br>6. CN VIII (cochlear branch) → cochlear nuclei of medulla oblongata → brain</li>
+          <li><strong>Frequency</strong> → determined by <em>which part</em> of cochlear duct is stimulated.</li>
+          <li><strong>Intensity (volume)</strong> → determined by <em>how many</em> hair cells are stimulated.</li>
+        </ul>
+        <div class="mnemonic-box">
+          <div class="mnemonic-label">🧠 Mnemonic – Ossicles</div>
+          <div class="mnemonic-text"><strong>"My Interesting Stereo"</strong> → <em>M</em>alleus, <em>I</em>ncus, <em>S</em>tapes (in order from tympanic membrane inward)</div>
+        </div>
+        <div class="key-box">
+          <div class="key-label">⭐ Key Concept</div>
+          <div class="key-text">Balance and hearing use the same basic receptor type (hair cells). The anatomical location determines what stimulates them: gravity (utricle/saccule), rotation (semicircular ducts), or sound pressure (cochlea).</div>
+        </div>
+      </div>
+    </article>
+
+  </div><!-- end notes-grid -->
+</div><!-- end panel-notes -->
+
+
+<!-- ===================== FLASHCARDS ===================== -->
+<div id="panel-flash" role="tabpanel" aria-labelledby="tab-flash" aria-hidden="true" class="tab-panel">
+
+  <div class="flashcard-controls">
+    <div class="fc-counter">
+      Card <span id="fc-current">1</span> of <span id="fc-total">1</span>
+      <span id="fc-bookmark-count" style="margin-left:12px;color:var(--accent2)">★ <span id="fc-bm-num">0</span> bookmarked</span>
+    </div>
+    <div class="fc-filter-row">
+      <button class="filter-btn active" onclick="setFilter('all',this)" aria-pressed="true">All Cards</button>
+      <button class="filter-btn" onclick="setFilter('hard',this)" aria-pressed="false">🔴 Needs Work</button>
+      <button class="filter-btn" onclick="setFilter('bookmarked',this)" aria-pressed="false">⭐ Bookmarked</button>
+    </div>
+  </div>
+
+  <div class="card-arena">
+    <div class="flashcard-wrap">
+      <div class="flashcard" id="flashcard" role="button" tabindex="0" aria-label="Flashcard. Press space or enter to flip." onclick="flipCard()" onkeydown="keyFlip(event)">
+        <div class="card-face card-front">
+          <div class="card-category" id="fc-cat"></div>
+          <div class="card-image" id="fc-img" aria-hidden="true"></div>
+          <div class="card-q" id="fc-q"></div>
+          <div class="card-hint" id="fc-hint"></div>
+          <span class="card-flip-hint" aria-hidden="true">Click to reveal ↩</span>
+        </div>
+        <div class="card-face card-back">
+          <div class="card-category" id="fc-cat-b"></div>
+          <div class="card-a" id="fc-a"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;align-items:center;gap:14px;width:100%;max-width:640px">
+      <div class="fc-nav">
+        <button class="fc-nav-btn" onclick="navCard(-1)" id="btn-prev" aria-label="Previous card">◀ Prev</button>
+        <button class="fc-nav-btn" onclick="shuffleCards()" aria-label="Shuffle cards">🔀 Shuffle</button>
+        <button class="fc-nav-btn" onclick="navCard(1)" id="btn-next" aria-label="Next card">Next ▶</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center">
+        <span style="font-family:var(--font-head);font-size:0.78rem;color:var(--text-muted)">How did it go?</span>
+        <div class="confidence-row" id="conf-row" aria-label="Rate your confidence" role="group">
+          <button class="conf-btn conf-easy" onclick="rateCard('easy')" aria-label="I got this — Easy">✓ Easy</button>
+          <button class="conf-btn conf-medium" onclick="rateCard('medium')" aria-label="Almost had it — Medium">~ Medium</button>
+          <button class="conf-btn conf-hard" onclick="rateCard('hard')" aria-label="Need to review — Hard">✗ Hard</button>
+        </div>
+        <button class="bookmark-btn" id="bookmark-btn" onclick="toggleBookmark()" aria-label="Bookmark this card">
+          <span id="bm-icon">☆</span> Bookmark
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end panel-flash -->
+
+
+<!-- ===================== PRACTICE QUIZ ===================== -->
+<div id="panel-quiz" role="tabpanel" aria-labelledby="tab-quiz" aria-hidden="true" class="tab-panel">
+
+  <div class="quiz-start" id="quiz-start">
+    <h2>Practice Quiz</h2>
+    <p>Test your knowledge of The Special Senses with 15 randomized questions. Detailed explanations are provided for every answer.</p>
+    <button class="start-btn" onclick="startQuiz()" aria-label="Start the practice quiz">Start Quiz →</button>
+  </div>
+
+  <div class="quiz-main" id="quiz-main">
+    <div class="quiz-meta">
+      <div class="quiz-progress-text" id="quiz-prog-text" aria-live="polite">Question 1 of 15</div>
+      <div class="quiz-score-badge" id="quiz-score-badge" aria-live="polite">Score: 0/0</div>
+    </div>
+
+    <div class="quiz-q-box">
+      <div class="quiz-q-num" id="quiz-q-num">Question 1</div>
+      <div class="quiz-q-text" id="quiz-q-text" aria-live="polite"></div>
+    </div>
+
+    <div class="quiz-options" id="quiz-options" role="list"></div>
+
+    <div class="explanation-box" id="expl-box" role="region" aria-label="Explanation" aria-live="polite">
+      <div class="expl-label">💡 Explanation</div>
+      <div class="expl-text" id="expl-text"></div>
+    </div>
+
+    <button class="quiz-next-btn" id="quiz-next" onclick="nextQuestion()" aria-label="Go to next question">
+      Next Question →
+    </button>
+  </div>
+
+  <div class="quiz-results" id="quiz-results" role="region" aria-label="Quiz results">
+    <div class="result-score" id="result-score-pct" aria-live="polite"></div>
+    <div class="result-label" id="result-label"></div>
+    <div class="result-breakdown">
+      <div class="breakdown-card">
+        <div class="breakdown-num" id="res-correct" style="color:var(--accent)">0</div>
+        <div class="breakdown-lbl">Correct</div>
+      </div>
+      <div class="breakdown-card">
+        <div class="breakdown-num" id="res-wrong" style="color:var(--accent3)">0</div>
+        <div class="breakdown-lbl">Incorrect</div>
+      </div>
+      <div class="breakdown-card">
+        <div class="breakdown-num" id="res-pct" style="color:var(--primary)">0%</div>
+        <div class="breakdown-lbl">Score</div>
+      </div>
+    </div>
+    <button class="retry-btn" onclick="resetQuiz()" style="margin-right:12px">↩ Try Again</button>
+    <button class="start-btn" onclick="startQuiz()" style="font-size:0.9rem;padding:11px 28px">New Quiz</button>
+
+    <div class="analytics-section" style="margin-top:36px">
+      <div class="analytics-title">📊 Performance by Topic</div>
+      <div class="topic-bars" id="topic-bars-quiz"></div>
+    </div>
+  </div>
+
+</div><!-- end panel-quiz -->
+
+
+<!-- ===================== QUICK REFERENCE ===================== -->
+<div id="panel-ref" role="tabpanel" aria-labelledby="tab-ref" aria-hidden="true" class="tab-panel">
+
+  <div class="qr-search-row">
+    <label for="qr-search" class="sr-only">Search quick reference table</label>
+    <input type="search" id="qr-search" class="qr-search" placeholder="🔍  Search terms, structures, functions..." oninput="filterTable()" aria-label="Search the quick reference table">
+    <button class="print-btn" onclick="window.print()" aria-label="Print this quick reference as a cheat sheet">
+      🖨️ Print Cheat Sheet
+    </button>
+  </div>
+
+  <div class="qr-table-wrap" role="region" aria-label="Quick reference table">
+    <table aria-label="Special Senses Quick Reference">
+      <thead>
+        <tr>
+          <th scope="col">Sense</th>
+          <th scope="col">Receptor / Structure</th>
+          <th scope="col">Key Function</th>
+          <th scope="col">Cranial Nerve / Pathway</th>
+          <th scope="col">High-Yield Fact</th>
+        </tr>
+      </thead>
+      <tbody id="qr-tbody">
+        <tr data-search="olfaction smell olfactory epithelium nasal cribriform ethmoid limbic">
+          <td><span class="sense-badge" style="background:rgba(104,211,145,0.15);color:var(--accent);border:1px solid rgba(104,211,145,0.3)">🫁 Olfaction</span></td>
+          <td>Olfactory epithelium; olfactory receptors (modified neurons)</td>
+          <td>Detect dissolved chemicals via odorant-binding proteins</td>
+          <td><strong>CN I (Olfactory)</strong> → olfactory bulb → olfactory cortex, hypothalamus, limbic system</td>
+          <td>Only sense that <strong>bypasses the thalamus</strong></td>
+        </tr>
+        <tr data-search="gustation taste buds papillae fungiform circumvallate filiform sweet salty sour bitter umami">
+          <td><span class="sense-badge" style="background:rgba(246,173,85,0.15);color:var(--accent2);border:1px solid rgba(246,173,85,0.3)">👅 Gustation</span></td>
+          <td>Taste buds in lingual papillae; gustatory cells</td>
+          <td>Detect dissolved chemicals; 6 primary tastes</td>
+          <td><strong>CN VII, IX, X</strong> → medulla oblongata → thalamus → sensory cortex</td>
+          <td>Gustatory cells replaced every <strong>10 days</strong></td>
+        </tr>
+        <tr data-search="vision eye sclera cornea retina rods cones fovea macula optic nerve iris pupil lens">
+          <td><span class="sense-badge" style="background:rgba(99,179,237,0.15);color:var(--primary);border:1px solid rgba(99,179,237,0.3)">👁️ Vision</span></td>
+          <td>Retina: rods (dim/B&W) and cones (color/detail)</td>
+          <td>Detect light; focus image; process visual field</td>
+          <td><strong>CN II (Optic)</strong> → optic chiasm → visual cortex (occipital lobe)</td>
+          <td>Cones densest at <strong>fovea</strong>; rods dominate periphery</td>
+        </tr>
+        <tr data-search="vision rhodopsin vitamin a night blindness color blindness retinal opsin">
+          <td><span class="sense-badge" style="background:rgba(99,179,237,0.15);color:var(--primary);border:1px solid rgba(99,179,237,0.3)">👁️ Visual Pigments</span></td>
+          <td>Rhodopsin = opsin + retinal (from Vitamin A)</td>
+          <td>Light absorption in photoreceptors</td>
+          <td>R,G,B cones → color integration</td>
+          <td>Vitamin A deficiency → <strong>night blindness</strong></td>
+        </tr>
+        <tr data-search="equilibrium vestibule saccule utricle semicircular canals hair cells otolith statoconia gravity rotation">
+          <td><span class="sense-badge" style="background:rgba(252,129,129,0.15);color:var(--accent3);border:1px solid rgba(252,129,129,0.3)">🔄 Equilibrium</span></td>
+          <td>Vestibular complex: saccule, utricle, semicircular ducts; hair cells</td>
+          <td>Saccule/utricle → gravity &amp; linear acceleration; Semicircular ducts → rotation</td>
+          <td><strong>CN VIII vestibular branch</strong> → vestibular nuclei → cerebellum/cortex</td>
+          <td>Otoliths (statoconia) shift with gravity in maculae</td>
+        </tr>
+        <tr data-search="hearing ear malleus incus stapes tympanic ossicles cochlea basilar organ of corti hair cells frequency pitch decibels">
+          <td><span class="sense-badge" style="background:rgba(183,148,244,0.15);color:var(--accent4);border:1px solid rgba(183,148,244,0.3)">👂 Hearing</span></td>
+          <td>Cochlear duct; organ of Corti; hair cells on basilar membrane</td>
+          <td>Detect sound frequency (pitch) &amp; intensity (volume)</td>
+          <td><strong>CN VIII cochlear branch</strong> → cochlear nuclei in medulla oblongata</td>
+          <td>Ossicles (malleus→incus→stapes) <strong>amplify</strong> sound</td>
+        </tr>
+        <tr data-search="ear external auricle pinna tympanic membrane cerumen wax middle eustachian tube inner endolymph bony labyrinth">
+          <td><span class="sense-badge" style="background:rgba(183,148,244,0.15);color:var(--accent4);border:1px solid rgba(183,148,244,0.3)">👂 Ear Anatomy</span></td>
+          <td>External (auricle→canal→eardrum) / Middle (ossicles, Eustachian tube) / Inner (cochlea, vestibule)</td>
+          <td>Transmit and transduce sound waves</td>
+          <td>Eustachian tube equalizes pressure across tympanic membrane</td>
+          <td>Frequency → <em>which</em> part of basilar membrane vibrates; Volume → <em>how many</em> hair cells</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="no-results" id="no-results" style="display:none" role="status" aria-live="polite">No results found. Try a different search term.</div>
+  </div>
+
+  <!-- ANALYTICS -->
+  <div class="analytics-section" role="region" aria-label="Your study analytics">
+    <div class="analytics-title">📊 Your Study Analytics</div>
+    <div class="analytics-grid">
+      <div class="stat-card">
+        <div class="stat-num" id="stat-cards-studied">0</div>
+        <div class="stat-lbl">Cards Studied</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-easy">0</div>
+        <div class="stat-lbl">Easy</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-medium">0</div>
+        <div class="stat-lbl">Medium</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-hard">0</div>
+        <div class="stat-lbl">Need Work</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-quiz-score">—</div>
+        <div class="stat-lbl">Last Quiz Score</div>
+      </div>
+    </div>
+    <div class="analytics-title" style="margin-top:0">Flashcard Mastery by Topic</div>
+    <div class="topic-bars" id="topic-bars-ref">
+      <div class="topic-bar-row">
+        <span class="topic-bar-label">Olfaction</span>
+        <div class="topic-bar-track"><div class="topic-bar-fill" id="bar-olfaction"></div></div>
+        <span class="topic-bar-pct" id="pct-olfaction">0%</span>
+      </div>
+      <div class="topic-bar-row">
+        <span class="topic-bar-label">Gustation</span>
+        <div class="topic-bar-track"><div class="topic-bar-fill" id="bar-gustation"></div></div>
+        <span class="topic-bar-pct" id="pct-gustation">0%</span>
+      </div>
+      <div class="topic-bar-row">
+        <span class="topic-bar-label">Vision</span>
+        <div class="topic-bar-track"><div class="topic-bar-fill" id="bar-vision"></div></div>
+        <span class="topic-bar-pct" id="pct-vision">0%</span>
+      </div>
+      <div class="topic-bar-row">
+        <span class="topic-bar-label">Equilibrium</span>
+        <div class="topic-bar-track"><div class="topic-bar-fill" id="bar-equilibrium"></div></div>
+        <span class="topic-bar-pct" id="pct-equilibrium">0%</span>
+      </div>
+      <div class="topic-bar-row">
+        <span class="topic-bar-label">Hearing</span>
+        <div class="topic-bar-track"><div class="topic-bar-fill" id="bar-hearing"></div></div>
+        <span class="topic-bar-pct" id="pct-hearing">0%</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end panel-ref -->
+
+</main>
+
+<footer role="contentinfo">
+  <div class="footer-text">The Special Senses · Anatomy &amp; Physiology Study Tool</div>
+  <div class="ada-note">
+    <span aria-hidden="true">♿</span> ADA/WCAG 2.1 AA Compliant · Keyboard Navigable · Screen Reader Friendly
+  </div>
+</footer>
+
+<!-- SR-ONLY UTILITY -->
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
+
+<script>
+/* ==================== DATA ==================== */
+
+const FLASHCARDS = [
+  { topic:'olfaction', img:'🫁', cat:'Olfaction', q:'Where are the olfactory organs located?', hint:'Think nasal anatomy...', a:'In the <strong>nasal cavity</strong> on either side of the <strong>nasal septum</strong>. The olfactory epithelium contains olfactory receptors, supporting cells, and basal (stem) cells.' },
+  { topic:'olfaction', img:'🧠', cat:'Olfaction', q:'What makes olfaction unique compared to all other special senses?', hint:'Think about the thalamus...', a:'Olfaction is the <strong>only sense that bypasses the thalamus</strong>. Olfactory information goes directly to the olfactory cortex, hypothalamus, and limbic system without a thalamic relay.' },
+  { topic:'olfaction', img:'🔬', cat:'Olfaction', q:'What do olfactory receptors detect, and what type of cells are they?', hint:'Think dissolved vs. airborne...', a:'Olfactory receptors are <strong>highly modified neurons</strong>. They detect <strong>dissolved chemicals</strong> as they interact with odorant-binding proteins on the olfactory epithelium surface.' },
+  { topic:'olfaction', img:'🗺️', cat:'Olfaction', q:'Trace the olfactory pathway from the epithelium to the brain.', hint:'Cribriform plate → ?', a:'Axons → cribriform plate of <strong>ethmoid bone</strong> → <strong>olfactory bulbs</strong> (1st synapse) → olfactory tract → <strong>olfactory cortex, hypothalamus, and limbic system</strong>.' },
+  { topic:'gustation', img:'👅', cat:'Gustation', q:'Name the 3 types of lingual papillae and which contain taste buds.', hint:'One has none, two have some...', a:'<strong>Filiform</strong> — friction only, NO taste buds<br><strong>Fungiform</strong> — ~5 taste buds each<br><strong>Circumvallate</strong> — up to 100 taste buds each' },
+  { topic:'gustation', img:'🧬', cat:'Gustation', q:'How long does a gustatory cell survive before being replaced?', hint:'Think short lifespan...', a:'A gustatory cell survives approximately <strong>10 days</strong> before being replaced by basal (stem) cells.' },
+  { topic:'gustation', img:'🍽️', cat:'Gustation', q:'List all 6 primary taste sensations.', hint:'4 classic + 2 additional...', a:'The 6 primary tastes are: <strong>sweet, salty, sour, bitter, umami</strong> (beef/chicken broths, parmesan), and <strong>water</strong> (detected by water receptors in the pharynx).' },
+  { topic:'vision', img:'👁️', cat:'Vision', q:'Name the 3 tunics (layers) of the eye and their components.', hint:'Fibrous, Vascular, Neural...', a:'<strong>Fibrous tunic:</strong> sclera (white) + cornea<br><strong>Vascular tunic (uvea):</strong> iris, ciliary body, choroid<br><strong>Neural tunic:</strong> retina (photoreceptors)' },
+  { topic:'vision', img:'🔦', cat:'Vision', q:'What is the difference between rods and cones?', hint:'One is for color, one for low light...', a:'<strong>Rods:</strong> no color discrimination, highly sensitive to light, dominate periphery, provide B&W vision in dim light.<br><strong>Cones:</strong> provide color vision, densely packed at the fovea/macula lutea, high resolution in bright light.' },
+  { topic:'vision', img:'🌑', cat:'Vision', q:'What is the blind spot and why does it exist?', hint:'Where nerves exit...', a:'The <strong>optic disc</strong> is called the blind spot because it contains <strong>no photoreceptors</strong> — it is where the optic nerve exits the eye. Light striking this area goes unnoticed.' },
+  { topic:'vision', img:'💊', cat:'Vision', q:'What is rhodopsin and what vitamin is required to make it?', hint:'Visual pigment = opsin + ?', a:'<strong>Rhodopsin = opsin + retinal</strong>. Retinal is synthesized from <strong>Vitamin A</strong>. Deficiency of Vitamin A causes <strong>night blindness</strong>.' },
+  { topic:'vision', img:'🎯', cat:'Vision', q:'Trace light through the eye from entry to photoreceptor stimulation.', hint:'Conjunctiva → cornea → ...', a:'Conjunctiva → <strong>cornea</strong> → anterior cavity → <strong>lens</strong> → posterior cavity → neural tissue of retina → <strong>photoreceptors</strong> (rods/cones)' },
+  { topic:'equilibrium', img:'🔄', cat:'Equilibrium', q:'What structures in the inner ear sense gravity and linear acceleration?', hint:'Two membranous sacs...', a:'The <strong>saccule and utricle</strong> (in the vestibule) sense gravity and linear acceleration. Hair cells in the maculae contact otoliths (statoconia/mineral crystals) that shift with gravity.' },
+  { topic:'equilibrium', img:'💫', cat:'Equilibrium', q:'What do the semicircular ducts detect?', hint:'Think head movement type...', a:'The semicircular ducts detect <strong>rotation of the head</strong>. The three ducts (anterior, posterior, lateral) correspond to rotation in different planes.' },
+  { topic:'equilibrium', img:'🦱', cat:'Equilibrium', q:'How do hair cells in the vestibular system work?', hint:'Do they move themselves?', a:'Hair cells do NOT actively move. <strong>External forces push the stereocilia and kinocilium</strong>, distorting the cell membrane and triggering signals based on direction and strength of mechanical stimuli.' },
+  { topic:'hearing', img:'👂', cat:'Hearing', q:'Name the 3 auditory ossicles in order.', hint:'Hammer, Anvil, Stirrup...', a:'<strong>Malleus</strong> (hammer) → <strong>Incus</strong> (anvil) → <strong>Stapes</strong> (stirrup). These conduct vibrations from the tympanic membrane to the inner ear and amplify sound.' },
+  { topic:'hearing', img:'📡', cat:'Hearing', q:'What determines the frequency (pitch) vs. intensity (volume) of heard sound?', hint:'Which part vs. how many...', a:'<strong>Frequency/pitch</strong>: determined by which part of the cochlear duct/basilar membrane is stimulated.<br><strong>Intensity/volume</strong>: determined by how many hair cells are stimulated at that location.' },
+  { topic:'hearing', img:'🌊', cat:'Hearing', q:'What is the function of the auditory (Eustachian) tube?', hint:'Pressure equalization...', a:'The auditory tube connects the middle ear to the nasopharynx and <strong>equalizes pressure</strong> on both sides of the tympanic membrane, essential for proper hearing.' },
+  { topic:'hearing', img:'🔬', cat:'Hearing', q:'What are the steps of the hearing process? (6 steps)', hint:'Sound waves → tympanic membrane → ...', a:'1. Sound waves → tympanic membrane<br>2. Ossicles vibrate &amp; amplify<br>3. Stapes → oval window → perilymph pressure waves<br>4. Basilar membrane distorted (frequency = location)<br>5. Hair cells → depolarization → neurotransmitters<br>6. CN VIII cochlear branch → medulla oblongata' },
+  { topic:'hearing', img:'🎵', cat:'Hearing', q:'What is the organ of Corti and where is it found?', hint:'Inside the cochlear duct...', a:'The <strong>organ of Corti</strong> is the hearing organ located within the cochlear duct. It contains hair cells on the basilar membrane that contact the tectorial membrane and transduce sound into nerve signals.' },
+];
+
+const QUIZ_QUESTIONS = [
+  { q:'Which special sense bypasses the thalamus and projects directly to the cerebral cortex?', opts:['Vision','Olfaction','Gustation','Hearing'], ans:1, topic:'olfaction', expl:'Olfaction is the only special sense that reaches the cortex without first synapsing in the thalamus. Olfactory signals travel directly to the olfactory cortex, hypothalamus, and limbic system — which is why smells trigger such powerful memories and emotions.' },
+  { q:'Which type of lingual papillae contains NO taste buds?', opts:['Fungiform','Circumvallate','Filiform','Vallate'], ans:2, topic:'gustation', expl:'Filiform papillae provide friction to the tongue surface but contain no taste buds. Fungiform papillae contain about 5 taste buds each, and circumvallate papillae contain up to 100 each.' },
+  { q:'Which photoreceptors provide color vision and are most dense at the fovea?', opts:['Rods','Bipolar cells','Ganglion cells','Cones'], ans:3, topic:'vision', expl:'Cones provide color vision and are densely clustered at the fovea (center of the macula lutea). Rods are more sensitive to light but cannot discriminate colors — they dominate the peripheral retina for dim-light vision.' },
+  { q:'Night blindness results from a deficiency of which vitamin?', opts:['Vitamin C','Vitamin D','Vitamin A','Vitamin B12'], ans:2, topic:'vision', expl:'Vitamin A is required to synthesize retinal, which combines with opsin to form rhodopsin — the visual pigment in rod cells. Without adequate Vitamin A, rhodopsin cannot be produced, causing difficulty seeing in dim light (night blindness).' },
+  { q:'Receptors in the saccule and utricle provide information about:', opts:['Sound frequency','Rotation of the head','Gravity and linear acceleration','Color perception'], ans:2, topic:'equilibrium', expl:'The saccule and utricle are part of the vestibule and sense gravity and linear acceleration. They contain hair cells in maculae that contact otoliths (mineral crystals called statoconia) which shift position in response to gravity.' },
+  { q:'In what order do sound vibrations pass through the auditory ossicles?', opts:['Incus → Malleus → Stapes','Malleus → Incus → Stapes','Stapes → Incus → Malleus','Malleus → Stapes → Incus'], ans:1, topic:'hearing', expl:'Sound vibrations travel: Tympanic membrane → Malleus (hammer) → Incus (anvil) → Stapes (stirrup) → oval window → inner ear. The ossicles act as levers that amplify sound pressure.' },
+  { q:'Which cranial nerve carries olfactory information to the brain?', opts:['CN II','CN V','CN I','CN VII'], ans:2, topic:'olfaction', expl:'CN I (the olfactory nerve) carries olfactory signals from the olfactory epithelium through the cribriform plate to the olfactory bulbs. This is the only cranial nerve that projects directly to the cortex without a thalamic relay.' },
+  { q:'What is the function of the auditory (Eustachian) tube?', opts:['Carry sound vibrations','Produce cerumen','Equalize pressure on both sides of the eardrum','Drain lacrimal fluid'], ans:2, topic:'hearing', expl:'The auditory (pharyngotympanic/Eustachian) tube connects the middle ear to the nasopharynx and equalizes air pressure on both sides of the tympanic membrane. Without this equalization, the eardrum cannot vibrate properly.' },
+  { q:'The optic disc is called the "blind spot" because:', opts:['It is covered by the lens','It contains only rod cells','It has no photoreceptors — it\'s where the optic nerve exits','It receives the least light'], ans:2, topic:'vision', expl:'The optic disc is the circular area where all ganglion cell axons converge and exit as the optic nerve. Because there are no rods or cones here, light striking this area produces no visual signal — creating a physiological blind spot.' },
+  { q:'Which structure in the inner ear contains the organ of Corti?', opts:['Vestibule','Semicircular canals','Saccule','Cochlear duct'], ans:3, topic:'hearing', expl:'The organ of Corti sits within the cochlear duct (also called the scala media). It contains hair cells on the basilar membrane that contact the tectorial membrane and are responsible for transducing sound pressure waves into nerve signals.' },
+  { q:'How many primary taste sensations do humans have?', opts:['4','5','6','3'], ans:2, topic:'gustation', expl:'Humans have 6 primary taste sensations: sweet, salty, sour, bitter, umami (characteristic of meats and parmesan), and water (detected by water receptors in the pharynx).' },
+  { q:'What is rhodopsin composed of?', opts:['Opsin + Vitamin A','Opsin + Retinal (from Vitamin A)','Crystallin + Retinal','Retinal + Lysozyme'], ans:1, topic:'vision', expl:'Rhodopsin = opsin (a protein) + retinal (a pigment synthesized from Vitamin A). When a photon hits retinal, it changes shape (isomerization), triggering a signal cascade in the rod cell. This is the basis of dim-light vision.' },
+  { q:'Rotation of the head is detected by which structure?', opts:['Saccule','Utricle','Cochlea','Semicircular ducts'], ans:3, topic:'equilibrium', expl:'The semicircular ducts (anterior, posterior, lateral) are sensitive to rotational movement of the head. Fluid movement within these ducts during head rotation deflects the hair cells, signaling the direction and speed of rotation.' },
+  { q:'The fibrous tunic of the eye includes:', opts:['Iris and choroid','Retina and fovea','Sclera and cornea','Ciliary body and lens'], ans:2, topic:'vision', expl:'The fibrous tunic is the outermost layer of the eye and includes the sclera (the white of the eye, providing structural support) and the cornea (the transparent anterior portion that begins refracting incoming light).' },
+  { q:'Where does the first synapse in the olfactory pathway occur?', opts:['Thalamus','Olfactory cortex','Olfactory bulb','Hypothalamus'], ans:2, topic:'olfaction', expl:'The first synapse in the olfactory pathway occurs in the olfactory bulb (located in the cerebrum). Axons from the olfactory epithelium pass through the cribriform plate of the ethmoid bone to reach the olfactory bulb.' },
+];
+
+/* ==================== STATE ==================== */
+let cardConfidence = {}; // index → 'easy'|'medium'|'hard'
+let cardBookmarks = new Set();
+let cardFilter = 'all';
+let filteredCards = [...FLASHCARDS.map((_,i)=>i)];
+let currentCardIdx = 0;
+let isFlipped = false;
+
+let quizQuestions = [];
+let quizIdx = 0;
+let quizScore = 0;
+let quizAnswered = false;
+let quizTopicScore = {};
+
+let analytics = {
+  easy: 0, medium: 0, hard: 0,
+  byTopic: { olfaction:{easy:0,total:0}, gustation:{easy:0,total:0}, vision:{easy:0,total:0}, equilibrium:{easy:0,total:0}, hearing:{easy:0,total:0} },
+  lastQuizPct: null
+};
+
+/* ==================== TABS ==================== */
+function switchTab(id) {
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.setAttribute('aria-selected', b.id === 'tab-' + id ? 'true' : 'false');
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => {
+    p.setAttribute('aria-hidden', p.id === 'panel-' + id ? 'false' : 'true');
+  });
+  if (id === 'flash') renderCard();
+  if (id === 'ref') updateAnalyticsDisplay();
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const id = btn.id.replace('tab-', '');
+    switchTab(id);
+  });
+  btn.addEventListener('keydown', e => {
+    const tabs = [...document.querySelectorAll('.tab-btn')];
+    const idx = tabs.indexOf(btn);
+    if (e.key === 'ArrowRight') { tabs[(idx+1)%tabs.length].focus(); e.preventDefault(); }
+    if (e.key === 'ArrowLeft') { tabs[(idx-1+tabs.length)%tabs.length].focus(); e.preventDefault(); }
+    if (e.key === 'Enter' || e.key === ' ') { btn.click(); e.preventDefault(); }
+  });
+});
+
+/* ==================== STUDY NOTES ==================== */
+function toggleNote(header) {
+  const card = header.closest('.note-card');
+  const isOpen = card.classList.toggle('open');
+  header.setAttribute('aria-expanded', isOpen.toString());
+}
+
+function keyToggle(e, header) {
+  if (e.key === 'Enter' || e.key === ' ') { toggleNote(header); e.preventDefault(); }
+}
+
+function filterNotes(topic) {
+  document.querySelectorAll('.section-btn').forEach(b => {
+    const matches = (b.textContent.toLowerCase().includes(topic) || topic === 'all');
+    b.classList.toggle('active', matches);
+    b.setAttribute('aria-pressed', matches.toString());
+  });
+  document.querySelectorAll('.note-card').forEach(card => {
+    if (topic === 'all' || card.dataset.topic === topic || card.dataset.topic === 'intro') {
+      card.style.display = '';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+/* ==================== FLASHCARDS ==================== */
+function buildFilteredList() {
+  filteredCards = FLASHCARDS.map((_,i) => i).filter(i => {
+    if (cardFilter === 'hard') return cardConfidence[i] === 'hard';
+    if (cardFilter === 'bookmarked') return cardBookmarks.has(i);
+    return true;
+  });
+  if (filteredCards.length === 0) filteredCards = FLASHCARDS.map((_,i)=>i);
+  currentCardIdx = 0;
+  isFlipped = false;
+}
+
+function renderCard() {
+  if (filteredCards.length === 0) buildFilteredList();
+  const realIdx = filteredCards[currentCardIdx];
+  const card = FLASHCARDS[realIdx];
+  document.getElementById('fc-cat').textContent = card.cat;
+  document.getElementById('fc-cat-b').textContent = card.cat;
+  document.getElementById('fc-img').textContent = card.img;
+  document.getElementById('fc-q').textContent = card.q;
+  document.getElementById('fc-hint').textContent = '💡 ' + card.hint;
+  document.getElementById('fc-a').innerHTML = card.a;
+  document.getElementById('fc-current').textContent = currentCardIdx + 1;
+  document.getElementById('fc-total').textContent = filteredCards.length;
+  document.getElementById('btn-prev').disabled = currentCardIdx === 0;
+  document.getElementById('btn-next').disabled = currentCardIdx === filteredCards.length - 1;
+
+  // Bookmark
+  const bm = cardBookmarks.has(realIdx);
+  document.getElementById('bm-icon').textContent = bm ? '★' : '☆';
+  document.getElementById('bookmark-btn').classList.toggle('bookmarked', bm);
+  document.getElementById('bookmark-btn').setAttribute('aria-label', bm ? 'Remove bookmark' : 'Bookmark this card');
+
+  // Unflip
+  const fc = document.getElementById('flashcard');
+  fc.classList.remove('flipped');
+  isFlipped = false;
+}
+
+function flipCard() {
+  const fc = document.getElementById('flashcard');
+  isFlipped = !isFlipped;
+  fc.classList.toggle('flipped', isFlipped);
+  fc.setAttribute('aria-label', isFlipped ? 'Answer shown. Press space to flip back.' : 'Flashcard. Press space or enter to flip.');
+}
+
+function keyFlip(e) {
+  if (e.key === 'Enter' || e.key === ' ') { flipCard(); e.preventDefault(); }
+}
+
+function navCard(dir) {
+  currentCardIdx = Math.max(0, Math.min(filteredCards.length - 1, currentCardIdx + dir));
+  isFlipped = false;
+  renderCard();
+}
+
+function shuffleCards() {
+  for (let i = filteredCards.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [filteredCards[i], filteredCards[j]] = [filteredCards[j], filteredCards[i]];
+  }
+  currentCardIdx = 0;
+  renderCard();
+}
+
+function rateCard(rating) {
+  const realIdx = filteredCards[currentCardIdx];
+  const prev = cardConfidence[realIdx];
+  cardConfidence[realIdx] = rating;
+  const card = FLASHCARDS[realIdx];
+
+  // Update analytics
+  if (prev) {
+    analytics[prev] = Math.max(0, analytics[prev] - 1);
+    if (analytics.byTopic[card.topic]) analytics.byTopic[card.topic][prev === 'easy' ? 'easy' : ''] = Math.max(0, analytics.byTopic[card.topic][prev === 'easy' ? 'easy' : 0]);
+  }
+  analytics[rating]++;
+  if (!analytics.byTopic[card.topic]) analytics.byTopic[card.topic] = { easy:0, total:0 };
+  if (rating === 'easy') analytics.byTopic[card.topic].easy++;
+  analytics.byTopic[card.topic].total = (analytics.byTopic[card.topic].total || 0) + 1;
+
+  // Count studied
+  const studied = Object.keys(cardConfidence).length;
+  document.getElementById('stat-cards-studied').textContent = studied;
+
+  updateProgress();
+  updateAnalyticsDisplay();
+
+  // Auto-advance
+  setTimeout(() => {
+    if (currentCardIdx < filteredCards.length - 1) navCard(1);
+  }, 400);
+}
+
+function toggleBookmark() {
+  const realIdx = filteredCards[currentCardIdx];
+  if (cardBookmarks.has(realIdx)) {
+    cardBookmarks.delete(realIdx);
+  } else {
+    cardBookmarks.add(realIdx);
+  }
+  document.getElementById('fc-bm-num').textContent = cardBookmarks.size;
+  renderCard();
+}
+
+function setFilter(filter, btn) {
+  cardFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.toggle('active', b === btn);
+    b.setAttribute('aria-pressed', (b === btn).toString());
+  });
+  buildFilteredList();
+  renderCard();
+}
+
+/* ==================== QUIZ ==================== */
+function startQuiz() {
+  // Shuffle and pick 15 questions
+  const shuffled = [...QUIZ_QUESTIONS].sort(() => Math.random() - 0.5);
+  quizQuestions = shuffled.slice(0, 15);
+  quizIdx = 0;
+  quizScore = 0;
+  quizAnswered = false;
+  quizTopicScore = {};
+
+  document.getElementById('quiz-start').style.display = 'none';
+  document.getElementById('quiz-results').classList.remove('show');
+  document.getElementById('quiz-main').classList.add('active');
+
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = quizQuestions[quizIdx];
+  quizAnswered = false;
+
+  document.getElementById('quiz-prog-text').textContent = `Question ${quizIdx + 1} of ${quizQuestions.length}`;
+  document.getElementById('quiz-score-badge').textContent = `Score: ${quizScore}/${quizIdx}`;
+  document.getElementById('quiz-q-num').textContent = `Question ${quizIdx + 1}`;
+  document.getElementById('quiz-q-text').textContent = q.q;
+
+  const optBox = document.getElementById('quiz-options');
+  optBox.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.setAttribute('role', 'listitem');
+    btn.setAttribute('aria-label', `Option ${letters[i]}: ${opt}`);
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => answerQuestion(i, btn);
+    optBox.appendChild(btn);
+  });
+
+  document.getElementById('expl-box').classList.remove('show');
+  document.getElementById('quiz-next').classList.remove('show');
+}
+
+function answerQuestion(chosen, btn) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+
+  const q = quizQuestions[quizIdx];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach((o, i) => {
+    o.disabled = true;
+    if (i === q.ans) o.classList.add('correct');
+    else if (i === chosen) o.classList.add('wrong');
+  });
+
+  const correct = chosen === q.ans;
+  if (correct) quizScore++;
+
+  // Track by topic
+  if (!quizTopicScore[q.topic]) quizTopicScore[q.topic] = { correct: 0, total: 0 };
+  quizTopicScore[q.topic].total++;
+  if (correct) quizTopicScore[q.topic].correct++;
+
+  document.getElementById('expl-text').innerHTML = q.expl;
+  document.getElementById('expl-box').classList.add('show');
+
+  const nextBtn = document.getElementById('quiz-next');
+  nextBtn.textContent = quizIdx === quizQuestions.length - 1 ? 'See Results →' : 'Next Question →';
+  nextBtn.classList.add('show');
+}
+
+function nextQuestion() {
+  quizIdx++;
+  if (quizIdx >= quizQuestions.length) {
+    showResults();
+    return;
+  }
+  renderQuestion();
+}
+
+function showResults() {
+  document.getElementById('quiz-main').classList.remove('active');
+  const pct = Math.round((quizScore / quizQuestions.length) * 100);
+  analytics.lastQuizPct = pct;
+
+  document.getElementById('result-score-pct').textContent = pct + '%';
+  document.getElementById('result-label').textContent =
+    pct >= 90 ? '🎉 Excellent! You\'ve mastered these concepts!' :
+    pct >= 75 ? '👍 Great work! Review the missed topics.' :
+    pct >= 60 ? '📚 Good effort! Focus on study notes for weak areas.' :
+    '💪 Keep studying! Use flashcards and notes to strengthen your knowledge.';
+
+  document.getElementById('res-correct').textContent = quizScore;
+  document.getElementById('res-wrong').textContent = quizQuestions.length - quizScore;
+  document.getElementById('res-pct').textContent = pct + '%';
+  document.getElementById('stat-quiz-score').textContent = pct + '%';
+
+  // Topic bars in results
+  const topics = ['olfaction','gustation','vision','equilibrium','hearing'];
+  const labels = { olfaction:'Olfaction', gustation:'Gustation', vision:'Vision', equilibrium:'Equilibrium', hearing:'Hearing' };
+  const barsEl = document.getElementById('topic-bars-quiz');
+  barsEl.innerHTML = '';
+  topics.forEach(t => {
+    const data = quizTopicScore[t] || { correct: 0, total: 0 };
+    const p = data.total ? Math.round((data.correct / data.total) * 100) : null;
+    const row = document.createElement('div');
+    row.className = 'topic-bar-row';
+    row.innerHTML = `
+      <span class="topic-bar-label">${labels[t]}</span>
+      <div class="topic-bar-track"><div class="topic-bar-fill" style="width:${p !== null ? p : 0}%"></div></div>
+      <span class="topic-bar-pct">${p !== null ? p + '%' : 'N/A'}</span>`;
+    barsEl.appendChild(row);
+    setTimeout(() => {}, 100);
+  });
+
+  document.getElementById('quiz-results').classList.add('show');
+  updateProgress();
+  updateAnalyticsDisplay();
+}
+
+function resetQuiz() {
+  document.getElementById('quiz-results').classList.remove('show');
+  document.getElementById('quiz-start').style.display = '';
+}
+
+/* ==================== QUICK REFERENCE SEARCH ==================== */
+function filterTable() {
+  const term = document.getElementById('qr-search').value.toLowerCase().trim();
+  let found = 0;
+  document.querySelectorAll('#qr-tbody tr').forEach(row => {
+    const text = (row.textContent + row.dataset.search).toLowerCase();
+    const show = !term || text.includes(term);
+    row.style.display = show ? '' : 'none';
+    if (show) found++;
+  });
+  document.getElementById('no-results').style.display = found === 0 ? 'block' : 'none';
+}
+
+/* ==================== ANALYTICS ==================== */
+function updateAnalyticsDisplay() {
+  document.getElementById('stat-easy').textContent = analytics.easy;
+  document.getElementById('stat-medium').textContent = analytics.medium;
+  document.getElementById('stat-hard').textContent = analytics.hard;
+  if (analytics.lastQuizPct !== null) {
+    document.getElementById('stat-quiz-score').textContent = analytics.lastQuizPct + '%';
+  }
+
+  const topics = ['olfaction','gustation','vision','equilibrium','hearing'];
+  topics.forEach(t => {
+    const d = analytics.byTopic[t] || { easy:0, total:0 };
+    const pct = d.total ? Math.round((d.easy / d.total) * 100) : 0;
+    const bar = document.getElementById('bar-' + t);
+    const pctEl = document.getElementById('pct-' + t);
+    if (bar) bar.style.width = pct + '%';
+    if (pctEl) pctEl.textContent = d.total ? pct + '%' : '0%';
+  });
+}
+
+function updateProgress() {
+  const rated = Object.keys(cardConfidence).length;
+  const total = FLASHCARDS.length;
+  const quizBonus = analytics.lastQuizPct !== null ? 1 : 0;
+  const pct = Math.min(100, Math.round(((rated / total) * 0.7 + (analytics.lastQuizPct || 0) / 100 * 0.3) * 100));
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+  const pbOuter = document.querySelector('.progress-bar-outer');
+  if (pbOuter) pbOuter.setAttribute('aria-valuenow', pct);
+}
+
+/* ==================== INIT ==================== */
+buildFilteredList();
+renderCard();
+updateAnalyticsDisplay();
+</script>
+
+</body>
+</html>

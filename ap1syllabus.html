@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIO 168 – Human Anatomy & Physiology I | Course Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --teal: #0F6E56;
+    --teal-light: #E1F5EE;
+    --teal-mid: #1D9E75;
+    --teal-dark: #085041;
+    --bone: #FAF8F4;
+    --bone2: #F0EDE6;
+    --ink: #1A1A18;
+    --ink-muted: #5F5E5A;
+    --ink-faint: #B4B2A9;
+    --accent: #D85A30;
+    --accent-light: #FAECE7;
+    --warn: #BA7517;
+    --warn-light: #FAEEDA;
+    --blue: #185FA5;
+    --blue-light: #E6F1FB;
+    --border: rgba(26,26,24,0.12);
+    --radius: 12px;
+    --shadow: 0 2px 16px rgba(26,26,24,0.07);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bone);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 60%, var(--teal-mid) 100%);
+    padding: 3rem 2rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .hero::after {
+    content: '';
+    position: absolute; bottom: -40px; left: 30%;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.03);
+  }
+  .hero-eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 0.5rem;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 0.6rem;
+  }
+  .hero-sub {
+    color: rgba(255,255,255,0.75);
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .hero-chips {
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .chip {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.9);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+
+  /* NAV TABS */
+  .nav-wrap {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 8px rgba(26,26,24,0.06);
+  }
+  .nav-tabs {
+    display: flex; overflow-x: auto; gap: 0;
+    padding: 0 1rem;
+    scrollbar-width: none;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    background: none; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px; font-weight: 500;
+    color: var(--ink-muted);
+    padding: 14px 16px;
+    border-bottom: 2.5px solid transparent;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .tab-btn:hover { color: var(--teal); }
+  .tab-btn.active { color: var(--teal); border-bottom-color: var(--teal); }
+
+  /* MAIN LAYOUT */
+  .main { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+
+  /* SECTIONS */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem;
+    color: var(--ink);
+    margin-bottom: 0.25rem;
+  }
+  .section-desc { color: var(--ink-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+  /* CARDS */
+  .card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
+  }
+
+  /* INFO GRID */
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+  .info-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    box-shadow: var(--shadow);
+  }
+  .info-card .label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink-faint); margin-bottom: 4px;
+  }
+  .info-card .value { font-size: 0.95rem; font-weight: 500; color: var(--ink); }
+  .info-card .value a { color: var(--teal); text-decoration: none; }
+  .info-card .value a:hover { text-decoration: underline; }
+
+  /* BADGES */
+  .badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 600;
+    padding: 2px 8px; border-radius: 4px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .badge-teal { background: var(--teal-light); color: var(--teal-dark); }
+  .badge-red { background: #FCEBEB; color: #791F1F; }
+  .badge-warn { background: var(--warn-light); color: #633806; }
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .badge-accent { background: var(--accent-light); color: #4A1B0C; }
+
+  /* GRADE WEIGHTS */
+  .grade-bar-wrap { margin-bottom: 1.25rem; }
+  .grade-bar-label {
+    display: flex; justify-content: space-between;
+    font-size: 0.875rem; margin-bottom: 4px;
+    font-weight: 500;
+  }
+  .grade-bar {
+    height: 10px; background: var(--bone2);
+    border-radius: 5px; overflow: hidden;
+  }
+  .grade-bar-fill { height: 100%; border-radius: 5px; transition: width 1s ease; }
+
+  /* GRADING TABLE */
+  .grade-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+  .grade-table th { text-align: left; font-weight: 600; padding: 8px 12px; background: var(--bone2); color: var(--ink-muted); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .grade-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  .grade-table tr:last-child td { border-bottom: none; }
+  .grade-table tr:hover td { background: var(--bone); }
+
+  /* FAQ ACCORDION */
+  .faq-item {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .faq-q {
+    width: 100%; background: none; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 1.25rem;
+    text-align: left;
+    font-size: 0.95rem; font-weight: 500; color: var(--ink);
+    transition: background 0.15s;
+  }
+  .faq-q:hover { background: var(--bone); }
+  .faq-q .arrow {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--bone2); color: var(--ink-muted);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; flex-shrink: 0; margin-left: 12px;
+    transition: transform 0.25s, background 0.2s;
+  }
+  .faq-item.open .faq-q .arrow { transform: rotate(180deg); background: var(--teal-light); color: var(--teal); }
+  .faq-item.open .faq-q { color: var(--teal); }
+  .faq-a {
+    display: none;
+    padding: 0 1.25rem 1rem;
+    font-size: 0.9rem; color: var(--ink-muted); line-height: 1.7;
+    border-top: 1px solid var(--border);
+  }
+  .faq-item.open .faq-a { display: block; }
+  .faq-a p { margin-bottom: 0.6rem; }
+  .faq-a ul { padding-left: 1.25rem; }
+  .faq-a li { margin-bottom: 0.3rem; }
+  .faq-a strong { color: var(--ink); }
+  .faq-a .highlight {
+    background: var(--warn-light);
+    border-left: 3px solid var(--warn);
+    padding: 8px 12px; border-radius: 0 6px 6px 0;
+    margin: 8px 0; font-size: 0.875rem;
+  }
+  .faq-a .success-box {
+    background: var(--teal-light);
+    border-left: 3px solid var(--teal);
+    padding: 8px 12px; border-radius: 0 6px 6px 0;
+    margin: 8px 0; font-size: 0.875rem;
+  }
+
+  /* CATEGORY FILTERS */
+  .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.25rem; }
+  .filter-btn {
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 20px; padding: 5px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12.5px; font-weight: 500; cursor: pointer; color: var(--ink-muted);
+    transition: all 0.15s;
+  }
+  .filter-btn:hover, .filter-btn.active { background: var(--teal); color: #fff; border-color: var(--teal); }
+
+  /* ASK A QUESTION */
+  .ask-wrap { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow); }
+  .ask-wrap label { display: block; font-size: 0.875rem; font-weight: 500; color: var(--ink-muted); margin-bottom: 6px; }
+  .ask-wrap textarea {
+    width: 100%; border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px; font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    color: var(--ink); resize: vertical; min-height: 100px;
+    background: var(--bone);
+    transition: border-color 0.15s;
+    outline: none;
+  }
+  .ask-wrap textarea:focus { border-color: var(--teal); }
+  .ask-wrap .hint { font-size: 12px; color: var(--ink-faint); margin-top: 6px; margin-bottom: 1rem; }
+  .ask-btn {
+    background: var(--teal); color: #fff; border: none;
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 600;
+    padding: 10px 24px; border-radius: 8px; cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .ask-btn:hover { background: var(--teal-dark); }
+  .ask-btn:active { transform: scale(0.98); }
+  .ask-result {
+    display: none;
+    margin-top: 1.25rem;
+    background: var(--teal-light);
+    border: 1px solid rgba(15,110,86,0.2);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-size: 0.9rem; color: var(--teal-dark); line-height: 1.7;
+  }
+  .ask-result .thinking { color: var(--ink-faint); font-style: italic; font-size: 0.85rem; }
+
+  /* TIMELINE */
+  .timeline-item {
+    display: flex; gap: 1rem; margin-bottom: 1rem;
+    padding-bottom: 1rem; border-bottom: 1px solid var(--border);
+  }
+  .timeline-item:last-child { border-bottom: none; margin-bottom: 0; }
+  .tl-dot {
+    width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700;
+  }
+  .tl-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 2px; }
+  .tl-desc { font-size: 0.875rem; color: var(--ink-muted); }
+
+  /* POLICY BOXES */
+  .policy-box {
+    border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1rem;
+    border-left: 4px solid;
+  }
+  .policy-box.warn { background: var(--warn-light); border-color: var(--warn); }
+  .policy-box.danger { background: #FCEBEB; border-color: #E24B4A; }
+  .policy-box.info { background: var(--blue-light); border-color: var(--blue); }
+  .policy-box.success { background: var(--teal-light); border-color: var(--teal); }
+  .policy-box h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+  .policy-box p, .policy-box li { font-size: 0.875rem; line-height: 1.65; }
+  .policy-box ul { padding-left: 1.2rem; }
+
+  /* CONTACT */
+  .contact-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+  }
+  .contact-row:last-child { border-bottom: none; }
+  .contact-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--teal-light); color: var(--teal);
+    display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0;
+  }
+  .contact-row .cl { color: var(--ink-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .contact-row .cv { font-weight: 500; }
+
+  /* SEARCH */
+  .search-wrap { position: relative; margin-bottom: 1.25rem; }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--ink-faint); font-size: 15px; }
+  #faqSearch {
+    width: 100%; border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 12px 10px 36px;
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    color: var(--ink); background: #fff; outline: none;
+    transition: border-color 0.15s;
+  }
+  #faqSearch:focus { border-color: var(--teal); }
+
+  /* FOOTER */
+  .footer-note { text-align: center; color: var(--ink-faint); font-size: 12px; margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+
+  @media (max-width: 600px) {
+    .hero { padding: 2rem 1.25rem 1.75rem; }
+    .info-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-eyebrow">Western Iowa Tech Community College</div>
+  <h1>Human Anatomy &amp; Physiology I</h1>
+  <p class="hero-sub">BIO-168-01 &nbsp;·&nbsp; Spring 2026 &nbsp;·&nbsp; Dr. Lee McNaughton</p>
+  <div class="hero-chips">
+    <span class="chip">📅 Jan 12 – May 8, 2026</span>
+    <span class="chip">📍 Lecture: L124</span>
+    <span class="chip">🔬 Lab: L147</span>
+    <span class="chip">4 Credit Hours</span>
+  </div>
+</div>
+
+<nav class="nav-wrap">
+  <div class="nav-tabs" role="tablist">
+    <button class="tab-btn active" onclick="showTab('overview')" role="tab">Overview</button>
+    <button class="tab-btn" onclick="showTab('grades')" role="tab">Grades</button>
+    <button class="tab-btn" onclick="showTab('policies')" role="tab">Policies</button>
+    <button class="tab-btn" onclick="showTab('faq')" role="tab">FAQ</button>
+    <button class="tab-btn" onclick="showTab('ask')" role="tab">✨ Ask a Question</button>
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- ===== OVERVIEW ===== -->
+  <section id="tab-overview" class="section active">
+    <h2 class="section-title">Course Overview</h2>
+    <p class="section-desc">Everything you need to know about BIO 168 at a glance.</p>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="label">Instructor</div>
+        <div class="value">Dr. Lee McNaughton</div>
+      </div>
+      <div class="info-card">
+        <div class="label">Email</div>
+        <div class="value"><a href="mailto:Lee.McNaughton@witcc.edu">Lee.McNaughton@witcc.edu</a></div>
+      </div>
+      <div class="info-card">
+        <div class="label">Phone</div>
+        <div class="value">712-574-9133</div>
+      </div>
+      <div class="info-card">
+        <div class="label">Office</div>
+        <div class="value">Room L322</div>
+      </div>
+      <div class="info-card">
+        <div class="label">Office Hours</div>
+        <div class="value">Mon 1–1:50 PM &amp; Tue 9–9:50 AM (by appt.)</div>
+      </div>
+      <div class="info-card">
+        <div class="label">Lecture</div>
+        <div class="value">Tue 8–8:50 AM &amp; Thu 8–9:50 AM · L124</div>
+      </div>
+      <div class="info-card">
+        <div class="label">Lab</div>
+        <div class="value">Thu 10–11:50 AM · L147</div>
+      </div>
+      <div class="info-card">
+        <div class="label">Textbook</div>
+        <div class="value">Martini – Fundamentals of A&amp;P, 12th ed. (VitalSource)</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="font-size:1rem;font-weight:600;margin-bottom:0.75rem;">About This Course</h3>
+      <p style="font-size:0.9rem;color:var(--ink-muted);line-height:1.75;">
+        This combined lecture and lab course explores the relationship between structure, function, and homeostasis in the human body. Topics include the <strong style="color:var(--ink)">skeletal, muscular, integumentary, and nervous systems</strong>, as well as cytology, histology, and articulations. You'll use microscopic techniques, learn anatomical terminology, and apply physiological concepts to real clinical scenarios.
+      </p>
+    </div>
+
+    <h3 style="font-size:1rem;font-weight:600;margin:1.5rem 0 0.75rem;">What You'll Learn</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0.75rem;">
+      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:1rem;box-shadow:var(--shadow);">
+        <div style="font-size:20px;margin-bottom:6px;">🦴</div>
+        <div style="font-weight:600;font-size:0.875rem;margin-bottom:3px;">Skeletal &amp; Muscular Systems</div>
+        <div style="font-size:0.8rem;color:var(--ink-muted);">Bones, joints, muscles, calcium homeostasis, contraction physiology</div>
+      </div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:1rem;box-shadow:var(--shadow);">
+        <div style="font-size:20px;margin-bottom:6px;">🧠</div>
+        <div style="font-weight:600;font-size:0.875rem;margin-bottom:3px;">Nervous System</div>
+        <div style="font-size:0.8rem;color:var(--ink-muted);">Action potentials, CNS, PNS, special senses, autonomic division</div>
+      </div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:1rem;box-shadow:var(--shadow);">
+        <div style="font-size:20px;margin-bottom:6px;">🔬</div>
+        <div style="font-weight:600;font-size:0.875rem;margin-bottom:3px;">Cells &amp; Tissues</div>
+        <div style="font-size:0.8rem;color:var(--ink-muted);">Histology, cell cycle, epithelial, connective, muscle &amp; nervous tissue</div>
+      </div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:10px;padding:1rem;box-shadow:var(--shadow);">
+        <div style="font-size:20px;margin-bottom:6px;">⚖️</div>
+        <div style="font-weight:600;font-size:0.875rem;margin-bottom:3px;">Homeostasis &amp; Chemistry</div>
+        <div style="font-size:0.8rem;color:var(--ink-muted);">Acid-base balance, fluid &amp; electrolyte balance, pH, metabolism</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== GRADES ===== -->
+  <section id="tab-grades" class="section">
+    <h2 class="section-title">Grading Breakdown</h2>
+    <p class="section-desc">Understand how your final grade is calculated.</p>
+
+    <div class="card">
+      <h3 style="font-size:0.9rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-muted);margin-bottom:1.25rem;">Grade Weights</h3>
+      <div class="grade-bar-wrap">
+        <div class="grade-bar-label"><span>Unit Exams (4 total)</span><span style="color:var(--teal);font-weight:600;">55%</span></div>
+        <div class="grade-bar"><div class="grade-bar-fill" style="width:55%;background:var(--teal);"></div></div>
+      </div>
+      <div class="grade-bar-wrap">
+        <div class="grade-bar-label"><span>Labs</span><span style="color:var(--accent);font-weight:600;">20%</span></div>
+        <div class="grade-bar"><div class="grade-bar-fill" style="width:20%;background:var(--accent);"></div></div>
+      </div>
+      <div class="grade-bar-wrap">
+        <div class="grade-bar-label"><span>Homework, Discussions, Assignments, Projects</span><span style="color:var(--blue);font-weight:600;">20%</span></div>
+        <div class="grade-bar"><div class="grade-bar-fill" style="width:20%;background:var(--blue);"></div></div>
+      </div>
+      <div class="grade-bar-wrap">
+        <div class="grade-bar-label"><span>Final Exam (Common Assessment)</span><span style="color:var(--warn);font-weight:600;">5%</span></div>
+        <div class="grade-bar"><div class="grade-bar-fill" style="width:5%;background:var(--warn);"></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="font-size:0.9rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-muted);margin-bottom:1rem;">Grading Scale</h3>
+      <table class="grade-table">
+        <thead><tr><th>Range</th><th>Grade</th><th>Range</th><th>Grade</th></tr></thead>
+        <tbody>
+          <tr><td>100–93%</td><td><span class="badge badge-teal">A</span></td><td>79–77%</td><td><span class="badge badge-warn">C+</span></td></tr>
+          <tr><td>92–90%</td><td><span class="badge badge-teal">A–</span></td><td>76–73%</td><td><span class="badge badge-warn">C</span></td></tr>
+          <tr><td>89–87%</td><td><span class="badge badge-blue">B+</span></td><td>72–70%</td><td><span class="badge badge-warn">C–</span></td></tr>
+          <tr><td>86–83%</td><td><span class="badge badge-blue">B</span></td><td>69–67%</td><td><span class="badge badge-accent">D+</span></td></tr>
+          <tr><td>82–80%</td><td><span class="badge badge-blue">B–</span></td><td>66–60%</td><td><span class="badge badge-accent">D / D–</span></td></tr>
+          <tr><td></td><td></td><td>Below 60%</td><td><span class="badge badge-red">F</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card" style="background:var(--warn-light);border-color:rgba(186,117,23,0.3);">
+      <h3 style="font-size:0.95rem;font-weight:600;color:#633806;margin-bottom:0.5rem;">⚠️ Late Penalty Impact</h3>
+      <p style="font-size:0.875rem;color:#633806;margin-bottom:0.75rem;">Late submissions in Category 2 receive a <strong>flat 25% deduction</strong>. Here's how that plays out on a 100-point item:</p>
+      <table class="grade-table" style="background:#fff;border-radius:8px;overflow:hidden;">
+        <thead><tr><th>Your Work</th><th>Raw Score</th><th>After –25%</th><th>Letter</th></tr></thead>
+        <tbody>
+          <tr><td>Perfect</td><td>100%</td><td>75%</td><td><span class="badge badge-warn">C</span></td></tr>
+          <tr><td>Good</td><td>85%</td><td>60%</td><td><span class="badge badge-accent">D</span></td></tr>
+          <tr><td>Average</td><td>75%</td><td>50%</td><td><span class="badge badge-red">F</span></td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:0.8rem;color:var(--warn);margin-top:8px;font-style:italic;">Turn things in on time — the math is brutal even for strong work.</p>
+    </div>
+  </section>
+
+  <!-- ===== POLICIES ===== -->
+  <section id="tab-policies" class="section">
+    <h2 class="section-title">Course Policies</h2>
+    <p class="section-desc">The rules that keep things fair for everyone.</p>
+
+    <div class="policy-box danger">
+      <h3>🚫 Category 1: No Second Chances (Zero Tolerance)</h3>
+      <p>Labs, in-class activities, quizzes, and "windowed" assignments (open 5+ days) must be completed at the scheduled time or by the deadline. <strong>No make-ups, no late submissions. A missed item = zero.</strong></p>
+    </div>
+
+    <div class="policy-box warn">
+      <h3>🕐 Category 2: 5-School-Day Safety Net</h3>
+      <p>Exams and standard assignments have a grace period of <strong>5 school days</strong>, but a <strong>25% flat deduction</strong> applies. After 5 days, the grade closes as a zero. For unexpected missed exams, you <em>must</em> email or text Dr. McNaughton the same day.</p>
+    </div>
+
+    <div class="policy-box danger">
+      <h3>📵 Final Exam — No Exceptions</h3>
+      <p>Final exams (common assessments) <strong>cannot be rescheduled or made up under any circumstances</strong>, except with official Accommodation Services documentation.</p>
+    </div>
+
+    <div class="policy-box info">
+      <h3>🤖 AI Usage Policy — Limited & Responsible</h3>
+      <p style="margin-bottom:6px;"><strong>Permitted:</strong> Brainstorming, explaining concepts, grammar corrections, creating outlines, generating first drafts (must be significantly transformed into your own voice), image generation for creative projects.</p>
+      <p style="margin-bottom:6px;"><strong>Not Permitted:</strong> Copy-paste AI text as your own work, AI during exams or quizzes, fabricating citations or lab data, substituting AI analysis for your own evaluation.</p>
+      <p><strong>Attribution required:</strong> Cite any AI tool used. If you can't explain your work in a follow-up, Path A (48-hr alternative assessment) is triggered.</p>
+    </div>
+
+    <div class="policy-box success">
+      <h3>🔬 Lab Policies</h3>
+      <ul>
+        <li>Closed-toe shoes required; hair must be secured; no food or drink.</li>
+        <li>Lab attendance is required — labs <strong>cannot be made up</strong>.</li>
+        <li>Follow all PPE rules and safety briefings at all times.</li>
+        <li>Failure to follow safety instructions may result in removal and loss of credit.</li>
+      </ul>
+    </div>
+
+    <div class="policy-box info">
+      <h3>✉️ Communication Policy</h3>
+      <p>Email is the primary contact method. Use your WITCC student email (<em>first.last@my.witcc.edu</em>), include the course number and your full name. Response time: <strong>within 48 business hours (Mon–Fri)</strong>. For urgent matters, use subject line: <strong>"URGENT: [Topic]"</strong>.</p>
+    </div>
+
+    <div class="policy-box warn">
+      <h3>🎓 Academic Integrity</h3>
+      <p style="margin-bottom:6px;"><strong>Path A (Suspicion):</strong> You'll be asked to complete a 48-hour alternative assessment to prove mastery. If you prove it, you keep your grade. If not — zero.</p>
+      <p><strong>Path B (Confirmed):</strong> Immediate zero, no redo. A second offense = automatic F for the semester and possible dismissal.</p>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section id="tab-faq" class="section">
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <p class="section-desc">Click any question to expand the answer. Can't find what you need? Use the <strong>Ask a Question</strong> tab.</p>
+
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="faqSearch" placeholder="Search questions…" oninput="filterFAQ(this.value)">
+    </div>
+
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="filterCat('all',this)">All Topics</button>
+      <button class="filter-btn" onclick="filterCat('deadlines',this)">Deadlines</button>
+      <button class="filter-btn" onclick="filterCat('exams',this)">Exams</button>
+      <button class="filter-btn" onclick="filterCat('lab',this)">Lab</button>
+      <button class="filter-btn" onclick="filterCat('grades',this)">Grades</button>
+      <button class="filter-btn" onclick="filterCat('ai',this)">AI Policy</button>
+      <button class="filter-btn" onclick="filterCat('contact',this)">Contact</button>
+    </div>
+
+    <div id="faqList">
+
+      <div class="faq-item" data-cat="deadlines">
+        <button class="faq-q" onclick="toggleFAQ(this)">What happens if I miss a quiz or in-class activity?<span class="arrow">▾</span></button>
+        <div class="faq-a">
+          <p>Quizzes and in-class activities fall under <strong>Category 1: Zero Tolerance</strong>. There are no make-ups and no late submissions. If you miss one, the grade is a zero — no exceptions (unless Accommodation Services provides documentation).</p>
+          <div class="highlight">📌 Tip: These items are often worth fewer points, but they add up. Showing up consistently matters.</div>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="deadlines">
+        <button class="faq-q" onclick="toggleFAQ(this)">Can I turn in an assignment late?<span class="arrow">▾</span></button>
+        <div class="faq-a">
+          <p>It depends on the type of assignment:</p>
+          <ul>
+            <li><strong>Category 1 items</strong> (quizzes, labs, windowed assignments open 5+ days): <strong>No late submissions at all.</strong></li>
+            <li><strong>Category 2 items</strong> (exams, standard assignments): You have a <strong>5-school-day grace period</strong>, but a <strong>25% flat deduction</strong> is applied to your score. After 5 days, the item closes as a zero.</li>
+          </ul>
+          <div class="highlight">⚠️ Even turning in perfect work late results in a 75% max — equal to a C. Submit on time whenever possible.</div>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="exams">
+        <button class="faq-q" onclick="toggleFAQ(this)">I missed an exam unexpectedly — what do I do?<span class="arrow">▾</span></button>
+        <div class="faq-a">
+          <p>Act immediately:</p>
+          <ul>
+            <li><strong>Contact Dr. McNaughton the same day</strong> — by email or text — to notify him of the situation.</li>
+            <li>You have a <strong>5-school-day window</strong> from the original exam date to make it up, with a 25% deduction applied.</li>
+            <li>After 5 school days, the exam grade is a zero and cannot be made up.</li>
+          </ul>
+          <div class="highlight">📞 Don't wait. The same-day contact requirement is strictly enforced.</div>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="exams">
+        <button class="faq-q" onclick="toggleFAQ(this)">Can I reschedule the final exam?<span class="arrow">▾</span></button>
+        <div class="faq-a">
+          <p><strong>No.</strong> Final exams (common assessments) cannot be rescheduled or made up under any circumstances. The only exception is an official temporary exemption from Accommodation Services — you must provide documentation to Dr. McNaughton.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="exams">
+        <button class="faq-q" onclick="toggleFAQ(this)">What are exams like? Are they open-book?<span class="arrow">▾</span></button>
+        <div class="faq-a">
+          <p>Exams are designed to measure your mastery under standardized conditions:</p>
+          <ul>
+            <li><strong>Proctored:</strong> In the classroom or at the testing center.</li>
+            <li><strong>Timed:</strong> Strict time limit — submit immediately when time expires.</li>
+            <li><strong>Closed-book and closed-note</strong> unless Dr. McNaughton explicitly states otherwise.</li>
+            <li><strong>No GenAI:</strong> Use of AI during an exam results in an immediate zero under Path B of the Academic Integrity Policy.</li>
+          </ul>
+          <p>If you have a technical issue during a Canvas-based exam, <strong>contact Dr. McNaughton immediately</strong> via email or text to document the problem.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="grades">
+        <button class="faq-q" onclick="toggleFAQ(this)">How is my final grade calculated?<span class="arrow">▾</span></button>
+        <div class="faq-a">
+          <p>Your grade uses <strong>weighted grading</strong>:</p>
+          <ul>
+            <li>Unit Exams (4 total): <strong>55%</strong></li>
+            <li>Labs: <strong>20%</strong></li>
+            <li>Homework, Discussions, Assignments, Projects: <strong>20%</strong></li>
+            <li>Final Exam (Common Assessment): <strong>5%</strong></li>
+          </ul>
+          <div class="success-box">💡 Your unit exams are by far the biggest factor — invest your study time there!</div>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="grades">
+        <button class="faq-q" onclick="toggleFAQ(this)">How do I request feedback on a graded assignment?<span class="arrow">▾</span></button>
+        <div class="faq-a">
+          <p>Feedback is available, but you have to request it:</p>
+          <ul>
+            <li>You must request feedback <strong>within 7 calendar days</strong> of receiving your grade.</li>
+            <li>Feedback is provided in a <strong>one-on-one session</strong> (in-person or virtual).</li>
+            <li>You can also request <strong>written feedback</strong> as an alternative or supplement.</li>
+          </ul>
+          <p>Email Dr. McNaughton to set up a review session within that window.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="lab">
+        <button class="faq-q" onclick="toggleFAQ(this)">What are the lab safety requirements?<span class="arrow">▾</span></button>
+        <div class="faq-a">
+          <p>Lab is a hands-on, safety-sensitive environment. Requirements:</p>
+          <ul>
+            <li><strong>Closed-toe shoes</strong> required at all times.</li>
+            <li><strong>Hair secured</strong> back if it could interfere with work.</li>
+            <li><strong>No food or drink</strong> in the lab.</li>
+            <li>Follow all <strong>PPE rules</strong> and safety briefings.</li>
+            <li>Adhere to all posted procedures.</li>
+          </ul>
+          <div class="highlight">⚠️ Failure to follow safety instructions may result in removal from lab and <strong>loss of credit</strong> for that activity.</div>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="lab">
+        <button class="faq-q" onclick="toggleFAQ(this)">Can I make up a missed lab?<span class="arrow">▾</span></button>
+        <div class="faq-a">
+          <p><strong>No.</strong> Labs cannot be made up. They fall under Category 1 (Zero Tolerance). If you miss a lab, you receive a zero for that activity.</p>
+          <p>The lab manual is embedded in the course — you do <em>not</em> need to purchase a printed lab manual or lab kit. Lab material fees are included in your registration fees.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="ai">
+        <button class="faq-q" onclick="toggleFAQ(this)">What can I use AI for in this course?<span class="arrow">▾</span></button>
+        <div class="faq-a">
+          <p><strong>Permitted uses:</strong></p>
+          <ul>
+            <li>Brainstorming, explaining tough concepts, summarizing your notes</li>
+            <li>Correcting grammar, creating outlines, formatting slides</li>
+            <li>Generating a first draft (must be significantly rewritten in your own voice)</li>
+            <li>Translation support for non-native English speakers (to clarify, not write)</li>
+          </ul>
+          <p><strong>Not permitted:</strong></p>
+          <ul>
+            <li>Submitting AI-generated text directly as your own work</li>
+            <li>Using AI during exams, quizzes, or lab reports</li>
+            <li>Fabricating citations, sources, or lab data with AI</li>
+          </ul>
+          <div class="highlight">📝 You must cite AI tools used. If you can't explain your work in a follow-up conversation, Dr. McNaughton may trigger the 48-hour Alternative Assessment.</div>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="ai">
+        <button class="faq-q" onclick="toggleFAQ(this)">What counts as academic dishonesty?<span class="arrow">▾</span></button>
+        <div class="faq-a">
+          <p>Academic dishonesty includes cheating, plagiarism, fabrication, dual submission, and facilitating others' dishonesty. The course uses a two-path system:</p>
+          <ul>
+            <li><strong>Path A (Suspicion):</strong> You'll complete a 48-hour alternative assessment to prove mastery. Prove it → keep your grade. Can't prove it → zero.</li>
+            <li><strong>Path B (Confirmed):</strong> Immediate zero, no redo. Examples: phone/cheat sheet caught in exam, 1:1 plagiarism match, blatant unattributed AI use.</li>
+          </ul>
+          <div class="highlight">⚠️ A second confirmed offense = automatic F for the semester + possible dismissal.</div>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="deadlines">
+        <button class="faq-q" onclick="toggleFAQ(this)">I have a college-sponsored activity during class — what do I do?<span class="arrow">▾</span></button>
+        <div class="faq-a">
+          <p>Notify Dr. McNaughton <strong>at least 48 hours before the missed class</strong>. Once notified, he'll discuss expectations and a make-up timeline with you. The window for make-up depends on the length of the absence.</p>
+          <div class="success-box">✅ Plan ahead — 48 hours is the hard minimum. Don't wait until the day before.</div>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="contact">
+        <button class="faq-q" onclick="toggleFAQ(this)">What's the best way to contact Dr. McNaughton?<span class="arrow">▾</span></button>
+        <div class="faq-a">
+          <p>Email is the <strong>most effective method</strong>. Use your WITCC student email (<em>first.last@my.witcc.edu</em>) and include your course number and full name in every message. Response time is within <strong>48 business hours (Mon–Fri)</strong>.</p>
+          <p>For urgent matters, use: <strong>"URGENT: [Your Topic]"</strong> as the subject line.</p>
+          <p>You can also reach him at <strong>712-574-9133</strong> or visit office L322 during office hours (by appointment): Mon 1–1:50 PM or Tue 9–9:50 AM.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="grades">
+        <button class="faq-q" onclick="toggleFAQ(this)">Where do I submit assignments?<span class="arrow">▾</span></button>
+        <div class="faq-a">
+          <p>Assignments are submitted in three ways — always check the specific instructions for each task:</p>
+          <ul>
+            <li><strong>Canvas Submissions:</strong> Digital assignments uploaded to Canvas by the deadline. Ensure your file is in a compatible format (.docx, .pdf).</li>
+            <li><strong>In-Person Submissions:</strong> Certain labs and in-class work must be handed in physically during the class session (Category 1 policy applies).</li>
+            <li><strong>Hybrid Submissions:</strong> Some projects may require both an in-person presentation and a digital submission to Canvas.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="faq-item" data-cat="contact">
+        <button class="faq-q" onclick="toggleFAQ(this)">I need accommodations — how do I get them?<span class="arrow">▾</span></button>
+        <div class="faq-a">
+          <p>Students with documented disabilities should contact <strong>ADA Accommodation Services</strong>:</p>
+          <ul>
+            <li>📍 Located in the Admissions office</li>
+            <li>📞 (712) 317-3440</li>
+          </ul>
+          <p>Submit your documentation to Dr. McNaughton as early in the semester as possible so accommodations can be arranged in time.</p>
+          <div class="success-box">✅ Accommodation Services documentation is the only exception to the no-makeup and late policies.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <p id="faqEmpty" style="display:none;text-align:center;color:var(--ink-faint);padding:2rem 0;">No matching questions found. Try the <strong>Ask a Question</strong> tab!</p>
+  </section>
+
+  <!-- ===== ASK A QUESTION ===== -->
+  <section id="tab-ask" class="section">
+    <h2 class="section-title">Ask a Question</h2>
+    <p class="section-desc">Have a question about the course? Get an AI-powered answer based on the syllabus — available 24/7.</p>
+
+    <div class="ask-wrap">
+      <label for="studentQuestion">What's your question?</label>
+      <textarea id="studentQuestion" placeholder="e.g. What happens if I miss an exam? How are labs graded? Can I use ChatGPT for homework?"></textarea>
+      <p class="hint">This AI assistant is trained on Dr. McNaughton's BIO 168 syllabus. For official confirmation, always reach out to your instructor.</p>
+      <button class="ask-btn" onclick="askQuestion()">Get Answer ✨</button>
+      <div class="ask-result" id="askResult"></div>
+    </div>
+
+    <div class="card" style="margin-top:1.5rem;">
+      <h3 style="font-size:0.875rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-muted);margin-bottom:0.75rem;">Popular Questions</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        <button onclick="quickAsk('What is the late penalty for turning in an assignment late?')" style="background:var(--bone);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12.5px;cursor:pointer;font-family:inherit;color:var(--ink-muted);">Late penalties?</button>
+        <button onclick="quickAsk('How much are exams worth in my final grade?')" style="background:var(--bone);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12.5px;cursor:pointer;font-family:inherit;color:var(--ink-muted);">Exam weight?</button>
+        <button onclick="quickAsk('What AI tools am I allowed to use for assignments?')" style="background:var(--bone);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12.5px;cursor:pointer;font-family:inherit;color:var(--ink-muted);">AI rules?</button>
+        <button onclick="quickAsk('What should I do if I have a lab safety concern?')" style="background:var(--bone);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12.5px;cursor:pointer;font-family:inherit;color:var(--ink-muted);">Lab safety?</button>
+        <button onclick="quickAsk('How do I contact Dr. McNaughton and how long will it take to hear back?')" style="background:var(--bone);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12.5px;cursor:pointer;font-family:inherit;color:var(--ink-muted);">Contact info?</button>
+        <button onclick="quickAsk('What is the attendance policy and what happens if I miss class?')" style="background:var(--bone);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:12.5px;cursor:pointer;font-family:inherit;color:var(--ink-muted);">Attendance policy?</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer-note">
+    BIO-168-01 · Spring 2026 · Western Iowa Tech Community College · Dr. Lee McNaughton<br>
+    This syllabus is a general guide and may be updated during the term. Any changes will be announced in class and posted on Canvas.
+  </div>
+</main>
+
+<script>
+const SYLLABUS = `
+You are a helpful course assistant for BIO 168 Human Anatomy and Physiology I at Western Iowa Tech Community College, taught by Dr. Lee McNaughton in Spring 2026.
+
+Here is the full course syllabus information:
+
+COURSE INFO:
+- Course: BIO-168-01-VS SP26 Human Anatomy and Physiology I, 4 credit hours
+- Dates: January 12 – May 8, 2026
+- Lecture: Tuesday 8:00–8:50 AM and Thursday 8:00–9:50 AM in room L124
+- Laboratory: Thursday 10:00–11:50 AM in room L147
+- Instructor: Dr. Lee McNaughton
+- Phone: 712-574-9133
+- Email: Lee.McNaughton@witcc.edu
+- Office: L322
+- Office Hours: By appointment – Monday 1:00–1:50 PM, Tuesday 9:00–9:50 AM
+
+TEXTBOOK:
+- Fundamentals of Anatomy & Physiology, 12th ed., by Martini (VitalSource – no additional purchase needed if registered)
+- Lab manual is embedded in the course – no purchase needed. Fees included in registration.
+
+GRADING BREAKDOWN (Weighted):
+- Unit Exams (4 total): 55%
+- Final Exam (Common Assessment): 5%
+- Labs: 20%
+- Homework, Discussions, Assignments, Projects: 20%
+
+GRADING SCALE:
+100-93: A, <93-90: A-, <90-87: B+, <87-83: B, <83-80: B-, <80-77: C+, <77-73: C, <73-70: C-, <70-67: D+, <67-63: D, <63-60: D-, <60-0: F
+
+DEADLINE POLICIES:
+Category 1 (Zero Tolerance - NO MAKEUPS): Labs, in-class activities, quizzes, and "windowed" assignments (open 5+ days). Missing these = zero, no exceptions.
+
+Category 2 (5-School-Day Safety Net): Exams and standard assignments. Grace period of 5 school days with a flat 25% deduction. After 5 days, grade = zero. For missed exams, student MUST email or text instructor the SAME DAY to schedule makeup.
+
+Final Exam: CANNOT be rescheduled or made up under any circumstances (except Accommodation Services documentation).
+
+AI POLICY (Limited & Responsible):
+Permitted: Brainstorming, explaining concepts, summarizing notes, grammar correction, outlines, formatting slides, generating first drafts (must be significantly transformed into your own voice), image generation for creative projects, translation support for non-native speakers (to clarify, not write), accessibility tools.
+NOT Permitted: Copy-pasting AI text as your own, using AI during exams/quizzes/lab reports, fabricating citations or lab data, substituting AI for your own analysis.
+Must cite AI tools used. If work appears entirely AI-generated and student cannot explain logic during follow-up, Path A is triggered.
+
+ACADEMIC INTEGRITY:
+Path A (Suspicion): 48-hour alternative assessment to prove mastery. Prove it = keep grade. Fail/refuse = zero.
+Path B (Confirmed – phone/cheat sheet, plagiarism match, blatant AI): Immediate zero, no redo. Second offense = automatic F + possible dismissal.
+
+LAB POLICIES:
+Closed-toe shoes, hair secured, no food or drink. Attendance required. Labs CANNOT be made up. Follow all PPE rules and safety briefings. Failure to comply may result in removal and loss of credit.
+
+COMMUNICATION:
+Primary: Email via WITCC student account (first.last@my.witcc.edu). Include course number and full name. Response time: 48 business hours Mon–Fri. For urgent matters, use subject: "URGENT: [Topic]".
+
+ACCOMMODATIONS:
+ADA Accommodation Services: Admissions office, (712) 317-3440. Submit documentation to instructor as early as possible. Accommodations documentation is the ONLY exception to no-makeup/late policies.
+
+ASSIGNMENT SUBMISSION:
+Canvas Submissions (digital), In-Person Submissions (labs/in-class work), or Hybrid (in-person presentation + digital Canvas submission). Check specific instructions for each task.
+
+FEEDBACK POLICY:
+Must request within 7 calendar days of receiving grade. Provided in one-on-one session (in-person or virtual). Written feedback also available on request.
+
+COURSE TOPICS: Introduction to A&P, anatomical terminology, homeostasis, chemistry of life, cells, tissues, skeletal system, muscular system, nervous system (CNS, PNS, autonomic, somatic), special senses, fluid/electrolyte/acid-base balance.
+
+---
+
+Answer the student's question based ONLY on this syllabus. Be warm, helpful, and specific. Keep answers concise (2–4 sentences). If something isn't covered in the syllabus, say so and suggest the student contact Dr. McNaughton directly. Do not make up information.
+`;
+
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function toggleFAQ(btn) {
+  const item = btn.parentElement;
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+
+function filterCat(cat, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('faqSearch').value = '';
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.style.display = (cat === 'all' || item.dataset.cat === cat) ? '' : 'none';
+  });
+  checkEmpty();
+}
+
+function filterFAQ(val) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.filter-btn').classList.add('active');
+  const q = val.toLowerCase();
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const text = item.textContent.toLowerCase();
+    item.style.display = text.includes(q) ? '' : 'none';
+  });
+  checkEmpty();
+}
+
+function checkEmpty() {
+  const visible = [...document.querySelectorAll('.faq-item')].filter(i => i.style.display !== 'none');
+  document.getElementById('faqEmpty').style.display = visible.length === 0 ? 'block' : 'none';
+}
+
+function quickAsk(q) {
+  document.getElementById('studentQuestion').value = q;
+  showTab('ask');
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-btn')[4].classList.add('active');
+  askQuestion();
+}
+
+async function askQuestion() {
+  const q = document.getElementById('studentQuestion').value.trim();
+  if (!q) return;
+  const resultEl = document.getElementById('askResult');
+  resultEl.style.display = 'block';
+  resultEl.innerHTML = '<span class="thinking">Checking the syllabus for you…</span>';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYLLABUS,
+        messages: [{ role: 'user', content: q }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.map(c => c.text || '').join('') || 'Sorry, I couldn\'t generate a response. Please try again.';
+    resultEl.innerHTML = text.replace(/\n\n/g, '<br><br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  } catch (e) {
+    resultEl.innerHTML = 'Something went wrong. Please check your connection and try again, or email Dr. McNaughton directly.';
+  }
+}
+</script>
+</body>
+</html>

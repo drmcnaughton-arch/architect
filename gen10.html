@@ -3,122 +3,155 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chapter 13: Translation & Proteins</title>
+<title>Ch. 13: Translation & Proteins – Full Interactive Suite</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --primary: #63b3ed;
-    --text: #e2e8f0;
-    --accent: #68d391;
-    --radius: 8px;
+    --bg: #0d1117; --surface: #161b22; --surface2: #1e2633; --surface3: #252d3a;
+    --border: rgba(99,179,237,0.15); --primary: #63b3ed; --accent: #68d391;
+    --accent2: #f6ad55; --accent3: #fc8181; --accent4: #b794f4; --text: #e2e8f0;
+    --text-muted: #8899aa; --radius: 14px; --radius-sm: 8px;
+    --font-head: 'Sora', sans-serif; --font-body: 'Lora', serif;
+    /* Concept Colors matched to lecture themes */
+    --machinery: #63b3ed; --steps: #68d391; --diversity: #b794f4;
   }
-  body { font-family: 'Sora', sans-serif; background: var(--bg); color: var(--text); padding: 20px; line-height: 1.6; }
-  .container { max-width: 800px; margin: auto; background: var(--surface); padding: 30px; border-radius: var(--radius); }
-  h1 { color: var(--primary); margin-top: 0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.7; }
   
-  /* Accordion Styles */
-  .accordion { margin-bottom: 10px; }
-  .accordion-header { width: 100%; background: #252d3a; color: white; padding: 15px; text-align: left; border: none; cursor: pointer; border-radius: var(--radius); font-weight: 600; display: flex; justify-content: space-between; }
-  .accordion-content { display: none; padding: 15px; background: #1e2633; border-bottom-left-radius: var(--radius); border-bottom-right-radius: var(--radius); }
+  /* HEADER & PROGRESS (Direct Port from original) */
+  header { background: linear-gradient(135deg, #0d1117 0%, #1a1f2e 50%, #0d1117 100%); border-bottom: 1px solid var(--border); padding: 22px 32px; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+  .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+  .logo { display: flex; align-items: center; gap: 14px; }
+  .logo-icon { width: 44px; height: 44px; background: linear-gradient(135deg, var(--primary), var(--accent4)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .overall-bar-wrap { display: flex; flex-direction: column; gap: 4px; }
+  .overall-bar-outer { width: 140px; height: 8px; background: var(--surface3); border-radius: 99px; overflow: hidden; }
+  .overall-bar-inner { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); width: 0%; transition: width 0.5s ease; }
+
+  /* MAIN NAVIGATION TABS */
+  .tabs-outer { background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 89px; z-index: 90; }
+  .tabs-inner { max-width: 1200px; margin: 0 auto; padding: 0 32px; display: flex; gap: 2px; }
+  .tab-btn { font-family: var(--font-head); font-size: 0.88rem; font-weight: 600; padding: 14px 24px; border: none; background: transparent; color: var(--text-muted); cursor: pointer; border-bottom: 3px solid transparent; }
+  .tab-btn.active { color: var(--text); border-bottom-color: var(--primary); }
+
+  main { max-width: 1200px; margin: 0 auto; padding: 36px 32px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* CONTENT COMPONENTS */
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .card-head { padding: 14px 20px; background: var(--surface2); font-weight: 600; color: var(--primary); }
+  .card-body { padding: 20px; }
+  .info-box { padding: 12px 16px; border-radius: var(--radius-sm); border-left: 3px solid var(--primary); background: rgba(99,179,237,0.07); margin-top: 10px; font-size: 0.9rem; }
   
-  /* Quiz Styles */
-  .quiz-box { margin-top: 30px; border-top: 2px solid var(--primary); padding-top: 20px; }
-  .drop-zone { min-height: 50px; background: #0d1117; margin: 10px 0; padding: 10px; border: 2px dashed var(--primary); border-radius: var(--radius); }
-  button.submit-btn { background: var(--primary); color: #000; border: none; padding: 10px 20px; border-radius: var(--radius); cursor: pointer; font-weight: bold; margin-top: 10px; }
-  
-  [aria-expanded="true"] + .accordion-content { display: block; }
+  /* FLASHCARD ARENA (Direct Port) */
+  .card-arena { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 40px 0; }
+  .flashcard { width: 100%; max-width: 500px; height: 250px; perspective: 1000px; cursor: pointer; }
+  .fc-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
+  .flashcard.flipped .fc-inner { transform: rotateY(180deg); }
+  .fc-front, .fc-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; padding: 30px; border-radius: var(--radius); border: 1px solid var(--border); }
+  .fc-front { background: var(--surface2); color: var(--primary); font-size: 1.4rem; font-weight: 700; }
+  .fc-back { background: var(--surface3); color: var(--text); transform: rotateY(180deg); font-size: 1.1rem; }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <h1>Chapter 13: Translation & Proteins</h1>
-  <p>Explore the mechanics of protein synthesis. Use the sections below to guide your study.</p>
-
-  <div class="accordion">
-    <button class="accordion-header" aria-expanded="false" onclick="toggle(this)">1. The Translation Machinery</button>
-    <div class="accordion-content">
-      <p>Translation requires three main components to polymerize amino acids:</p>
-      <ul>
-        <li><strong>Ribosomes:</strong> The "factory." 70S (prokaryotic) vs 80S (eukaryotic).</li>
-        <li><strong>tRNA:</strong> The "adapter" that brings specific amino acids.</li>
-        <li><strong>Aminoacyl tRNA Synthetase:</strong> The enzyme that "charges" the tRNA with the correct amino acid.</li>
-      </ul>
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">🧬</div>
+      <div class="logo-text"><h1>Ch. 13: Translation</h1><span>Lecture Companion</span></div>
+    </div>
+    <div class="overall-bar-wrap">
+      <div class="overall-bar-outer"><div id="progress-bar" class="overall-bar-inner"></div></div>
     </div>
   </div>
+</header>
 
-  <div class="accordion">
-    <button class="accordion-header" aria-expanded="false" onclick="toggle(this)">2. The Three Steps of Translation</button>
-    <div class="accordion-content">
-      <p>Translation occurs in three highly regulated phases:</p>
-      <ol>
-        <li><strong>Initiation:</strong> Small subunit binds mRNA; initiator tRNA pairs with start codon.</li>
-        <li><strong>Elongation:</strong> Peptide bond formation occurs; the ribosome moves along the mRNA.</li>
-        <li><strong>Termination:</strong> Release factors bind to the stop codon; the complex dissociates.</li>
-      </ol>
-    </div>
-  </div>
-
-  <div class="accordion">
-    <button class="accordion-header" aria-expanded="false" onclick="toggle(this)">3. Protein Diversity</button>
-    <div class="accordion-content">
-      <p>Proteins serve diverse roles:</p>
-      <ul>
-        <li><strong>Enzymes:</strong> Catalyze reactions.</li>
-        <li><strong>Immunoglobulins:</strong> Immune response.</li>
-        <li><strong>Histones:</strong> DNA binding/compaction.</li>
-        <li><strong>Transcription Factors:</strong> Gene expression regulation.</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="quiz-box">
-    <h3>Quick Check: Sequence the Stages</h3>
-    <p>Select the correct order of the Translation Process:</p>
-    <select id="q1">
-      <option value="">--Select Step 1--</option>
-      <option value="init">Initiation</option>
-      <option value="elon">Elongation</option>
-      <option value="term">Termination</option>
-    </select>
-    <select id="q2">
-      <option value="">--Select Step 2--</option>
-      <option value="init">Initiation</option>
-      <option value="elon">Elongation</option>
-      <option value="term">Termination</option>
-    </select>
-    <select id="q3">
-      <option value="">--Select Step 3--</option>
-      <option value="init">Initiation</option>
-      <option value="elon">Elongation</option>
-      <option value="term">Termination</option>
-    </select>
-    <br>
-    <button class="submit-btn" onclick="checkQuiz()">Check Answer</button>
-    <p id="result"></p>
+<div class="tabs-outer">
+  <div class="tabs-inner">
+    <button class="tab-btn active" onclick="openTab(event, 'machinery')">13.1: Machinery</button>
+    <button class="tab-btn" onclick="openTab(event, 'steps')">13.2: The Steps</button>
+    <button class="tab-btn" onclick="openTab(event, 'diversity')">13.8: Diversity</button>
+    <button class="tab-btn" onclick="openTab(event, 'study')">Study Cards</button>
   </div>
 </div>
 
-<script>
-  function toggle(btn) {
-    const expanded = btn.getAttribute('aria-expanded') === 'true';
-    btn.setAttribute('aria-expanded', !expanded);
-  }
+<main>
+  <section id="machinery" class="tab-panel active">
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-head">Ribosomal Subunits</div>
+        <div class="card-body">
+          <p>Ribosomes consist of large and small subunits[cite: 1639].</p>
+          <div class="info-box">
+            <strong>Bacterial (70S):</strong> 50S + 30S subunits[cite: 1791].<br>
+            <strong>Eukaryotic (80S):</strong> 60S + 40S subunits[cite: 1792].
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head">tRNA Charging</div>
+        <div class="card-body">
+          <p>Aminoacyl tRNA synthetase chemically links tRNAs to their proper amino acids[cite: 1651].</p>
+          <div class="info-box">There are 20 different synthetases—one for each amino acid[cite: 1652].</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  function checkQuiz() {
-    const q1 = document.getElementById('q1').value;
-    const q2 = document.getElementById('q2').value;
-    const q3 = document.getElementById('q3').value;
-    const res = document.getElementById('result');
+  <section id="steps" class="tab-panel">
+    <div class="card">
+      <div class="card-head">The Three Phases of Translation</div>
+      <div class="card-body">
+        <div class="info-box"><strong>1. Initiation:</strong> Requires IF1, IF2, IF3, and GTP [cite: 1656-1657].</div>
+        <div class="info-box" style="border-color: var(--accent);"><strong>2. Elongation:</strong> EF-Tu and EF-G facilitate the addition of amino acids [cite: 1657-1658].</div>
+        <div class="info-box" style="border-color: var(--accent3);"><strong>3. Termination:</strong> Triggered by stop codons (UAG, UAA, UGA) and release factors [cite: 1677-1678].</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="diversity" class="tab-panel">
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-head">Protein Structure Levels</div>
+        <div class="card-body">
+          <ul>
+            <li><strong>Primary:</strong> Amino acid sequence[cite: 1730].</li>
+            <li><strong>Secondary:</strong> Alpha-helices and Beta-sheets[cite: 1730].</li>
+            <li><strong>Tertiary:</strong> 3D conformation[cite: 1730].</li>
+            <li><strong>Quaternary:</strong> Multiple polypeptide chains[cite: 1731].</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="study" class="tab-panel">
+    <div class="card-arena">
+      <div class="flashcard" onclick="this.classList.toggle('flipped')">
+        <div class="fc-inner">
+          <div class="fc-front">Histones</div>
+          <div class="fc-back">Proteins that bind to DNA in eukaryotes[cite: 1744].</div>
+        </div>
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.8rem;">Click card to flip</p>
+    </div>
+  </section>
+</main>
+
+<script>
+  let viewed = new Set();
+  function openTab(evt, name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(name).classList.add('active');
+    evt.currentTarget.classList.add('active');
     
-    if(q1 === 'init' && q2 === 'elon' && q3 === 'term') {
-      res.textContent = "Correct! You understand the sequence.";
-      res.style.color = "var(--accent)";
-    } else {
-      res.textContent = "Not quite. Review the 'Three Steps' section and try again.";
-      res.style.color = "red";
-    }
+    viewed.add(name);
+    document.getElementById('progress-bar').style.width = (viewed.size / 4 * 100) + '%';
   }
 </script>
 </body>

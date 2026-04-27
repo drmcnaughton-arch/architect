@@ -1,1442 +1,182 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Mendelian Genetics Interactive Study Tool</title>
-
-<style>
-:root {
-  --text: #111111;
-  --background: #ffffff;
-  --panel: #ffffff;
-  --soft: #f5f5f5;
-  --line: #222222;
-  --blue: #004b8d;
-  --blue-light: #eaf3ff;
-  --green: #0b6b2b;
-  --green-light: #ecfdf2;
-  --red: #9b1c1c;
-  --red-light: #fff0f0;
-  --yellow: #fff8d6;
-  --focus: #000000;
-  --max-width: 940px;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  background: var(--background);
-  color: var(--text);
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 19px;
-  line-height: 1.65;
-}
-
-a {
-  color: var(--blue);
-  font-weight: 700;
-}
-
-button,
-input,
-select,
-textarea {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-.skip-link {
-  position: absolute;
-  top: -100px;
-  left: 0;
-  background: #000;
-  color: #fff;
-  padding: 12px 16px;
-  z-index: 999;
-}
-
-.skip-link:focus {
-  top: 0;
-}
-
-header {
-  border-bottom: 4px solid #000;
-  background: #fff;
-}
-
-.header-inner {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 28px 20px;
-}
-
-h1 {
-  margin: 0 0 8px;
-  font-size: clamp(2rem, 4vw, 3rem);
-  line-height: 1.1;
-}
-
-.subtitle {
-  margin: 0;
-  font-size: 1.1rem;
-  max-width: 760px;
-}
-
-main {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 24px 20px 80px;
-}
-
-nav {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 20px;
-  border-bottom: 2px solid #000;
-}
-
-nav h2 {
-  margin-top: 0;
-}
-
-.nav-list {
-  display: grid;
-  gap: 10px;
-  padding-left: 0;
-  list-style: none;
-}
-
-.nav-list a {
-  display: block;
-  padding: 12px 14px;
-  border: 2px solid #000;
-  background: #fff;
-  text-decoration: none;
-}
-
-.nav-list a:hover,
-.nav-list a:focus {
-  background: var(--blue-light);
-}
-
-section.topic {
-  border-top: 4px solid #000;
-  padding-top: 32px;
-  margin-top: 44px;
-}
-
-.topic-title {
-  font-size: clamp(1.65rem, 3vw, 2.2rem);
-  line-height: 1.15;
-  margin: 0 0 8px;
-}
-
-.topic-summary {
-  font-size: 1.05rem;
-  margin-top: 0;
-  max-width: 780px;
-}
-
-.tool-block {
-  border: 2px solid #000;
-  padding: 22px;
-  margin: 26px 0;
-  background: #fff;
-}
-
-.tool-block h3 {
-  margin-top: 0;
-  font-size: 1.35rem;
-  line-height: 1.25;
-}
-
-.study-notes {
-  padding-left: 1.2em;
-}
-
-.study-notes li {
-  margin-bottom: 9px;
-}
-
-.note-group {
-  margin-bottom: 22px;
-}
-
-.note-group h4 {
-  font-size: 1.15rem;
-  margin: 0 0 8px;
-}
-
-button.primary,
-button.secondary,
-button.good,
-button.bad {
-  border: 3px solid #000;
-  padding: 12px 18px;
-  margin: 6px 8px 6px 0;
-  font-weight: 700;
-  border-radius: 0;
-}
-
-button.primary {
-  background: var(--blue);
-  color: #fff;
-}
-
-button.secondary {
-  background: #fff;
-  color: #000;
-}
-
-button.good {
-  background: var(--green);
-  color: #fff;
-}
-
-button.bad {
-  background: var(--red);
-  color: #fff;
-}
-
-button:hover,
-button:focus {
-  outline: 4px solid var(--focus);
-  outline-offset: 3px;
-}
-
-.flashcard {
-  border: 3px solid #000;
-  background: var(--blue-light);
-  padding: 28px;
-  min-height: 190px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  margin: 18px 0;
-}
-
-.flashcard strong {
-  display: block;
-  font-size: 1.25rem;
-  line-height: 1.45;
-}
-
-.status-line {
-  font-weight: 700;
-  margin: 12px 0;
-}
-
-.progress-area {
-  border: 2px solid #000;
-  padding: 18px;
-  margin: 22px 0;
-  background: var(--soft);
-}
-
-.progress-row {
-  margin-bottom: 12px;
-}
-
-progress {
-  width: 100%;
-  height: 24px;
-  accent-color: var(--blue);
-}
-
-.match-item,
-.practice-item {
-  border-top: 1px solid #777;
-  padding: 18px 0;
-}
-
-.match-item:first-of-type,
-.practice-item:first-of-type {
-  border-top: 0;
-}
-
-label {
-  font-weight: 700;
-  display: block;
-  margin-bottom: 8px;
-}
-
-select,
-input[type="text"],
-textarea {
-  width: 100%;
-  border: 3px solid #000;
-  padding: 12px;
-  background: #fff;
-  color: #000;
-}
-
-textarea {
-  min-height: 120px;
-  resize: vertical;
-}
-
-.radio-option {
-  display: block;
-  border: 2px solid #000;
-  padding: 12px;
-  margin: 10px 0;
-  background: #fff;
-  font-weight: 400;
-}
-
-.radio-option input {
-  width: 20px;
-  height: 20px;
-  margin-right: 8px;
-}
-
-.feedback {
-  display: none;
-  border: 3px solid #000;
-  padding: 14px;
-  margin-top: 16px;
-  font-weight: 700;
-}
-
-.feedback.show {
-  display: block;
-}
-
-.feedback.correct {
-  background: var(--green-light);
-  border-color: var(--green);
-}
-
-.feedback.partial {
-  background: var(--yellow);
-}
-
-.feedback.incorrect {
-  background: var(--red-light);
-  border-color: var(--red);
-}
-
-.answer-key {
-  display: none;
-  border: 3px solid #000;
-  background: #fff;
-  padding: 16px;
-  margin-top: 16px;
-}
-
-.answer-key.show {
-  display: block;
-}
-
-.answer-key h4 {
-  margin-top: 0;
-}
-
-.answer-key li {
-  margin-bottom: 8px;
-}
-
-.item-status {
-  display: block;
-  margin-top: 8px;
-  font-weight: 700;
-}
-
-.correct-input {
-  background: var(--green-light);
-  border-color: var(--green);
-}
-
-.incorrect-input {
-  background: var(--red-light);
-  border-color: var(--red);
-}
-
-.overview-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 16px;
-}
-
-.overview-table th,
-.overview-table td {
-  border: 2px solid #000;
-  padding: 12px;
-  text-align: left;
-  vertical-align: top;
-}
-
-.overview-table th {
-  background: #000;
-  color: #fff;
-}
-
-.overview-table tr:nth-child(even) td {
-  background: var(--soft);
-}
-
-.small-text {
-  font-size: 0.95rem;
-}
-
-footer {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  border-top: 4px solid #000;
-  padding: 24px 20px 50px;
-}
-
-@media (max-width: 700px) {
-  body {
-    font-size: 18px;
-  }
-
-  main,
-  nav,
-  .header-inner,
-  footer {
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-
-  .tool-block {
-    padding: 18px;
-  }
-
-  button.primary,
-  button.secondary,
-  button.good,
-  button.bad {
-    width: 100%;
-    margin-right: 0;
-  }
-
-  .overview-table {
-    font-size: 0.95rem;
-  }
-}
-
-@media print {
-  nav,
-  .flashcard-controls,
-  .activity-controls,
-  .progress-area,
-  footer {
-    display: none !important;
-  }
-
-  body {
-    font-size: 12pt;
-    line-height: 1.45;
-  }
-
-  main {
-    max-width: none;
-    padding: 0;
-  }
-
-  section.topic,
-  .tool-block {
-    break-inside: avoid;
-  }
-
-  .tool-block {
-    border: 1px solid #000;
-  }
-
-  .answer-key {
-    display: block !important;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mendelian Genetics Readable Study Tool</title>
+  <style>
+    :root{
+      --text:#000;
+      --bg:#fff;
+      --panel:#fff;
+      --soft:#f7f7f7;
+      --line:#111;
+      --link:#004b8d;
+      --focus:#ffbf47;
+      --good-bg:#e9f8ee;
+      --bad-bg:#fff0f0;
+      --info-bg:#eef6ff;
+      --max:880px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;font-size:20px;line-height:1.65}
+    a{color:var(--link);font-weight:700}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    .skip-link{position:absolute;left:0;top:-100px;background:#000;color:#fff;padding:12px 16px;z-index:9999}
+    .skip-link:focus{top:0}
+    header{border-bottom:4px solid #000;background:#fff}
+    .wrap{max-width:var(--max);margin:0 auto;padding:24px 18px}
+    h1{font-size:clamp(2rem,5vw,3rem);line-height:1.1;margin:0 0 8px}
+    h2{font-size:clamp(1.6rem,4vw,2.1rem);line-height:1.2;margin:0 0 10px}
+    h3{font-size:1.35rem;line-height:1.25;margin:0 0 12px}
+    h4{font-size:1.12rem;margin:20px 0 8px}
+    p{margin:0 0 14px}
+    .lead{font-size:1.08rem;max-width:760px}
+    nav{border-bottom:3px solid #000;background:#fff}
+    .contents{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:10px}
+    .contents a{display:block;border:2px solid #000;padding:12px 14px;text-decoration:none;background:#fff;color:#000}
+    .contents a:hover,.contents a:focus{background:var(--info-bg)}
+    main section.topic{border-top:4px solid #000;padding-top:32px;margin-top:42px}
+    .summary{font-size:1.05rem;max-width:760px}
+    .block{border:2px solid #000;background:#fff;padding:20px;margin:22px 0}
+    .block.plain{border:0;padding:0;margin:22px 0}
+    ul{padding-left:1.35em}
+    li{margin:7px 0}
+    .overview-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.98rem}
+    .overview-table th,.overview-table td{border:2px solid #000;padding:10px;text-align:left;vertical-align:top}
+    .overview-table th{background:#000;color:#fff}
+    .overview-table tr:nth-child(even) td{background:var(--soft)}
+    .progress-box{background:var(--soft);border:2px solid #000;padding:16px;margin:18px 0}
+    progress{width:100%;height:26px;accent-color:#004b8d}
+    .status{font-weight:700;margin:10px 0}
+    .flashcard{background:var(--info-bg);border:3px solid #000;padding:24px;min-height:170px;margin:16px 0;display:flex;align-items:center;justify-content:center;text-align:center}
+    .flashcard .label{font-weight:700;text-transform:uppercase;letter-spacing:.04em;font-size:.9rem;margin-bottom:8px}
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+    button{border:3px solid #000;background:#fff;color:#000;padding:11px 15px;font-weight:700;border-radius:0}
+    button.primary{background:#004b8d;color:#fff}
+    button.good{background:#0b6b2b;color:#fff}
+    button.bad{background:#9b1c1c;color:#fff}
+    button:focus,button:hover,a:focus,select:focus,input:focus,textarea:focus{outline:4px solid var(--focus);outline-offset:2px}
+    label{display:block;font-weight:700;margin-bottom:8px}
+    select,input[type=text],textarea{width:100%;border:3px solid #000;background:#fff;color:#000;padding:11px;margin-top:4px}
+    textarea{min-height:115px;resize:vertical}
+    .item{border-top:1px solid #777;padding:16px 0}
+    .item:first-child{border-top:0}
+    .item-status{display:block;margin-top:8px;font-weight:700}
+    .correct-field{background:var(--good-bg);border-color:#0b6b2b!important}
+    .wrong-field{background:var(--bad-bg);border-color:#9b1c1c!important}
+    .radio{display:block;border:2px solid #000;padding:10px 12px;margin:8px 0;font-weight:400;background:#fff}
+    .radio input{width:20px;height:20px;margin-right:8px;vertical-align:middle}
+    .feedback{display:none;border:3px solid #000;padding:13px;margin-top:14px;font-weight:700}
+    .feedback.show{display:block}
+    .feedback.good{background:var(--good-bg);border-color:#0b6b2b}
+    .feedback.partial{background:#fff8d6}
+    .feedback.bad{background:var(--bad-bg);border-color:#9b1c1c}
+    .answer{display:none;border:3px solid #000;background:#fff;padding:15px;margin-top:14px}
+    .answer.show{display:block}
+    .case{background:var(--soft);border:2px solid #000;padding:14px;margin:10px 0}
+    .top-link{display:inline-block;margin-top:12px}
+    footer{border-top:4px solid #000;margin-top:40px}
+    @media(max-width:700px){body{font-size:18px}.wrap{padding-left:14px;padding-right:14px}.block{padding:16px}.controls button{width:100%}.overview-table{font-size:.9rem}}
+    @media print{nav,.controls,.progress-box,footer{display:none!important}body{font-size:12pt;line-height:1.45}.wrap{max-width:none;padding:0 10px}.block{break-inside:avoid}.answer{display:block!important}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  </style>
 </head>
-
 <body>
 <a class="skip-link" href="#main">Skip to main content</a>
-
 <header>
-  <div class="header-inner">
+  <div class="wrap">
     <h1>Mendelian Genetics</h1>
-    <p class="subtitle">A high-readability interactive study tool for reviewing Mendel’s experiments, inheritance ratios, probability, chi-square analysis, pedigrees, and Tay-Sachs disease.</p>
+    <p class="lead">A plain, high-readability study tool with notes, flashcards, matching, practice, and discussion prompts. The design favors readability over decoration.</p>
   </div>
 </header>
-
-<nav aria-label="Study tool navigation">
-  <h2>Contents</h2>
-  <ul class="nav-list">
-    <li><a href="#overview">Overview and Progress</a></li>
-    <li><a href="#foundations">Mendel’s Experimental Foundations</a></li>
-    <li><a href="#monohybrid">Monohybrid Crosses and Segregation</a></li>
-    <li><a href="#multihybrid">Dihybrid and Trihybrid Crosses</a></li>
-    <li><a href="#probability">Probability and Chi-Square Analysis</a></li>
-    <li><a href="#pedigrees">Pedigrees and Human Inheritance</a></li>
-    <li><a href="#taysachs">Tay-Sachs Disease</a></li>
-  </ul>
+<nav aria-label="Page contents">
+  <div class="wrap">
+    <h2>Contents</h2>
+    <ul class="contents">
+      <li><a href="#overview">Overview and progress</a></li>
+      <li><a href="#foundations">Mendel's experimental foundations</a></li>
+      <li><a href="#monohybrid">Monohybrid crosses and segregation</a></li>
+      <li><a href="#multihybrid">Dihybrid and trihybrid crosses</a></li>
+      <li><a href="#probability">Probability and chi-square analysis</a></li>
+      <li><a href="#pedigrees">Pedigrees and human inheritance</a></li>
+      <li><a href="#taysachs">Tay-Sachs disease</a></li>
+    </ul>
+  </div>
 </nav>
-
-<main id="main">
-
-<section id="overview" class="topic">
-  <h2 class="topic-title">Overview</h2>
-  <p class="topic-summary">Use this page as a study worksheet. Each topic includes study notes, flashcards, matching, practice questions, and a discussion prompt. Your progress saves automatically in this browser.</p>
-
-  <div class="progress-area" aria-label="Overall progress">
-    <h3>Progress</h3>
-    <div class="progress-row">
-      <strong>Overall completion:</strong>
-      <span id="overallText">0%</span>
-      <progress id="overallProgress" max="100" value="0"></progress>
+<main id="main" class="wrap">
+  <section id="overview" class="topic">
+    <h2>Overview</h2>
+    <p class="summary">Each topic appears as a full section. There are no hidden tabs, no sticky navigation bars, no decorative shading, and no multi-column study cards. Progress saves in this browser.</p>
+    <div class="progress-box">
+      <h3>Progress</h3>
+      <p><strong>Overall completion:</strong> <span id="overallText">0%</span></p>
+      <progress id="overallProgress" max="100" value="0">0%</progress>
+      <p id="progressDetails">No activities completed yet.</p>
+      <button onclick="resetAllProgress()">Reset all progress</button>
     </div>
-    <p id="progressDetails">No activities completed yet.</p>
-    <button class="secondary" onclick="resetAllProgress()">Reset all saved progress</button>
-  </div>
-
-  <div class="tool-block">
-    <h3>Topic Summary Table</h3>
-    <table class="overview-table">
-      <thead>
-        <tr>
-          <th>Topic</th>
-          <th>Core idea</th>
-          <th>Key study focus</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Mendel’s Experimental Foundations</td>
-          <td>Mendel used controlled pea plant crosses and quantitative records to identify patterns of inheritance.</td>
-          <td>Traits, phenotypes, genotypes, alleles, homozygous, heterozygous.</td>
-        </tr>
-        <tr>
-          <td>Monohybrid Crosses</td>
-          <td>A single trait can show predictable inheritance patterns across generations.</td>
-          <td>3:1 ratio, segregation, dominance, Punnett squares, testcrosses.</td>
-        </tr>
-        <tr>
-          <td>Dihybrid and Trihybrid Crosses</td>
-          <td>Multiple traits can be analyzed using independent assortment and probability.</td>
-          <td>9:3:3:1 ratio, product law, forked-line method.</td>
-        </tr>
-        <tr>
-          <td>Probability and Chi-Square</td>
-          <td>Probability explains expected ratios; chi-square evaluates whether observed data fit expectations.</td>
-          <td>Null hypothesis, p value, degrees of freedom, goodness of fit.</td>
-        </tr>
-        <tr>
-          <td>Pedigrees</td>
-          <td>Family trees reveal patterns of human inheritance.</td>
-          <td>Pedigree symbols, autosomal dominant, autosomal recessive.</td>
-        </tr>
-        <tr>
-          <td>Tay-Sachs Disease</td>
-          <td>A recessive disorder can be understood at the molecular level.</td>
-          <td>Hex-A, ganglioside GM2, recessive inheritance, nervous system deterioration.</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<div id="topicsContainer"></div>
-
+    <div class="block">
+      <h3>Topic summary</h3>
+      <table class="overview-table">
+        <thead><tr><th>Topic</th><th>Core idea</th><th>Study focus</th></tr></thead>
+        <tbody>
+          <tr><td>Mendel's method</td><td>Controlled pea plant crosses revealed predictable inheritance.</td><td>Traits, phenotype, genotype, alleles.</td></tr>
+          <tr><td>Monohybrid crosses</td><td>One trait can be followed through P, F1, and F2 generations.</td><td>3:1 ratio, segregation, testcrosses.</td></tr>
+          <tr><td>Dihybrid and trihybrid crosses</td><td>Multiple traits can be analyzed with independent assortment.</td><td>9:3:3:1 ratio, product law, forked-line method.</td></tr>
+          <tr><td>Probability and chi-square</td><td>Expected ratios can be compared with observed data.</td><td>Null hypothesis, p value, degrees of freedom.</td></tr>
+          <tr><td>Pedigrees</td><td>Family trees reveal inheritance patterns in humans.</td><td>Symbols, autosomal dominant, autosomal recessive.</td></tr>
+          <tr><td>Tay-Sachs</td><td>A recessive disorder can be connected to a molecular defect.</td><td>Hex-A, ganglioside GM2, nervous system deterioration.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+  <div id="topics"></div>
 </main>
-
 <footer>
-  <p>This version uses a white background, black text, large controls, single-column layout, visible labels, and minimal visual decoration to improve readability.</p>
+  <div class="wrap"><p>This file uses a plain single-column layout, black text on white background, large controls, visible written status labels, and a print-friendly stylesheet.</p></div>
 </footer>
-
 <script>
 const topics = [
-  {
-    id: "foundations",
-    title: "Mendel’s Experimental Foundations",
-    summary: "Mendel used garden peas, contrasting traits, controlled crosses, and quantitative records to discover predictable inheritance patterns.",
-    notes: [
-      {
-        heading: "Why Mendel’s method worked",
-        points: [
-          "Mendel used garden peas as a model organism.",
-          "He focused on one or a few pairs of contrasting traits at a time.",
-          "He kept accurate quantitative records.",
-          "His postulates became principles of transmission genetics."
-        ]
-      },
-      {
-        heading: "Seven contrasting pea characters",
-        points: [
-          "Mendel studied visible characters such as stem height, seed shape, seed color, pod shape, pod color, flower color, and flower position.",
-          "Each character had two contrasting traits.",
-          "In the F1 generation, one trait appeared in all plants.",
-          "The contrasting trait reappeared in about one-fourth of the F2 plants."
-        ]
-      },
-      {
-        heading: "Important vocabulary",
-        points: [
-          "A phenotype is the physical expression of a trait.",
-          "A genotype is the allelic makeup of an individual.",
-          "Alleles are alternative versions of a gene.",
-          "A homozygous genotype has identical alleles.",
-          "A heterozygous genotype has two different alleles."
-        ]
-      }
-    ],
-    flashcards: [
-      ["What is a phenotype?", "A phenotype is the observable physical expression of a trait."],
-      ["What is a genotype?", "A genotype is the allelic makeup of an individual for a specific trait."],
-      ["What is an allele?", "An allele is an alternative form of a gene."],
-      ["What does homozygous mean?", "Homozygous means the organism has two identical alleles for a gene."],
-      ["What does heterozygous mean?", "Heterozygous means the organism has two different alleles for a gene."],
-      ["Why were Mendel’s records important?", "His quantitative records allowed him to detect predictable ratios rather than relying on vague observations."]
-    ],
-    match: [
-      ["Physical expression of a trait", "Phenotype"],
-      ["Allelic makeup of an individual", "Genotype"],
-      ["Alternative version of a gene", "Allele"],
-      ["Two identical alleles", "Homozygous"],
-      ["Two different alleles", "Heterozygous"]
-    ],
-    practice: {
-      mcQuestion: "Which choice best explains why Mendel’s experimental design was successful?",
-      mcOptions: [
-        "He studied many traits at once without counting offspring.",
-        "He used controlled crosses and kept quantitative records.",
-        "He only studied human families.",
-        "He avoided traits with contrasting forms."
-      ],
-      mcAnswer: 1,
-      fillQuestion: "The physical expression of a trait is called the _____.",
-      fillAnswer: "phenotype",
-      tfQuestion: "A heterozygous individual has two different alleles for a gene.",
-      tfAnswer: true,
-      casePrompt: "A pea plant has the genotype Dd.",
-      caseQuestion: "Is this plant homozygous or heterozygous?",
-      caseAnswer: "It is heterozygous because it has two different alleles: D and d."
-    },
-    discussionQuestion: "Why did focusing on one or a few contrasting traits make Mendel’s results easier to interpret?",
-    discussionAnswer: "Focusing on one or a few traits reduced confusion and made inheritance patterns easier to see. Because Mendel counted offspring carefully, he could identify predictable ratios and use those ratios to build explanations for inheritance."
-  },
-  {
-    id: "monohybrid",
-    title: "Monohybrid Crosses and Segregation",
-    summary: "A monohybrid cross follows one trait from one generation to the next and reveals segregation.",
-    notes: [
-      {
-        heading: "Monohybrid cross",
-        points: [
-          "A monohybrid cross follows one pair of contrasting traits.",
-          "The original true-breeding parents are the P generation.",
-          "Their offspring are the F1 generation.",
-          "Self-fertilization of F1 individuals produces the F2 generation."
-        ]
-      },
-      {
-        heading: "Classic tall and dwarf cross",
-        points: [
-          "Tall plants crossed with dwarf plants produced F1 plants that were all tall.",
-          "When F1 plants self-fertilized, about three-fourths of F2 plants were tall.",
-          "About one-fourth of F2 plants were dwarf.",
-          "This produced the classic 3:1 phenotypic ratio."
-        ]
-      },
-      {
-        heading: "Mendel’s first three postulates",
-        points: [
-          "Unit factors occur in pairs.",
-          "One factor may be dominant and the other recessive.",
-          "Paired unit factors segregate during gamete formation.",
-          "Each gamete receives one allele from each pair."
-        ]
-      },
-      {
-        heading: "Testcross",
-        points: [
-          "A testcross determines whether an individual with a dominant phenotype is homozygous or heterozygous.",
-          "The unknown individual is crossed with a homozygous recessive individual.",
-          "All dominant offspring suggest homozygous dominant.",
-          "A 1:1 dominant-to-recessive result suggests heterozygous."
-        ]
-      }
-    ],
-    flashcards: [
-      ["What is a monohybrid cross?", "A monohybrid cross follows one pair of contrasting traits."],
-      ["What is the P generation?", "The P generation is the original parental generation."],
-      ["What is the F1 generation?", "The F1 generation is the first offspring generation from the parental cross."],
-      ["What is the expected F2 phenotypic ratio for a classic monohybrid cross?", "The expected F2 phenotypic ratio is 3 dominant phenotype to 1 recessive phenotype."],
-      ["What is segregation?", "Segregation is the separation of paired alleles during gamete formation."],
-      ["What is a testcross?", "A testcross crosses an unknown dominant phenotype with a homozygous recessive individual."]
-    ],
-    match: [
-      ["Original parent generation", "P generation"],
-      ["First offspring generation", "F1 generation"],
-      ["Produced by selfing F1 individuals", "F2 generation"],
-      ["Alleles separate during gamete formation", "Segregation"],
-      ["Cross with homozygous recessive individual", "Testcross"]
-    ],
-    practice: {
-      mcQuestion: "In a Dd x Dd cross, which genotype produces the recessive phenotype?",
-      mcOptions: ["DD", "Dd", "dD", "dd"],
-      mcAnswer: 3,
-      fillQuestion: "A cross used to determine whether an individual with a dominant phenotype is homozygous or heterozygous is called a _____.",
-      fillAnswer: "testcross",
-      tfQuestion: "A recessive allele disappears permanently in the F1 generation.",
-      tfAnswer: false,
-      casePrompt: "A tall pea plant is crossed with a dwarf plant. Half of the offspring are tall and half are dwarf.",
-      caseQuestion: "What is the genotype of the tall parent?",
-      caseAnswer: "The tall parent is heterozygous, Dd. A Dd x dd testcross produces about one-half tall and one-half dwarf offspring."
-    },
-    discussionQuestion: "How can a recessive trait disappear in the F1 generation but reappear in the F2 generation?",
-    discussionAnswer: "The recessive allele is not lost. It is masked by the dominant allele in F1 heterozygotes. When alleles segregate during gamete formation, two recessive alleles can come together again in the F2 generation."
-  },
-  {
-    id: "multihybrid",
-    title: "Dihybrid and Trihybrid Crosses",
-    summary: "Dihybrid and trihybrid crosses show how multiple traits can be inherited when alleles assort independently.",
-    notes: [
-      {
-        heading: "Dihybrid cross",
-        points: [
-          "A dihybrid cross follows two pairs of contrasting traits.",
-          "Mendel’s classic dihybrid cross produced an F2 phenotypic ratio of 9:3:3:1.",
-          "The ratio depends on segregation, independent assortment, and random fertilization."
-        ]
-      },
-      {
-        heading: "Independent assortment",
-        points: [
-          "During gamete formation, allele pairs for different traits can assort independently.",
-          "The allele received for one gene pair does not determine the allele received for another independently assorting gene pair.",
-          "All possible gamete combinations form with equal frequency when genes assort independently."
-        ]
-      },
-      {
-        heading: "Trihybrid cross and forked-line method",
-        points: [
-          "A trihybrid cross follows three traits.",
-          "Large Punnett squares become difficult to manage.",
-          "The forked-line method uses probability branches.",
-          "It works when the gene pairs assort independently."
-        ]
-      }
-    ],
-    flashcards: [
-      ["What is a dihybrid cross?", "A dihybrid cross follows two pairs of contrasting traits."],
-      ["What is the classic F2 phenotypic ratio for a dihybrid cross?", "The classic F2 phenotypic ratio is 9:3:3:1."],
-      ["What is independent assortment?", "Independent assortment means allele pairs for different traits separate independently during gamete formation."],
-      ["What is a trihybrid cross?", "A trihybrid cross follows three pairs of contrasting traits."],
-      ["Why use the forked-line method?", "It simplifies crosses involving multiple traits by using probability branches."],
-      ["What is the product law?", "The product law states that the probability of independent events occurring together equals the product of their individual probabilities."]
-    ],
-    match: [
-      ["Two-factor cross", "Dihybrid cross"],
-      ["Three-factor cross", "Trihybrid cross"],
-      ["Classic dihybrid F2 ratio", "9:3:3:1"],
-      ["Branch diagram method", "Forked-line method"],
-      ["Allele pairs separate independently", "Independent assortment"]
-    ],
-    practice: {
-      mcQuestion: "Which F2 phenotypic ratio is expected from a classic dihybrid cross with independent assortment?",
-      mcOptions: ["1:1", "3:1", "9:3:3:1", "1:2:1"],
-      mcAnswer: 2,
-      fillQuestion: "The branch diagram used to solve crosses with multiple independently assorting gene pairs is the _____ method.",
-      fillAnswer: "forked-line",
-      tfQuestion: "Independent assortment means that one allele pair can separate independently of another allele pair.",
-      tfAnswer: true,
-      casePrompt: "A plant heterozygous for seed color and seed shape is self-fertilized. Yellow and round are dominant.",
-      caseQuestion: "What F2 phenotypic ratio is expected if the genes assort independently?",
-      caseAnswer: "The expected ratio is 9 yellow round : 3 yellow wrinkled : 3 green round : 1 green wrinkled."
-    },
-    discussionQuestion: "Why does independent assortment increase genetic variation?",
-    discussionAnswer: "Independent assortment increases variation because alleles from different gene pairs can be combined in multiple ways. As the number of independently assorting genes increases, the number of possible gamete combinations increases dramatically."
-  },
-  {
-    id: "probability",
-    title: "Probability and Chi-Square Analysis",
-    summary: "Probability predicts genetic outcomes, while chi-square analysis evaluates whether observed data fit expected ratios.",
-    notes: [
-      {
-        heading: "Probability in genetics",
-        points: [
-          "Genetic ratios can be expressed as probabilities.",
-          "A probability of 0 means an event will not occur.",
-          "A probability of 1 means an event will occur.",
-          "Expected ratios are predictions, not guarantees for every small sample."
-        ]
-      },
-      {
-        heading: "Product and sum laws",
-        points: [
-          "The product law applies when independent events occur simultaneously.",
-          "The sum law applies when an outcome can happen in more than one way.",
-          "Both laws help explain Punnett square ratios."
-        ]
-      },
-      {
-        heading: "Chi-square analysis",
-        points: [
-          "Mendelian ratios are expected predictions.",
-          "Observed data may deviate because of chance.",
-          "Chi-square analysis evaluates goodness of fit.",
-          "Larger sample sizes reduce the relative effect of chance deviation."
-        ]
-      },
-      {
-        heading: "Null hypothesis and p values",
-        points: [
-          "The null hypothesis assumes the data fit the predicted ratio.",
-          "Degrees of freedom equal the number of categories minus one.",
-          "A p value below 0.05 usually supports rejecting the null hypothesis.",
-          "A p value of 0.05 or higher usually supports failing to reject the null hypothesis."
-        ]
-      }
-    ],
-    flashcards: [
-      ["What does chi-square analysis evaluate?", "It evaluates whether observed data fit expected genetic ratios."],
-      ["What is the null hypothesis?", "The null hypothesis assumes that observed data fit the predicted ratio and deviations are due to chance."],
-      ["How are degrees of freedom calculated?", "Degrees of freedom equal the number of categories minus one."],
-      ["What does p < 0.05 usually mean?", "It usually means the deviation is unlikely to be due to chance alone, so the null hypothesis is rejected."],
-      ["What does the product law calculate?", "It calculates the probability that independent events occur together."],
-      ["Why does sample size matter?", "Larger samples reduce the relative impact of chance deviations."]
-    ],
-    match: [
-      ["Goodness-of-fit test", "Chi-square"],
-      ["Assumes data fit the expected ratio", "Null hypothesis"],
-      ["Number of categories minus one", "Degrees of freedom"],
-      ["Probability of chance deviation", "p value"],
-      ["Used for independent events occurring together", "Product law"]
-    ],
-    practice: {
-      mcQuestion: "For four phenotypic categories, how many degrees of freedom are used in a chi-square test?",
-      mcOptions: ["1", "2", "3", "4"],
-      mcAnswer: 2,
-      fillQuestion: "A p value less than _____ is commonly used as the cutoff for rejecting the null hypothesis.",
-      fillAnswer: "0.05",
-      tfQuestion: "Chi-square analysis takes observed deviation and sample size into account.",
-      tfAnswer: true,
-      casePrompt: "A monohybrid F2 generation is expected to show a 3:1 ratio, but the observed count is not exactly 3:1.",
-      caseQuestion: "Should the expected ratio be rejected automatically?",
-      caseAnswer: "No. Observed results can deviate because of chance. A chi-square test is used to determine whether the deviation is small enough to be explained by chance."
-    },
-    discussionQuestion: "Why should a geneticist not reject a Mendelian prediction just because observed data are not perfectly equal to the expected ratio?",
-    discussionAnswer: "Random events during gamete formation and fertilization can cause observed results to differ from expected values. Chi-square analysis helps determine whether the deviation is likely due to chance or whether the expected model should be questioned."
-  },
-  {
-    id: "pedigrees",
-    title: "Pedigrees and Human Inheritance",
-    summary: "Pedigrees are family trees used to track traits and identify patterns of inheritance in humans.",
-    notes: [
-      {
-        heading: "Purpose of pedigrees",
-        points: [
-          "A pedigree is a family tree for a specific trait.",
-          "Pedigree analysis reveals inheritance patterns.",
-          "Pedigrees are useful in humans because controlled crosses are not possible."
-        ]
-      },
-      {
-        heading: "Common pedigree symbols",
-        points: [
-          "Circles represent females.",
-          "Squares represent males.",
-          "Diamonds can represent unknown sex.",
-          "Shading indicates expression of the phenotype.",
-          "A dot may indicate a known heterozygous carrier.",
-          "Generations are labeled with Roman numerals."
-        ]
-      },
-      {
-        heading: "Autosomal recessive pattern",
-        points: [
-          "The trait may skip generations.",
-          "Affected individuals can have unaffected carrier parents.",
-          "Males and females are usually affected equally."
-        ]
-      },
-      {
-        heading: "Autosomal dominant pattern",
-        points: [
-          "The trait usually appears in every generation.",
-          "Affected individuals usually have an affected parent.",
-          "Males and females are usually affected equally."
-        ]
-      }
-    ],
-    flashcards: [
-      ["What is a pedigree?", "A pedigree is a family tree used to track a trait through generations."],
-      ["What does shading mean in a pedigree?", "Shading indicates that the individual expresses the phenotype being studied."],
-      ["What does a dot commonly indicate?", "A dot can indicate a known heterozygous carrier."],
-      ["What pattern is common in autosomal recessive inheritance?", "The trait may skip generations and appear in children of unaffected carrier parents."],
-      ["What pattern is common in autosomal dominant inheritance?", "The trait usually appears in every generation and affected individuals usually have an affected parent."],
-      ["Why do autosomal traits affect males and females equally?", "Because the gene is on an autosome rather than a sex chromosome."]
-    ],
-    match: [
-      ["Family tree for a trait", "Pedigree"],
-      ["Individual for whom pedigree is constructed", "Proband"],
-      ["Related parents", "Consanguineous"],
-      ["Trait often skips generations", "Autosomal recessive"],
-      ["Trait usually appears each generation", "Autosomal dominant"]
-    ],
-    practice: {
-      mcQuestion: "Which observation best suggests autosomal recessive inheritance?",
-      mcOptions: [
-        "Every affected person has an affected parent.",
-        "The trait skips generations.",
-        "Only males are affected.",
-        "Only females are affected."
-      ],
-      mcAnswer: 1,
-      fillQuestion: "The individual for whom a pedigree is constructed is called the _____.",
-      fillAnswer: "proband",
-      tfQuestion: "Autosomal dominant traits usually affect males and females equally.",
-      tfAnswer: true,
-      casePrompt: "Two unaffected parents have an affected child. The trait appears in both males and females.",
-      caseQuestion: "Which inheritance pattern best fits this description?",
-      caseAnswer: "Autosomal recessive inheritance best fits this pattern. The parents are likely carriers."
-    },
-    discussionQuestion: "How can a pedigree help distinguish autosomal dominant inheritance from autosomal recessive inheritance?",
-    discussionAnswer: "Autosomal dominant traits usually appear in every generation, and affected individuals usually have an affected parent. Autosomal recessive traits can skip generations because unaffected carrier parents can have affected children."
-  },
-  {
-    id: "taysachs",
-    title: "Tay-Sachs Disease",
-    summary: "Tay-Sachs disease shows how a recessive genetic disorder can be explained by a molecular defect.",
-    notes: [
-      {
-        heading: "Recessive inheritance",
-        points: [
-          "Tay-Sachs disease is a recessive disorder.",
-          "A single mutant gene can have multiple effects.",
-          "One wild-type allele is sufficient for normal development."
-        ]
-      },
-      {
-        heading: "Hexosaminidase A",
-        points: [
-          "Hex-A stands for hexosaminidase A.",
-          "Hex-A is needed to break down ganglioside GM2.",
-          "Ganglioside GM2 is a lipid component of nerve cell membranes."
-        ]
-      },
-      {
-        heading: "Cellular consequences",
-        points: [
-          "Without functional Hex-A, ganglioside GM2 accumulates in neurons.",
-          "This accumulation causes deterioration of the nervous system.",
-          "The disorder connects genotype, enzyme activity, cellular buildup, and phenotype."
-        ]
-      }
-    ],
-    flashcards: [
-      ["What type of inheritance pattern does Tay-Sachs disease show?", "Tay-Sachs disease is recessive."],
-      ["What enzyme is affected in Tay-Sachs disease?", "Hexosaminidase A, also called Hex-A."],
-      ["What molecule accumulates in neurons?", "Ganglioside GM2 accumulates in neurons."],
-      ["What body system is most directly affected?", "The nervous system is most directly affected."],
-      ["Why is one wild-type allele enough for normal development?", "One functional allele produces enough Hex-A activity to prevent harmful accumulation."],
-      ["How does Tay-Sachs connect genotype to phenotype?", "A mutant gene reduces Hex-A activity, GM2 accumulates in neurons, neurons deteriorate, and disease symptoms result."]
-    ],
-    match: [
-      ["Hexosaminidase A", "Hex-A"],
-      ["Lipid that accumulates in neurons", "Ganglioside GM2"],
-      ["Inheritance pattern", "Recessive"],
-      ["Primary affected system", "Nervous system"],
-      ["One normal allele gives enough function", "Wild-type allele sufficiency"]
-    ],
-    practice: {
-      mcQuestion: "What is the immediate molecular problem in Tay-Sachs disease?",
-      mcOptions: [
-        "Excess vitamin production",
-        "Loss of Hex-A activity",
-        "Overactive blood clotting",
-        "Too many chromosomes"
-      ],
-      mcAnswer: 1,
-      fillQuestion: "The lipid that accumulates in neurons in Tay-Sachs disease is ganglioside _____.",
-      fillAnswer: "GM2",
-      tfQuestion: "Tay-Sachs disease is described as a dominant disorder.",
-      tfAnswer: false,
-      casePrompt: "A child has two mutant alleles for the gene associated with Hex-A.",
-      caseQuestion: "What cellular consequence would you expect?",
-      caseAnswer: "Ganglioside GM2 would accumulate in neurons, causing deterioration of the nervous system."
-    },
-    discussionQuestion: "Why is Tay-Sachs useful for connecting classical Mendelian inheritance with molecular genetics?",
-    discussionAnswer: "Tay-Sachs follows a recessive inheritance pattern, but it can also be explained at the molecular level. A mutant gene reduces Hex-A activity, ganglioside GM2 accumulates in neurons, and nervous system deterioration results."
-  }
+  {id:'foundations', title:"Mendel's Experimental Foundations", summary:"Mendel used garden peas, contrasting traits, controlled crosses, and quantitative records to discover predictable inheritance patterns.", notes:[['Why Mendel\'s method worked',['Mendel used garden peas as a model organism.','He focused on one or a few pairs of contrasting traits at a time.','He kept accurate quantitative records.','His postulates became principles of transmission genetics.']],['Seven contrasting pea characters',['Mendel studied stem height, seed shape, seed color, pod shape, pod color, flower color, and flower position.','Each character had two contrasting traits.','In the F1 generation, one trait appeared in all plants.','The contrasting trait reappeared in about one-fourth of the F2 plants.']],['Important vocabulary',['A phenotype is the physical expression of a trait.','A genotype is the allelic makeup of an individual.','Alleles are alternative versions of a gene.','Homozygous means two identical alleles; heterozygous means two different alleles.']]], flash:[['What is a phenotype?','The observable physical expression of a trait.'],['What is a genotype?','The allelic makeup of an individual for a specific trait.'],['What is an allele?','An alternative form of a gene.'],['What does homozygous mean?','Having two identical alleles for a gene.'],['What does heterozygous mean?','Having two different alleles for a gene.'],['Why were Mendel\'s records important?','They allowed him to detect predictable ratios rather than relying on vague observations.']], match:[['Physical expression of a trait','Phenotype'],['Allelic makeup of an individual','Genotype'],['Alternative version of a gene','Allele'],['Two identical alleles','Homozygous'],['Two different alleles','Heterozygous']], practice:{mcQ:'Which choice best explains why Mendel\'s experimental design was successful?', mc:['He studied many traits at once without counting offspring.','He used controlled crosses and kept quantitative records.','He only studied human families.','He avoided traits with contrasting forms.'], mcA:1, fillQ:'The physical expression of a trait is called the _____.', fillA:'phenotype', tfQ:'A heterozygous individual has two different alleles for a gene.', tfA:true, caseP:'A pea plant has the genotype Dd.', caseQ:'Is this plant homozygous or heterozygous?', caseA:'It is heterozygous because it has two different alleles: D and d.'}, discussionQ:'Why did focusing on one or a few contrasting traits make Mendel\'s results easier to interpret?', discussionA:'Focusing on one or a few traits reduced confusion and made inheritance patterns easier to see. Because Mendel counted offspring carefully, he could identify predictable ratios and build explanations for inheritance.'},
+  {id:'monohybrid', title:'Monohybrid Crosses and Segregation', summary:'A monohybrid cross follows one trait from one generation to the next and reveals segregation.', notes:[['Monohybrid cross',['A monohybrid cross follows one pair of contrasting traits.','The original true-breeding parents are the P generation.','Their offspring are the F1 generation.','Self-fertilization of F1 individuals produces the F2 generation.']],['Classic tall and dwarf cross',['Tall plants crossed with dwarf plants produced F1 plants that were all tall.','When F1 plants self-fertilized, about three-fourths of F2 plants were tall.','About one-fourth of F2 plants were dwarf.','This produced the classic 3:1 phenotypic ratio.']],['Mendel\'s first three postulates',['Unit factors occur in pairs.','One factor may be dominant and the other recessive.','Paired unit factors segregate during gamete formation.','Each gamete receives one allele from each pair.']],['Testcross',['A testcross determines whether an individual with a dominant phenotype is homozygous or heterozygous.','The unknown individual is crossed with a homozygous recessive individual.','All dominant offspring suggest homozygous dominant.','A 1:1 dominant-to-recessive result suggests heterozygous.']]], flash:[['What is a monohybrid cross?','A cross that follows one pair of contrasting traits.'],['What is the P generation?','The original parental generation.'],['What is the F1 generation?','The first offspring generation from the parental cross.'],['What is the expected F2 phenotypic ratio for a classic monohybrid cross?','Three dominant phenotype offspring to one recessive phenotype offspring.'],['What is segregation?','The separation of paired alleles during gamete formation.'],['What is a testcross?','A cross between an unknown dominant phenotype and a homozygous recessive individual.']], match:[['Original parent generation','P generation'],['First offspring generation','F1 generation'],['Produced by selfing F1 individuals','F2 generation'],['Alleles separate during gamete formation','Segregation'],['Cross with homozygous recessive individual','Testcross']], practice:{mcQ:'In a Dd x Dd cross, which genotype produces the recessive phenotype?', mc:['DD','Dd','dD','dd'], mcA:3, fillQ:'A cross used to determine whether an individual with a dominant phenotype is homozygous or heterozygous is called a _____.', fillA:'testcross', tfQ:'A recessive allele disappears permanently in the F1 generation.', tfA:false, caseP:'A tall pea plant is crossed with a dwarf plant. Half of the offspring are tall and half are dwarf.', caseQ:'What is the genotype of the tall parent?', caseA:'The tall parent is heterozygous, Dd. A Dd x dd testcross produces about one-half tall and one-half dwarf offspring.'}, discussionQ:'How can a recessive trait disappear in the F1 generation but reappear in the F2 generation?', discussionA:'The recessive allele is not lost. It is masked by the dominant allele in F1 heterozygotes. When alleles segregate during gamete formation, two recessive alleles can come together again in the F2 generation.'},
+  {id:'multihybrid', title:'Dihybrid and Trihybrid Crosses', summary:'Dihybrid and trihybrid crosses show how multiple traits can be inherited when alleles assort independently.', notes:[['Dihybrid cross',['A dihybrid cross follows two pairs of contrasting traits.','Mendel\'s classic dihybrid cross produced an F2 phenotypic ratio of 9:3:3:1.','The ratio depends on segregation, independent assortment, and random fertilization.']],['Independent assortment',['During gamete formation, allele pairs for different traits can assort independently.','The allele received for one gene pair does not determine the allele received for another independently assorting gene pair.','All possible gamete combinations form with equal frequency when genes assort independently.']],['Trihybrid cross and forked-line method',['A trihybrid cross follows three traits.','Large Punnett squares become difficult to manage.','The forked-line method uses probability branches.','It works when the gene pairs assort independently.']]], flash:[['What is a dihybrid cross?','A cross that follows two pairs of contrasting traits.'],['What is the classic F2 phenotypic ratio for a dihybrid cross?','9:3:3:1.'],['What is independent assortment?','Allele pairs for different traits separate independently during gamete formation.'],['What is a trihybrid cross?','A cross that follows three pairs of contrasting traits.'],['Why use the forked-line method?','It simplifies crosses involving multiple traits by using probability branches.'],['What is the product law?','The probability of independent events occurring together equals the product of their individual probabilities.']], match:[['Two-factor cross','Dihybrid cross'],['Three-factor cross','Trihybrid cross'],['Classic dihybrid F2 ratio','9:3:3:1'],['Branch diagram method','Forked-line method'],['Allele pairs separate independently','Independent assortment']], practice:{mcQ:'Which F2 phenotypic ratio is expected from a classic dihybrid cross with independent assortment?', mc:['1:1','3:1','9:3:3:1','1:2:1'], mcA:2, fillQ:'The branch diagram used to solve crosses with multiple independently assorting gene pairs is the _____ method.', fillA:'forked-line', tfQ:'Independent assortment means that one allele pair can separate independently of another allele pair.', tfA:true, caseP:'A plant heterozygous for seed color and seed shape is self-fertilized. Yellow and round are dominant.', caseQ:'What F2 phenotypic ratio is expected if the genes assort independently?', caseA:'The expected ratio is 9 yellow round : 3 yellow wrinkled : 3 green round : 1 green wrinkled.'}, discussionQ:'Why does independent assortment increase genetic variation?', discussionA:'Independent assortment increases variation because alleles from different gene pairs can be combined in multiple ways. As the number of independently assorting genes increases, the number of possible gamete combinations increases dramatically.'},
+  {id:'probability', title:'Probability and Chi-Square Analysis', summary:'Probability predicts genetic outcomes, while chi-square analysis evaluates whether observed data fit expected ratios.', notes:[['Probability in genetics',['Genetic ratios can be expressed as probabilities.','A probability of 0 means an event will not occur.','A probability of 1 means an event will occur.','Expected ratios are predictions, not guarantees for every small sample.']],['Product and sum laws',['The product law applies when independent events occur simultaneously.','The sum law applies when an outcome can happen in more than one way.','Both laws help explain Punnett square ratios.']],['Chi-square analysis',['Mendelian ratios are expected predictions.','Observed data may deviate because of chance.','Chi-square analysis evaluates goodness of fit.','Larger sample sizes reduce the relative effect of chance deviation.']],['Null hypothesis and p values',['The null hypothesis assumes the data fit the predicted ratio.','Degrees of freedom equal the number of categories minus one.','A p value below 0.05 usually supports rejecting the null hypothesis.','A p value of 0.05 or higher usually supports failing to reject the null hypothesis.']]], flash:[['What does chi-square analysis evaluate?','Whether observed data fit expected genetic ratios.'],['What is the null hypothesis?','The assumption that observed data fit the predicted ratio and deviations are due to chance.'],['How are degrees of freedom calculated?','Number of categories minus one.'],['What does p < 0.05 usually mean?','The deviation is unlikely to be due to chance alone, so the null hypothesis is rejected.'],['What does the product law calculate?','The probability that independent events occur together.'],['Why does sample size matter?','Larger samples reduce the relative impact of chance deviations.']], match:[['Goodness-of-fit test','Chi-square'],['Assumes data fit the expected ratio','Null hypothesis'],['Number of categories minus one','Degrees of freedom'],['Probability of chance deviation','p value'],['Used for independent events occurring together','Product law']], practice:{mcQ:'For four phenotypic categories, how many degrees of freedom are used in a chi-square test?', mc:['1','2','3','4'], mcA:2, fillQ:'A p value less than _____ is commonly used as the cutoff for rejecting the null hypothesis.', fillA:'0.05', tfQ:'Chi-square analysis takes observed deviation and sample size into account.', tfA:true, caseP:'A monohybrid F2 generation is expected to show a 3:1 ratio, but the observed count is not exactly 3:1.', caseQ:'Should the expected ratio be rejected automatically?', caseA:'No. Observed results can deviate because of chance. A chi-square test is used to determine whether the deviation is small enough to be explained by chance.'}, discussionQ:'Why should a geneticist not reject a Mendelian prediction just because observed data are not perfectly equal to the expected ratio?', discussionA:'Random events during gamete formation and fertilization can cause observed results to differ from expected values. Chi-square analysis helps determine whether the deviation is likely due to chance or whether the expected model should be questioned.'},
+  {id:'pedigrees', title:'Pedigrees and Human Inheritance', summary:'Pedigrees are family trees used to track traits and identify patterns of inheritance in humans.', notes:[['Purpose of pedigrees',['A pedigree is a family tree for a specific trait.','Pedigree analysis reveals inheritance patterns.','Pedigrees are useful in humans because controlled crosses are not possible.']],['Common pedigree symbols',['Circles represent females.','Squares represent males.','Diamonds can represent unknown sex.','Shading indicates expression of the phenotype.','A dot may indicate a known heterozygous carrier.','Generations are labeled with Roman numerals.']],['Autosomal recessive pattern',['The trait may skip generations.','Affected individuals can have unaffected carrier parents.','Males and females are usually affected equally.']],['Autosomal dominant pattern',['The trait usually appears in every generation.','Affected individuals usually have an affected parent.','Males and females are usually affected equally.']]], flash:[['What is a pedigree?','A family tree used to track a trait through generations.'],['What does shading mean in a pedigree?','The individual expresses the phenotype being studied.'],['What does a dot commonly indicate?','A known heterozygous carrier.'],['What pattern is common in autosomal recessive inheritance?','The trait may skip generations and appear in children of unaffected carrier parents.'],['What pattern is common in autosomal dominant inheritance?','The trait usually appears in every generation and affected individuals usually have an affected parent.'],['Why do autosomal traits affect males and females equally?','Because the gene is on an autosome rather than a sex chromosome.']], match:[['Family tree for a trait','Pedigree'],['Individual for whom pedigree is constructed','Proband'],['Related parents','Consanguineous'],['Trait often skips generations','Autosomal recessive'],['Trait usually appears each generation','Autosomal dominant']], practice:{mcQ:'Which observation best suggests autosomal recessive inheritance?', mc:['Every affected person has an affected parent.','The trait skips generations.','Only males are affected.','Only females are affected.'], mcA:1, fillQ:'The individual for whom a pedigree is constructed is called the _____.', fillA:'proband', tfQ:'Autosomal dominant traits usually affect males and females equally.', tfA:true, caseP:'Two unaffected parents have an affected child. The trait appears in both males and females.', caseQ:'Which inheritance pattern best fits this description?', caseA:'Autosomal recessive inheritance best fits this pattern. The parents are likely carriers.'}, discussionQ:'How can a pedigree help distinguish autosomal dominant inheritance from autosomal recessive inheritance?', discussionA:'Autosomal dominant traits usually appear in every generation, and affected individuals usually have an affected parent. Autosomal recessive traits can skip generations because unaffected carrier parents can have affected children.'},
+  {id:'taysachs', title:'Tay-Sachs Disease', summary:'Tay-Sachs disease shows how a recessive genetic disorder can be explained by a molecular defect.', notes:[['Recessive inheritance',['Tay-Sachs disease is a recessive disorder.','A single mutant gene can have multiple effects.','One wild-type allele is sufficient for normal development.']],['Hexosaminidase A',['Hex-A stands for hexosaminidase A.','Hex-A is needed to break down ganglioside GM2.','Ganglioside GM2 is a lipid component of nerve cell membranes.']],['Cellular consequences',['Without functional Hex-A, ganglioside GM2 accumulates in neurons.','This accumulation causes deterioration of the nervous system.','The disorder connects genotype, enzyme activity, cellular buildup, and phenotype.']]], flash:[['What type of inheritance pattern does Tay-Sachs disease show?','Tay-Sachs disease is recessive.'],['What enzyme is affected in Tay-Sachs disease?','Hexosaminidase A, also called Hex-A.'],['What molecule accumulates in neurons?','Ganglioside GM2 accumulates in neurons.'],['What body system is most directly affected?','The nervous system is most directly affected.'],['Why is one wild-type allele enough for normal development?','One functional allele produces enough Hex-A activity to prevent harmful accumulation.'],['How does Tay-Sachs connect genotype to phenotype?','A mutant gene reduces Hex-A activity, GM2 accumulates in neurons, neurons deteriorate, and disease symptoms result.']], match:[['Hexosaminidase A','Hex-A'],['Lipid that accumulates in neurons','Ganglioside GM2'],['Inheritance pattern','Recessive'],['Primary affected system','Nervous system'],['One normal allele gives enough function','Wild-type allele sufficiency']], practice:{mcQ:'What is the immediate molecular problem in Tay-Sachs disease?', mc:['Excess vitamin production','Loss of Hex-A activity','Overactive blood clotting','Too many chromosomes'], mcA:1, fillQ:'The lipid that accumulates in neurons in Tay-Sachs disease is ganglioside _____.', fillA:'GM2', tfQ:'Tay-Sachs disease is described as a dominant disorder.', tfA:false, caseP:'A child has two mutant alleles for the gene associated with Hex-A.', caseQ:'What cellular consequence would you expect?', caseA:'Ganglioside GM2 would accumulate in neurons, causing deterioration of the nervous system.'}, discussionQ:'Why is Tay-Sachs useful for connecting classical Mendelian inheritance with molecular genetics?', discussionA:'Tay-Sachs follows a recessive inheritance pattern, but it can also be explained at the molecular level. A mutant gene reduces Hex-A activity, ganglioside GM2 accumulates in neurons, and nervous system deterioration results.'}
 ];
-
-const STORAGE_KEY = "mendelian_genetics_readability_first_v1";
-
-let progress = loadProgress();
-
-function loadProgress() {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (saved) {
-    try {
-      return JSON.parse(saved);
-    } catch {
-      return makeDefaultProgress();
-    }
-  }
-  return makeDefaultProgress();
-}
-
-function makeDefaultProgress() {
-  const data = {};
-  topics.forEach(topic => {
-    data[topic.id] = {
-      cardIndex: 0,
-      cardFlipped: false,
-      cardsCompleted: 0,
-      cardsEasy: 0,
-      cardsHard: 0,
-      matchingCompleted: false,
-      practiceCompleted: false,
-      discussionCompleted: false
-    };
-  });
-  return data;
-}
-
-function saveProgress() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
-}
-
-function escapeHTML(text) {
-  return String(text).replace(/[&<>"']/g, char => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[char]));
-}
-
-function renderTopics() {
-  const container = document.getElementById("topicsContainer");
-
-  container.innerHTML = topics.map(topic => `
-    <section id="${topic.id}" class="topic">
-      <h2 class="topic-title">${escapeHTML(topic.title)}</h2>
-      <p class="topic-summary">${escapeHTML(topic.summary)}</p>
-
-      <div class="tool-block">
-        <h3>Study Notes</h3>
-        ${topic.notes.map(group => `
-          <div class="note-group">
-            <h4>${escapeHTML(group.heading)}</h4>
-            <ul class="study-notes">
-              ${group.points.map(point => `<li>${escapeHTML(point)}</li>`).join("")}
-            </ul>
-          </div>
-        `).join("")}
-      </div>
-
-      <div class="tool-block">
-        <h3>Flashcards</h3>
-        <p class="small-text">Read the question, flip the card, then mark your confidence.</p>
-        <p class="status-line" id="${topic.id}-card-status"></p>
-        <div class="flashcard" id="${topic.id}-flashcard">
-          Loading flashcard...
-        </div>
-        <div class="flashcard-controls">
-          <button class="secondary" onclick="previousCard('${topic.id}')">Previous</button>
-          <button class="primary" onclick="flipCard('${topic.id}')">Flip Card</button>
-          <button class="secondary" onclick="nextCard('${topic.id}')">Next</button>
-          <button class="good" onclick="markCard('${topic.id}', 'easy')">Got it</button>
-          <button class="bad" onclick="markCard('${topic.id}', 'hard')">Still learning</button>
-          <button class="secondary" onclick="restartDeck('${topic.id}')">Restart Deck</button>
-        </div>
-      </div>
-
-      <div class="tool-block">
-        <h3>Matching Activity</h3>
-        <p>Choose the correct term for each description. After checking, each item will show a written status label.</p>
-        ${topic.match.map((item, index) => `
-          <div class="match-item">
-            <label for="${topic.id}-match-${index}">${escapeHTML(item[0])}</label>
-            <select id="${topic.id}-match-${index}" aria-describedby="${topic.id}-match-status-${index}">
-              <option value="">Select an answer</option>
-              ${shuffle([...new Set(topic.match.map(x => x[1]))]).map(option => `
-                <option value="${escapeHTML(option)}">${escapeHTML(option)}</option>
-              `).join("")}
-            </select>
-            <span class="item-status" id="${topic.id}-match-status-${index}">Status: Not checked</span>
-          </div>
-        `).join("")}
-
-        <div class="activity-controls">
-          <button class="primary" onclick="checkMatching('${topic.id}')">Check Matching</button>
-          <button class="secondary" onclick="resetMatching('${topic.id}')">Reset Matching</button>
-        </div>
-
-        <div class="feedback" id="${topic.id}-match-feedback"></div>
-
-        <div class="answer-key" id="${topic.id}-match-key">
-          <h4>Matching Answer Key</h4>
-          <ol>
-            ${topic.match.map(item => `
-              <li>${escapeHTML(item[0])}: <strong>${escapeHTML(item[1])}</strong></li>
-            `).join("")}
-          </ol>
-        </div>
-      </div>
-
-      <div class="tool-block">
-        <h3>Practice Questions</h3>
-
-        <div class="practice-item">
-          <p><strong>Multiple Choice:</strong> ${escapeHTML(topic.practice.mcQuestion)}</p>
-          ${topic.practice.mcOptions.map((option, index) => `
-            <label class="radio-option">
-              <input type="radio" name="${topic.id}-mc" value="${index}">
-              ${escapeHTML(option)}
-            </label>
-          `).join("")}
-        </div>
-
-        <div class="practice-item">
-          <label for="${topic.id}-fill">
-            Fill in the blank: ${escapeHTML(topic.practice.fillQuestion)}
-          </label>
-          <input type="text" id="${topic.id}-fill" aria-describedby="${topic.id}-fill-status">
-          <span class="item-status" id="${topic.id}-fill-status">Status: Not checked</span>
-        </div>
-
-        <div class="practice-item">
-          <p><strong>True or False:</strong> ${escapeHTML(topic.practice.tfQuestion)}</p>
-          <label class="radio-option">
-            <input type="radio" name="${topic.id}-tf" value="true">
-            True
-          </label>
-          <label class="radio-option">
-            <input type="radio" name="${topic.id}-tf" value="false">
-            False
-          </label>
-        </div>
-
-        <div class="practice-item">
-          <p><strong>Case Study:</strong> ${escapeHTML(topic.practice.casePrompt)}</p>
-          <p>${escapeHTML(topic.practice.caseQuestion)}</p>
-          <textarea id="${topic.id}-case" placeholder="Write your reasoning here before revealing the model answer."></textarea>
-          <div class="answer-key" id="${topic.id}-case-answer">
-            <h4>Case Study Model Answer</h4>
-            <p>${escapeHTML(topic.practice.caseAnswer)}</p>
-          </div>
-        </div>
-
-        <div class="activity-controls">
-          <button class="primary" onclick="checkPractice('${topic.id}')">Check Practice</button>
-          <button class="secondary" onclick="toggleCaseAnswer('${topic.id}')">Show or Hide Case Answer</button>
-          <button class="secondary" onclick="resetPractice('${topic.id}')">Reset Practice</button>
-        </div>
-
-        <div class="feedback" id="${topic.id}-practice-feedback"></div>
-      </div>
-
-      <div class="tool-block">
-        <h3>Discussion Prompt</h3>
-        <p><strong>${escapeHTML(topic.discussionQuestion)}</strong></p>
-        <textarea id="${topic.id}-discussion-text" placeholder="Write your response here."></textarea>
-
-        <div class="activity-controls">
-          <button class="primary" onclick="showDiscussionAnswer('${topic.id}')">Reveal Model Answer</button>
-          <button class="secondary" onclick="hideDiscussionAnswer('${topic.id}')">Hide Model Answer</button>
-        </div>
-
-        <div class="answer-key" id="${topic.id}-discussion-answer">
-          <h4>Discussion Model Answer</h4>
-          <p>${escapeHTML(topic.discussionAnswer)}</p>
-        </div>
-      </div>
-    </section>
-  `).join("");
-
-  topics.forEach(topic => renderCard(topic.id));
-  updateProgress();
-}
-
-function getTopic(id) {
-  return topics.find(topic => topic.id === id);
-}
-
-function renderCard(topicId) {
-  const topic = getTopic(topicId);
-  const topicProgress = progress[topicId];
-  const card = topic.flashcards[topicProgress.cardIndex];
-  const cardElement = document.getElementById(`${topicId}-flashcard`);
-  const statusElement = document.getElementById(`${topicId}-card-status`);
-
-  if (!cardElement || !statusElement) return;
-
-  const cardNumber = topicProgress.cardIndex + 1;
-  const totalCards = topic.flashcards.length;
-
-  statusElement.textContent =
-    `Card ${cardNumber} of ${totalCards}. Completed: ${topicProgress.cardsCompleted}. Got it: ${topicProgress.cardsEasy}. Still learning: ${topicProgress.cardsHard}.`;
-
-  if (topicProgress.cardFlipped) {
-    cardElement.innerHTML = `
-      <div>
-        <strong>Answer</strong>
-        <p>${escapeHTML(card[1])}</p>
-      </div>
-    `;
-  } else {
-    cardElement.innerHTML = `
-      <div>
-        <strong>Question</strong>
-        <p>${escapeHTML(card[0])}</p>
-      </div>
-    `;
-  }
-}
-
-function flipCard(topicId) {
-  progress[topicId].cardFlipped = !progress[topicId].cardFlipped;
-  saveProgress();
-  renderCard(topicId);
-}
-
-function nextCard(topicId) {
-  const topic = getTopic(topicId);
-  progress[topicId].cardIndex = Math.min(topic.flashcards.length - 1, progress[topicId].cardIndex + 1);
-  progress[topicId].cardFlipped = false;
-  saveProgress();
-  renderCard(topicId);
-}
-
-function previousCard(topicId) {
-  progress[topicId].cardIndex = Math.max(0, progress[topicId].cardIndex - 1);
-  progress[topicId].cardFlipped = false;
-  saveProgress();
-  renderCard(topicId);
-}
-
-function markCard(topicId, confidence) {
-  const topic = getTopic(topicId);
-  const topicProgress = progress[topicId];
-
-  if (topicProgress.cardsCompleted < topic.flashcards.length) {
-    topicProgress.cardsCompleted++;
-
-    if (confidence === "easy") {
-      topicProgress.cardsEasy++;
-    } else {
-      topicProgress.cardsHard++;
-    }
-  }
-
-  if (topicProgress.cardsCompleted < topic.flashcards.length) {
-    topicProgress.cardIndex = Math.min(topic.flashcards.length - 1, topicProgress.cardIndex + 1);
-    topicProgress.cardFlipped = false;
-  }
-
-  saveProgress();
-  renderCard(topicId);
-  updateProgress();
-}
-
-function restartDeck(topicId) {
-  progress[topicId].cardIndex = 0;
-  progress[topicId].cardFlipped = false;
-  progress[topicId].cardsCompleted = 0;
-  progress[topicId].cardsEasy = 0;
-  progress[topicId].cardsHard = 0;
-  saveProgress();
-  renderCard(topicId);
-  updateProgress();
-}
-
-function checkMatching(topicId) {
-  const topic = getTopic(topicId);
-  let correct = 0;
-
-  topic.match.forEach((item, index) => {
-    const select = document.getElementById(`${topicId}-match-${index}`);
-    const status = document.getElementById(`${topicId}-match-status-${index}`);
-
-    select.classList.remove("correct-input", "incorrect-input");
-
-    if (select.value === item[1]) {
-      correct++;
-      select.classList.add("correct-input");
-      status.textContent = "Status: Correct";
-    } else {
-      select.classList.add("incorrect-input");
-      status.textContent = `Status: Incorrect. Correct answer: ${item[1]}`;
-    }
-  });
-
-  progress[topicId].matchingCompleted = true;
-  saveProgress();
-
-  const feedback = document.getElementById(`${topicId}-match-feedback`);
-  feedback.className = "feedback show " + (correct === topic.match.length ? "correct" : "partial");
-  feedback.textContent = `Matching completed. Score: ${correct} of ${topic.match.length}.`;
-
-  document.getElementById(`${topicId}-match-key`).classList.add("show");
-
-  updateProgress();
-}
-
-function resetMatching(topicId) {
-  const topic = getTopic(topicId);
-
-  topic.match.forEach((item, index) => {
-    const select = document.getElementById(`${topicId}-match-${index}`);
-    const status = document.getElementById(`${topicId}-match-status-${index}`);
-    select.value = "";
-    select.classList.remove("correct-input", "incorrect-input");
-    status.textContent = "Status: Not checked";
-  });
-
-  progress[topicId].matchingCompleted = false;
-  saveProgress();
-
-  document.getElementById(`${topicId}-match-feedback`).className = "feedback";
-  document.getElementById(`${topicId}-match-key`).classList.remove("show");
-
-  updateProgress();
-}
-
-function checkPractice(topicId) {
-  const topic = getTopic(topicId);
-  let correct = 0;
-  const total = 3;
-
-  const mc = document.querySelector(`input[name="${topicId}-mc"]:checked`);
-  if (mc && Number(mc.value) === topic.practice.mcAnswer) {
-    correct++;
-  }
-
-  const fillInput = document.getElementById(`${topicId}-fill`);
-  const fillStatus = document.getElementById(`${topicId}-fill-status`);
-  const userFill = fillInput.value.trim().toLowerCase();
-  const correctFill = topic.practice.fillAnswer.toLowerCase();
-
-  fillInput.classList.remove("correct-input", "incorrect-input");
-
-  if (userFill === correctFill) {
-    correct++;
-    fillInput.classList.add("correct-input");
-    fillStatus.textContent = "Status: Correct";
-  } else {
-    fillInput.classList.add("incorrect-input");
-    fillStatus.textContent = `Status: Incorrect. Correct answer: ${topic.practice.fillAnswer}`;
-  }
-
-  const tf = document.querySelector(`input[name="${topicId}-tf"]:checked`);
-  if (tf && (tf.value === "true") === topic.practice.tfAnswer) {
-    correct++;
-  }
-
-  progress[topicId].practiceCompleted = true;
-  saveProgress();
-
-  const feedback = document.getElementById(`${topicId}-practice-feedback`);
-  feedback.className = "feedback show " + (correct === total ? "correct" : "partial");
-  feedback.textContent = `Practice completed. Automatically scored items: ${correct} of ${total}. The case study is self-checked with the model answer.`;
-
-  updateProgress();
-}
-
-function resetPractice(topicId) {
-  document.querySelectorAll(`input[name="${topicId}-mc"], input[name="${topicId}-tf"]`).forEach(input => {
-    input.checked = false;
-  });
-
-  const fillInput = document.getElementById(`${topicId}-fill`);
-  const fillStatus = document.getElementById(`${topicId}-fill-status`);
-  fillInput.value = "";
-  fillInput.classList.remove("correct-input", "incorrect-input");
-  fillStatus.textContent = "Status: Not checked";
-
-  document.getElementById(`${topicId}-case`).value = "";
-  document.getElementById(`${topicId}-case-answer`).classList.remove("show");
-  document.getElementById(`${topicId}-practice-feedback`).className = "feedback";
-
-  progress[topicId].practiceCompleted = false;
-  saveProgress();
-  updateProgress();
-}
-
-function toggleCaseAnswer(topicId) {
-  document.getElementById(`${topicId}-case-answer`).classList.toggle("show");
-}
-
-function showDiscussionAnswer(topicId) {
-  document.getElementById(`${topicId}-discussion-answer`).classList.add("show");
-  progress[topicId].discussionCompleted = true;
-  saveProgress();
-  updateProgress();
-}
-
-function hideDiscussionAnswer(topicId) {
-  document.getElementById(`${topicId}-discussion-answer`).classList.remove("show");
-}
-
-function updateProgress() {
-  let totalItems = 0;
-  let completedItems = 0;
-  let completedCards = 0;
-  let easyCards = 0;
-  let hardCards = 0;
-
-  topics.forEach(topic => {
-    const p = progress[topic.id];
-
-    totalItems += topic.flashcards.length + 3;
-
-    completedItems += Math.min(p.cardsCompleted, topic.flashcards.length);
-    completedItems += p.matchingCompleted ? 1 : 0;
-    completedItems += p.practiceCompleted ? 1 : 0;
-    completedItems += p.discussionCompleted ? 1 : 0;
-
-    completedCards += p.cardsCompleted;
-    easyCards += p.cardsEasy;
-    hardCards += p.cardsHard;
-  });
-
-  const percent = Math.round((completedItems / totalItems) * 100);
-
-  document.getElementById("overallProgress").value = percent;
-  document.getElementById("overallText").textContent = percent + "%";
-
-  document.getElementById("progressDetails").textContent =
-    `Completed study items: ${completedItems} of ${totalItems}. Flashcards completed: ${completedCards}. Got it: ${easyCards}. Still learning: ${hardCards}.`;
-}
-
-function resetAllProgress() {
-  const confirmed = confirm("Reset all saved progress for this study tool?");
-  if (!confirmed) return;
-
-  progress = makeDefaultProgress();
-  saveProgress();
-  renderTopics();
-}
-
-function shuffle(array) {
-  return [...array].sort(() => Math.random() - 0.5);
-}
-
-renderTopics();
+const KEY='mendelian_readable_real_file_v1';
+let progress=load();
+function defaults(){const p={};topics.forEach(t=>p[t.id]={card:0,flipped:false,cardsDone:0,easy:0,hard:0,match:false,practice:false,discussion:false});return p}
+function load(){try{return Object.assign(defaults(),JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){return defaults()}}
+function save(){localStorage.setItem(KEY,JSON.stringify(progress))}
+function h(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function options(t){return [...new Set(t.match.map(x=>x[1]))].sort()}
+function render(){document.getElementById('topics').innerHTML=topics.map(t=>section(t)).join('');topics.forEach(t=>renderCard(t.id));updateProgress()}
+function section(t){return `<section id="${t.id}" class="topic"><h2>${h(t.title)}</h2><p class="summary">${h(t.summary)}</p><a class="top-link" href="#overview">Back to overview</a>${notes(t)}${cards(t)}${matching(t)}${practice(t)}${discussion(t)}</section>`}
+function notes(t){return `<div class="block"><h3>Study notes</h3>${t.notes.map(g=>`<h4>${h(g[0])}</h4><ul>${g[1].map(x=>`<li>${h(x)}</li>`).join('')}</ul>`).join('')}</div>`}
+function cards(t){return `<div class="block"><h3>Flashcards</h3><p>Read the question, flip the card, then mark your confidence.</p><p class="status" id="${t.id}-card-status"></p><div class="flashcard" id="${t.id}-card"></div><div class="controls"><button onclick="prevCard('${t.id}')">Previous</button><button class="primary" onclick="flipCard('${t.id}')">Flip card</button><button onclick="nextCard('${t.id}')">Next</button><button class="good" onclick="markCard('${t.id}','easy')">Got it</button><button class="bad" onclick="markCard('${t.id}','hard')">Still learning</button><button onclick="restartDeck('${t.id}')">Restart deck</button></div></div>`}
+function matching(t){return `<div class="block"><h3>Matching activity</h3><p>After checking, every item shows a written status label.</p>${t.match.map((m,i)=>`<div class="item"><label for="${t.id}-m-${i}">${h(m[0])}</label><select id="${t.id}-m-${i}" aria-describedby="${t.id}-ms-${i}"><option value="">Select an answer</option>${options(t).map(o=>`<option>${h(o)}</option>`).join('')}</select><span class="item-status" id="${t.id}-ms-${i}">Status: Not checked</span></div>`).join('')}<div class="controls"><button class="primary" onclick="checkMatch('${t.id}')">Check matching</button><button onclick="resetMatch('${t.id}')">Reset matching</button></div><div class="feedback" id="${t.id}-match-feedback"></div><div class="answer" id="${t.id}-match-key"><h4>Answer key</h4><ol>${t.match.map(m=>`<li>${h(m[0])}: <strong>${h(m[1])}</strong></li>`).join('')}</ol></div></div>`}
+function practice(t){const p=t.practice;return `<div class="block"><h3>Practice questions</h3><div class="item"><p><strong>Multiple choice:</strong> ${h(p.mcQ)}</p>${p.mc.map((o,i)=>`<label class="radio"><input type="radio" name="${t.id}-mc" value="${i}">${h(o)}</label>`).join('')}</div><div class="item"><label for="${t.id}-fill">Fill in the blank: ${h(p.fillQ)}</label><input type="text" id="${t.id}-fill" aria-describedby="${t.id}-fill-status"><span class="item-status" id="${t.id}-fill-status">Status: Not checked</span></div><div class="item"><p><strong>True or false:</strong> ${h(p.tfQ)}</p><label class="radio"><input type="radio" name="${t.id}-tf" value="true">True</label><label class="radio"><input type="radio" name="${t.id}-tf" value="false">False</label></div><div class="item"><p><strong>Case study:</strong> ${h(p.caseP)}</p><p>${h(p.caseQ)}</p><textarea id="${t.id}-case" placeholder="Write your reasoning here before revealing the model answer."></textarea><div class="answer" id="${t.id}-case-answer"><h4>Case study model answer</h4><p>${h(p.caseA)}</p></div></div><div class="controls"><button class="primary" onclick="checkPractice('${t.id}')">Check practice</button><button onclick="toggle('${t.id}-case-answer')">Show or hide case answer</button><button onclick="resetPractice('${t.id}')">Reset practice</button></div><div class="feedback" id="${t.id}-practice-feedback"></div></div>`}
+function discussion(t){return `<div class="block"><h3>Discussion prompt</h3><p><strong>${h(t.discussionQ)}</strong></p><textarea id="${t.id}-disc-text" placeholder="Write your response here."></textarea><div class="controls"><button class="primary" onclick="showDiscussion('${t.id}')">Reveal model answer</button><button onclick="hideDiscussion('${t.id}')">Hide model answer</button></div><div class="answer" id="${t.id}-disc-answer"><h4>Model answer</h4><p>${h(t.discussionA)}</p></div></div>`}
+function get(id){return topics.find(t=>t.id===id)}
+function renderCard(id){const t=get(id),p=progress[id],card=t.flash[p.card];document.getElementById(id+'-card-status').textContent=`Card ${p.card+1} of ${t.flash.length}. Completed: ${p.cardsDone}. Got it: ${p.easy}. Still learning: ${p.hard}.`;document.getElementById(id+'-card').innerHTML=p.flipped?`<div><div class="label">Answer</div><p>${h(card[1])}</p></div>`:`<div><div class="label">Question</div><p>${h(card[0])}</p></div>`}
+function flipCard(id){progress[id].flipped=!progress[id].flipped;save();renderCard(id)}
+function nextCard(id){const t=get(id);progress[id].card=Math.min(t.flash.length-1,progress[id].card+1);progress[id].flipped=false;save();renderCard(id)}
+function prevCard(id){progress[id].card=Math.max(0,progress[id].card-1);progress[id].flipped=false;save();renderCard(id)}
+function markCard(id,type){const t=get(id),p=progress[id];if(p.cardsDone<t.flash.length){p.cardsDone++;type==='easy'?p.easy++:p.hard++}if(p.cardsDone<t.flash.length){p.card=Math.min(t.flash.length-1,p.card+1);p.flipped=false}save();renderCard(id);updateProgress()}
+function restartDeck(id){progress[id].card=0;progress[id].flipped=false;progress[id].cardsDone=0;progress[id].easy=0;progress[id].hard=0;save();renderCard(id);updateProgress()}
+function checkMatch(id){const t=get(id);let correct=0;t.match.forEach((m,i)=>{const s=document.getElementById(`${id}-m-${i}`),st=document.getElementById(`${id}-ms-${i}`);s.classList.remove('correct-field','wrong-field');if(s.value===m[1]){correct++;s.classList.add('correct-field');st.textContent='Status: Correct'}else{s.classList.add('wrong-field');st.textContent=`Status: Incorrect. Correct answer: ${m[1]}`}});progress[id].match=true;save();const fb=document.getElementById(id+'-match-feedback');fb.className='feedback show '+(correct===t.match.length?'good':'partial');fb.textContent=`Matching completed. Score: ${correct} of ${t.match.length}.`;document.getElementById(id+'-match-key').classList.add('show');updateProgress()}
+function resetMatch(id){const t=get(id);t.match.forEach((m,i)=>{const s=document.getElementById(`${id}-m-${i}`),st=document.getElementById(`${id}-ms-${i}`);s.value='';s.classList.remove('correct-field','wrong-field');st.textContent='Status: Not checked'});progress[id].match=false;save();document.getElementById(id+'-match-feedback').className='feedback';document.getElementById(id+'-match-key').classList.remove('show');updateProgress()}
+function checkPractice(id){const t=get(id),p=t.practice;let correct=0;const mc=document.querySelector(`input[name="${id}-mc"]:checked`);if(mc&&Number(mc.value)===p.mcA)correct++;const fill=document.getElementById(id+'-fill'),fs=document.getElementById(id+'-fill-status');fill.classList.remove('correct-field','wrong-field');if(fill.value.trim().toLowerCase()===p.fillA.toLowerCase()){correct++;fill.classList.add('correct-field');fs.textContent='Status: Correct'}else{fill.classList.add('wrong-field');fs.textContent=`Status: Incorrect. Correct answer: ${p.fillA}`}const tf=document.querySelector(`input[name="${id}-tf"]:checked`);if(tf&&(tf.value==='true')===p.tfA)correct++;progress[id].practice=true;save();const fb=document.getElementById(id+'-practice-feedback');fb.className='feedback show '+(correct===3?'good':'partial');fb.textContent=`Practice completed. Automatically scored items: ${correct} of 3. The case study is self-checked.`;updateProgress()}
+function resetPractice(id){document.querySelectorAll(`input[name="${id}-mc"],input[name="${id}-tf"]`).forEach(x=>x.checked=false);const f=document.getElementById(id+'-fill'),fs=document.getElementById(id+'-fill-status');f.value='';f.classList.remove('correct-field','wrong-field');fs.textContent='Status: Not checked';document.getElementById(id+'-case').value='';document.getElementById(id+'-case-answer').classList.remove('show');document.getElementById(id+'-practice-feedback').className='feedback';progress[id].practice=false;save();updateProgress()}
+function toggle(id){document.getElementById(id).classList.toggle('show')}
+function showDiscussion(id){document.getElementById(id+'-disc-answer').classList.add('show');progress[id].discussion=true;save();updateProgress()}
+function hideDiscussion(id){document.getElementById(id+'-disc-answer').classList.remove('show')}
+function updateProgress(){let total=0,done=0,cards=0,easy=0,hard=0;topics.forEach(t=>{const p=progress[t.id];total+=t.flash.length+3;done+=Math.min(p.cardsDone,t.flash.length)+(p.match?1:0)+(p.practice?1:0)+(p.discussion?1:0);cards+=p.cardsDone;easy+=p.easy;hard+=p.hard});const pct=Math.round(done/total*100);document.getElementById('overallProgress').value=pct;document.getElementById('overallText').textContent=pct+'%';document.getElementById('progressDetails').textContent=`Completed study items: ${done} of ${total}. Flashcards completed: ${cards}. Got it: ${easy}. Still learning: ${hard}.`}
+function resetAllProgress(){if(!confirm('Reset all saved progress for this study tool?'))return;progress=defaults();save();render()}
+render();
 </script>
 </body>
 </html>

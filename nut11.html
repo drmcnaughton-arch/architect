@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fat-Soluble Vitamins A, D, E & K – Interactive Study Tool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1e2633;
+    --surface3: #252d3a;
+    --border: rgba(99,179,237,0.15);
+    --primary: #63b3ed;
+    --primary-glow: rgba(99,179,237,0.2);
+    --accent: #68d391;
+    --accent2: #f6ad55;
+    --accent3: #fc8181;
+    --accent4: #b794f4;
+    --text: #e2e8f0;
+    --text-muted: #8899aa;
+    --text-dim: #4a5568;
+    --radius: 14px;
+    --radius-sm: 8px;
+    --font-head: 'Sora', sans-serif;
+    --font-body: 'Lora', serif;
+    /* Vitamin colors */
+    --vit-a: #f6ad55;
+    --vit-d: #63b3ed;
+    --vit-e: #68d391;
+    --vit-k: #b794f4;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font-body); background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.7; font-size: 16px; }
+  .skip-link { position: absolute; top: -100px; left: 0; background: var(--primary); color: #000; padding: 10px 20px; font-family: var(--font-head); font-weight: 700; z-index: 9999; border-radius: 0 0 var(--radius-sm) 0; transition: top 0.2s; }
+  .skip-link:focus { top: 0; }
+
+  /* ===== HEADER ===== */
+  header {
+    background: linear-gradient(135deg, #0d1117 0%, #1a1f2e 50%, #0d1117 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 22px 32px;
+    position: sticky; top: 0; z-index: 100;
+    backdrop-filter: blur(10px);
+  }
+  .header-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+  .logo { display: flex; align-items: center; gap: 14px; }
+  .logo-icon { width: 44px; height: 44px; background: linear-gradient(135deg, var(--primary), var(--accent4)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .logo-text h1 { font-family: var(--font-head); font-size: 1.1rem; font-weight: 700; color: var(--text); line-height: 1.2; }
+  .logo-text span { font-size: 0.75rem; color: var(--text-muted); font-style: italic; }
+
+  /* Score Bar */
+  .score-bar { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .score-stat { text-align: center; }
+  .score-num { font-family: var(--font-head); font-size: 1.3rem; font-weight: 700; color: var(--primary); line-height: 1; }
+  .score-lbl { font-family: var(--font-head); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-top: 2px; }
+  .score-divider { width: 1px; height: 36px; background: var(--border); }
+  .overall-bar-wrap { display: flex; flex-direction: column; gap: 4px; }
+  .overall-bar-label { font-family: var(--font-head); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); }
+  .overall-bar-outer { width: 140px; height: 8px; background: var(--surface3); border-radius: 99px; overflow: hidden; }
+  .overall-bar-inner { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); border-radius: 99px; transition: width 0.5s ease; width: 0%; }
+
+  /* ===== VITAMIN TABS ===== */
+  .tabs-outer { background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 89px; z-index: 90; }
+  .tabs-inner { max-width: 1200px; margin: 0 auto; padding: 0 32px; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+  .tabs-inner::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    font-family: var(--font-head); font-size: 0.88rem; font-weight: 600;
+    padding: 14px 24px; border: none; border-bottom: 3px solid transparent;
+    background: transparent; color: var(--text-muted);
+    cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    display: flex; align-items: center; gap: 9px;
+    position: relative;
+  }
+  .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .tab-btn.active { color: var(--text); }
+  .tab-btn.active[data-tab="overview"] { border-color: var(--primary); color: var(--primary); }
+  .tab-btn.active[data-tab="vitA"] { border-color: var(--vit-a); color: var(--vit-a); }
+  .tab-btn.active[data-tab="vitD"] { border-color: var(--vit-d); color: var(--vit-d); }
+  .tab-btn.active[data-tab="vitE"] { border-color: var(--vit-e); color: var(--vit-e); }
+  .tab-btn.active[data-tab="vitK"] { border-color: var(--vit-k); color: var(--vit-k); }
+  .tab-badge { width: 26px; height: 26px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; flex-shrink: 0; }
+  .badge-a { background: rgba(246,173,85,0.15); color: var(--vit-a); }
+  .badge-d { background: rgba(99,179,237,0.15); color: var(--vit-d); }
+  .badge-e { background: rgba(104,211,145,0.15); color: var(--vit-e); }
+  .badge-k { background: rgba(183,148,244,0.15); color: var(--vit-k); }
+  .tab-complete { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); position: absolute; top: 10px; right: 8px; display: none; }
+  .tab-complete.show { display: block; }
+  .tab-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+
+  /* ===== MAIN ===== */
+  main { max-width: 1200px; margin: 0 auto; padding: 36px 32px 80px; }
+  .tab-panel { display: none; animation: fadeIn 0.3s ease; }
+  .tab-panel.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ===== SECTION HEADERS ===== */
+  .section-head { margin-bottom: 28px; }
+  .section-head-inner { display: flex; align-items: center; gap: 18px; margin-bottom: 6px; }
+  .section-big-badge { width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 1.8rem; font-weight: 700; flex-shrink: 0; }
+  .big-a { background: rgba(246,173,85,0.12); border: 2px solid rgba(246,173,85,0.3); color: var(--vit-a); }
+  .big-d { background: rgba(99,179,237,0.12); border: 2px solid rgba(99,179,237,0.3); color: var(--vit-d); }
+  .big-e { background: rgba(104,211,145,0.12); border: 2px solid rgba(104,211,145,0.3); color: var(--vit-e); }
+  .big-k { background: rgba(183,148,244,0.12); border: 2px solid rgba(183,148,244,0.3); color: var(--vit-k); }
+  .section-title { font-family: var(--font-head); font-size: 1.7rem; font-weight: 700; color: var(--text); }
+  .section-subtitle { font-size: 0.93rem; color: var(--text-muted); font-style: italic; }
+
+  /* ===== SUB-SECTION TABS ===== */
+  .sub-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 24px; }
+  .sub-tab {
+    font-family: var(--font-head); font-size: 0.78rem; font-weight: 600;
+    padding: 7px 18px; border: 1px solid var(--border); border-radius: 99px;
+    background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.2s;
+  }
+  .sub-tab:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+  .sub-tab.active { background: var(--primary-glow); border-color: var(--primary); color: var(--primary); }
+  .sub-tab:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .sub-panel { display: none; }
+  .sub-panel.active { display: block; animation: fadeIn 0.25s ease; }
+
+  /* ===== CONTENT CARDS ===== */
+  .cards-grid { display: grid; gap: 16px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 800px) { .two-col, .three-col { grid-template-columns: 1fr; } }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: border-color 0.2s; }
+  .card:hover { border-color: rgba(99,179,237,0.3); }
+  .card-head { padding: 14px 20px; background: var(--surface2); display: flex; align-items: center; gap: 10px; }
+  .card-icon { width: 32px; height: 32px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+  .card-head-title { font-family: var(--font-head); font-size: 0.9rem; font-weight: 600; color: var(--text); }
+  .card-body { padding: 18px 20px; }
+  .card-body ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .card-body li { padding-left: 18px; position: relative; color: var(--text); font-size: 0.92rem; line-height: 1.5; }
+  .card-body li::before { content: '›'; position: absolute; left: 0; color: var(--primary); font-weight: 700; }
+  .card-body strong { color: var(--accent2); }
+  .card-body em { color: var(--accent4); font-style: italic; }
+  .info-box { padding: 12px 16px; border-radius: var(--radius-sm); border-left: 3px solid; margin-top: 14px; }
+  .ib-blue { background: rgba(99,179,237,0.07); border-color: var(--primary); }
+  .ib-amber { background: rgba(246,173,85,0.07); border-color: var(--accent2); }
+  .ib-green { background: rgba(104,211,145,0.07); border-color: var(--accent); }
+  .ib-purple { background: rgba(183,148,244,0.07); border-color: var(--accent4); }
+  .ib-red { background: rgba(252,129,129,0.07); border-color: var(--accent3); }
+  .ib-label { font-family: var(--font-head); font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; }
+  .ib-text { font-size: 0.85rem; color: var(--text); line-height: 1.6; }
+
+  /* ===== FLASHCARDS ===== */
+  .fc-section { }
+  .fc-controls { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 22px; }
+  .fc-count { font-family: var(--font-head); font-size: 0.88rem; color: var(--text-muted); }
+  .fc-count span { color: var(--primary); font-weight: 700; }
+  .fc-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .fc-filter {
+    font-family: var(--font-head); font-size: 0.75rem; font-weight: 600;
+    padding: 6px 14px; border: 1px solid var(--border); border-radius: 99px;
+    background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.2s;
+  }
+  .fc-filter.active { background: var(--primary-glow); border-color: var(--primary); color: var(--primary); }
+  .fc-filter:hover { border-color: var(--primary); color: var(--primary); }
+  .fc-filter:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .card-arena { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  .fc-wrap { width: 100%; max-width: 620px; perspective: 1200px; }
+  .flashcard { width: 100%; min-height: 280px; position: relative; transform-style: preserve-3d; transition: transform 0.55s cubic-bezier(0.4,0,0.2,1); cursor: pointer; border-radius: var(--radius); }
+  .flashcard.flipped { transform: rotateY(180deg); }
+  .card-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: var(--radius); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px; text-align: center; border: 1px solid var(--border); min-height: 280px; }
+  .card-front { background: linear-gradient(145deg, var(--surface), var(--surface2)); }
+  .card-back { background: linear-gradient(145deg, #0e1f2f, #122030); border-color: var(--primary); transform: rotateY(180deg); }
+  .card-cat { font-family: var(--font-head); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--primary); margin-bottom: 14px; padding: 3px 12px; background: var(--primary-glow); border-radius: 99px; }
+  .card-emoji { font-size: 3rem; margin-bottom: 14px; line-height: 1; }
+  .card-q { font-family: var(--font-head); font-size: 1.1rem; font-weight: 600; color: var(--text); line-height: 1.45; }
+  .card-hint { margin-top: 12px; font-size: 0.78rem; color: var(--text-dim); font-style: italic; }
+  .card-a { font-size: 0.95rem; color: var(--text); line-height: 1.65; }
+  .card-a strong { color: var(--accent2); }
+  .card-flip-hint { position: absolute; bottom: 12px; right: 16px; font-family: var(--font-head); font-size: 0.68rem; color: var(--text-dim); }
+  .fc-nav { display: flex; align-items: center; gap: 14px; }
+  .fc-nav-btn {
+    font-family: var(--font-head); font-size: 0.85rem; font-weight: 600;
+    padding: 10px 22px; border: 1px solid var(--border); border-radius: 99px;
+    background: var(--surface2); color: var(--text); cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .fc-nav-btn:hover:not(:disabled) { background: var(--surface3); border-color: var(--primary); color: var(--primary); }
+  .fc-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .fc-nav-btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .conf-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
+  .conf-lbl { font-family: var(--font-head); font-size: 0.72rem; color: var(--text-muted); margin-right: 2px; }
+  .conf-btn { font-family: var(--font-head); font-size: 0.78rem; font-weight: 700; padding: 7px 16px; border: none; border-radius: 99px; cursor: pointer; transition: all 0.15s; }
+  .conf-easy { background: rgba(104,211,145,0.15); color: var(--accent); border: 1px solid rgba(104,211,145,0.4); }
+  .conf-easy:hover { background: rgba(104,211,145,0.3); }
+  .conf-hard { background: rgba(252,129,129,0.15); color: var(--accent3); border: 1px solid rgba(252,129,129,0.4); }
+  .conf-hard:hover { background: rgba(252,129,129,0.3); }
+  .conf-btn:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+  .fc-done-banner { display: none; text-align: center; padding: 40px 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+  .fc-done-banner.show { display: block; }
+  .fc-done-title { font-family: var(--font-head); font-size: 1.4rem; font-weight: 700; margin-bottom: 10px; }
+  .fc-done-sub { color: var(--text-muted); margin-bottom: 22px; }
+  .restart-fc-btn { font-family: var(--font-head); font-size: 0.88rem; font-weight: 700; padding: 11px 26px; background: var(--primary); color: #000; border: none; border-radius: 99px; cursor: pointer; transition: all 0.2s; }
+  .restart-fc-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99,179,237,0.3); }
+
+  /* ===== MATCHING ===== */
+  .match-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; }
+  .match-intro { font-family: var(--font-head); font-size: 0.82rem; color: var(--text-muted); font-weight: 600; margin-bottom: 20px; }
+  .match-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+  .match-row-label { flex: 1; min-width: 200px; font-size: 0.9rem; color: var(--text); line-height: 1.4; }
+  .match-select {
+    font-family: var(--font-body); font-size: 0.88rem; padding: 8px 12px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); color: var(--text); cursor: pointer;
+    outline: none; min-width: 170px; transition: border-color 0.2s;
+  }
+  .match-select:focus { border-color: var(--primary); }
+  .match-select.correct { border-color: var(--accent); background: rgba(104,211,145,0.08); color: var(--accent); }
+  .match-select.wrong { border-color: var(--accent3); background: rgba(252,129,129,0.05); }
+  .match-actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+  .check-btn { font-family: var(--font-head); font-size: 0.85rem; font-weight: 700; padding: 10px 22px; background: var(--primary); color: #000; border: none; border-radius: 99px; cursor: pointer; transition: all 0.2s; }
+  .check-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 18px rgba(99,179,237,0.3); }
+  .check-btn:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+  .reset-btn { font-family: var(--font-head); font-size: 0.82rem; font-weight: 600; padding: 10px 20px; background: transparent; border: 1px solid var(--border); border-radius: 99px; color: var(--text-muted); cursor: pointer; transition: all 0.2s; }
+  .reset-btn:hover { border-color: var(--accent2); color: var(--accent2); }
+  .feedback-msg { display: none; margin-top: 14px; padding: 10px 16px; border-radius: var(--radius-sm); font-family: var(--font-head); font-size: 0.85rem; font-weight: 600; }
+  .feedback-msg.show { display: block; }
+  .fb-good { background: rgba(104,211,145,0.1); color: var(--accent); border: 1px solid rgba(104,211,145,0.3); }
+  .fb-partial { background: rgba(246,173,85,0.1); color: var(--accent2); border: 1px solid rgba(246,173,85,0.3); }
+  .answer-reveal { display: none; margin-top: 16px; padding: 16px 18px; background: rgba(104,211,145,0.05); border: 1px solid rgba(104,211,145,0.2); border-radius: var(--radius-sm); }
+  .answer-reveal.show { display: block; }
+  .ar-label { font-family: var(--font-head); font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 10px; }
+  .answer-reveal ol { padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+  .answer-reveal li { font-size: 0.9rem; color: var(--text); }
+  .answer-reveal strong { color: var(--accent2); }
+
+  /* ===== DISCUSSION ===== */
+  .disc-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 18px; }
+  .disc-q-block { padding: 22px 26px; background: var(--surface2); border-bottom: 1px solid var(--border); }
+  .disc-label { font-family: var(--font-head); font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--primary); margin-bottom: 8px; }
+  .disc-q { font-family: var(--font-head); font-size: 1rem; font-weight: 600; color: var(--text); line-height: 1.5; }
+  .disc-think { padding: 18px 26px; border-bottom: 1px solid var(--border); }
+  .disc-think-lbl { font-family: var(--font-head); font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 8px; }
+  .disc-textarea { width: 100%; min-height: 90px; padding: 12px 14px; background: var(--surface3); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-family: var(--font-body); font-size: 0.9rem; resize: vertical; outline: none; transition: border-color 0.2s; line-height: 1.6; }
+  .disc-textarea:focus { border-color: var(--primary); }
+  .disc-answer { padding: 20px 26px; display: none; border-top: 1px solid var(--border); }
+  .disc-answer.show { display: block; animation: fadeIn 0.25s ease; }
+  .disc-ans-label { font-family: var(--font-head); font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 10px; }
+  .disc-ans-text { font-size: 0.92rem; color: var(--text); line-height: 1.7; }
+  .disc-ans-text strong { color: var(--accent2); }
+  .disc-ans-text em { color: var(--accent4); font-style: italic; }
+  .disc-footer { padding: 14px 26px; background: var(--surface2); display: flex; gap: 10px; }
+  .reveal-btn { font-family: var(--font-head); font-size: 0.85rem; font-weight: 700; padding: 10px 22px; background: linear-gradient(135deg, var(--primary), var(--accent4)); color: #000; border: none; border-radius: 99px; cursor: pointer; transition: all 0.2s; }
+  .reveal-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 18px rgba(99,179,237,0.3); }
+  .reveal-btn:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+  .hide-btn { font-family: var(--font-head); font-size: 0.85rem; font-weight: 600; padding: 10px 22px; background: transparent; border: 1px solid var(--border); border-radius: 99px; color: var(--text-muted); cursor: pointer; transition: all 0.2s; }
+  .hide-btn:hover { border-color: var(--accent3); color: var(--accent3); }
+
+  /* ===== OVERVIEW ===== */
+  .overview-hero { text-align: center; padding: 40px 20px 48px; }
+  .ov-title { font-family: var(--font-head); font-size: 2.2rem; font-weight: 700; background: linear-gradient(135deg, var(--primary), var(--accent4)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 10px; line-height: 1.2; }
+  .ov-sub { font-size: 1rem; color: var(--text-muted); max-width: 460px; margin: 0 auto 36px; }
+  .vit-jump-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; max-width: 900px; margin: 0 auto; }
+  .vit-jump-card {
+    padding: 22px 20px; border: 1px solid; border-radius: var(--radius);
+    cursor: pointer; transition: all 0.2s; text-align: center;
+    background: var(--surface);
+  }
+  .vit-jump-card:hover { transform: translateY(-3px); }
+  .vit-jump-card:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .vjc-a { border-color: rgba(246,173,85,0.25); }
+  .vjc-a:hover { border-color: var(--vit-a); box-shadow: 0 8px 28px rgba(246,173,85,0.15); }
+  .vjc-d { border-color: rgba(99,179,237,0.25); }
+  .vjc-d:hover { border-color: var(--vit-d); box-shadow: 0 8px 28px rgba(99,179,237,0.15); }
+  .vjc-e { border-color: rgba(104,211,145,0.25); }
+  .vjc-e:hover { border-color: var(--vit-e); box-shadow: 0 8px 28px rgba(104,211,145,0.15); }
+  .vjc-k { border-color: rgba(183,148,244,0.25); }
+  .vjc-k:hover { border-color: var(--vit-k); box-shadow: 0 8px 28px rgba(183,148,244,0.15); }
+  .vjc-letter { font-family: var(--font-head); font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+  .vjc-name { font-family: var(--font-head); font-size: 0.88rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .vjc-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
+
+  /* Overview comparison table */
+  .ov-table-wrap { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); margin-top: 32px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+  thead { background: var(--surface2); }
+  th { font-family: var(--font-head); font-weight: 700; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  td { padding: 12px 16px; border-bottom: 1px solid rgba(99,179,237,0.07); color: var(--text); vertical-align: top; line-height: 1.5; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  td strong { color: var(--accent2); }
+
+  /* Progress tracker panel */
+  .progress-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-top: 32px; }
+  .pp-title { font-family: var(--font-head); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 20px; }
+  .pp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 22px; }
+  .pp-stat { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; text-align: center; }
+  .pp-num { font-family: var(--font-head); font-size: 1.7rem; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+  .pp-lbl { font-size: 0.72rem; color: var(--text-muted); }
+  .pp-bars { display: flex; flex-direction: column; gap: 10px; }
+  .pp-bar-row { display: flex; align-items: center; gap: 12px; }
+  .pp-bar-lbl { font-family: var(--font-head); font-size: 0.75rem; color: var(--text-muted); width: 80px; flex-shrink: 0; }
+  .pp-bar-track { flex: 1; height: 8px; background: var(--surface3); border-radius: 99px; overflow: hidden; }
+  .pp-bar-fill { height: 100%; border-radius: 99px; transition: width 0.6s ease; width: 0%; }
+  .pp-bar-pct { font-family: var(--font-head); font-size: 0.72rem; color: var(--text-muted); width: 30px; text-align: right; }
+
+  /* ===== FOOTER ===== */
+  footer { max-width: 1200px; margin: 0 auto; padding: 18px 32px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  .footer-text { font-size: 0.75rem; color: var(--text-dim); font-style: italic; }
+  .ada-note { font-family: var(--font-head); font-size: 0.68rem; color: var(--text-dim); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 680px) {
+    header { padding: 16px; }
+    .tabs-inner { padding: 0 16px; }
+    .tab-btn { padding: 12px 14px; font-size: 0.8rem; }
+    main { padding: 24px 16px 60px; }
+    footer { padding: 14px 16px; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+  :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<!-- HEADER -->
+<header role="banner">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon" aria-hidden="true">💊</div>
+      <div class="logo-text">
+        <h1>Fat-Soluble Vitamins: A, D, E &amp; K</h1>
+        <span>Understanding Nutrition, 16e · Chapter 11</span>
+      </div>
+    </div>
+    <div class="score-bar" aria-label="Your progress">
+      <div class="score-stat">
+        <div class="score-num" id="hdr-cards">0</div>
+        <div class="score-lbl">Cards Done</div>
+      </div>
+      <div class="score-divider"></div>
+      <div class="score-stat">
+        <div class="score-num" id="hdr-match">0%</div>
+        <div class="score-lbl">Match Score</div>
+      </div>
+      <div class="score-divider"></div>
+      <div class="overall-bar-wrap">
+        <div class="overall-bar-label">Overall Progress</div>
+        <div class="overall-bar-outer" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+          <div class="overall-bar-inner" id="overall-bar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- VITAMIN TABS -->
+<div class="tabs-outer" role="tablist" aria-label="Vitamin sections">
+  <div class="tabs-inner">
+    <button class="tab-btn active" data-tab="overview" role="tab" aria-selected="true" aria-controls="panel-overview" onclick="switchTab('overview',this)">
+      📋 Overview
+      <span class="tab-complete" id="tc-overview"></span>
+    </button>
+    <button class="tab-btn" data-tab="vitA" role="tab" aria-selected="false" aria-controls="panel-vitA" onclick="switchTab('vitA',this)">
+      <span class="tab-badge badge-a">A</span> Vitamin A
+      <span class="tab-complete" id="tc-vitA"></span>
+    </button>
+    <button class="tab-btn" data-tab="vitD" role="tab" aria-selected="false" aria-controls="panel-vitD" onclick="switchTab('vitD',this)">
+      <span class="tab-badge badge-d">D</span> Vitamin D
+      <span class="tab-complete" id="tc-vitD"></span>
+    </button>
+    <button class="tab-btn" data-tab="vitE" role="tab" aria-selected="false" aria-controls="panel-vitE" onclick="switchTab('vitE',this)">
+      <span class="tab-badge badge-e">E</span> Vitamin E
+      <span class="tab-complete" id="tc-vitE"></span>
+    </button>
+    <button class="tab-btn" data-tab="vitK" role="tab" aria-selected="false" aria-controls="panel-vitK" onclick="switchTab('vitK',this)">
+      <span class="tab-badge badge-k">K</span> Vitamin K
+      <span class="tab-complete" id="tc-vitK"></span>
+    </button>
+  </div>
+</div>
+
+<main id="main-content">
+
+  <!-- ===================== OVERVIEW ===================== -->
+  <div class="tab-panel active" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
+    <div class="overview-hero">
+      <div class="ov-title">The Fat-Soluble Vitamins</div>
+      <p class="ov-sub">Chapter 11 · Explore each vitamin using the tabs above, or jump directly to a section below.</p>
+      <div class="vit-jump-grid">
+        <button class="vit-jump-card vjc-a" onclick="switchTabByName('vitA')" aria-label="Go to Vitamin A">
+          <div class="vjc-letter" style="color:var(--vit-a)">A</div>
+          <div class="vjc-name">Vitamin A &amp; Beta-Carotene</div>
+          <div class="vjc-desc">Vision, cell differentiation, reproduction, and growth</div>
+        </button>
+        <button class="vit-jump-card vjc-d" onclick="switchTabByName('vitD')" aria-label="Go to Vitamin D">
+          <div class="vjc-letter" style="color:var(--vit-d)">D</div>
+          <div class="vjc-name">Vitamin D</div>
+          <div class="vjc-desc">Bone health, calcium absorption, immunity, brain function</div>
+        </button>
+        <button class="vit-jump-card vjc-e" onclick="switchTabByName('vitE')" aria-label="Go to Vitamin E">
+          <div class="vjc-letter" style="color:var(--vit-e)">E</div>
+          <div class="vjc-name">Vitamin E</div>
+          <div class="vjc-desc">Primary fat-soluble antioxidant; protects cells and LDLs</div>
+        </button>
+        <button class="vit-jump-card vjc-k" onclick="switchTabByName('vitK')" aria-label="Go to Vitamin K">
+          <div class="vjc-letter" style="color:var(--vit-k)">K</div>
+          <div class="vjc-name">Vitamin K</div>
+          <div class="vjc-desc">Blood clotting, bone proteins, and gut bacteria synthesis</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Fat-soluble characteristics -->
+    <div class="two-col" style="margin-bottom:16px;">
+      <div class="card">
+        <div class="card-head"><div class="card-icon" style="background:rgba(99,179,237,0.1)">💧</div><span class="card-head-title">Absorption &amp; Transport</span></div>
+        <div class="card-body"><ul>
+          <li>Require <strong>bile</strong> for digestion and absorption</li>
+          <li>Travel through the <strong>lymphatic system</strong></li>
+          <li>Carried by transport proteins in the bloodstream</li>
+          <li>Chylomicrons transport them after intestinal absorption</li>
+        </ul></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-icon" style="background:rgba(252,129,129,0.1)">⚠️</div><span class="card-head-title">Storage &amp; Toxicity Risk</span></div>
+        <div class="card-body"><ul>
+          <li>Stored in <strong>liver and adipose (fat) tissues</strong></li>
+          <li><strong>Not readily excreted</strong> — accumulate over time</li>
+          <li>Increases risk of <em>toxicity</em> with excess intake</li>
+          <li>Deficiency develops slowly due to stored reserves</li>
+        </ul>
+        <div class="info-box ib-red"><div class="ib-label" style="color:var(--accent3)">⚠️ Key Contrast</div><div class="ib-text">Unlike water-soluble vitamins, excess cannot be excreted in urine — making supplement overdose genuinely dangerous.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary table -->
+    <div class="ov-table-wrap">
+      <table>
+        <thead>
+          <tr><th>Vitamin</th><th>Key Roles</th><th>Deficiency</th><th>Toxicity</th><th>Sources</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color:var(--vit-a)">A</strong> (Retinoids)</td>
+            <td>Vision, cell differentiation, reproduction, immune function</td>
+            <td>Night blindness, blindness, infection risk</td>
+            <td>High — cell damage, bone defects</td>
+            <td>Liver, dark leafy greens, orange/yellow produce</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--vit-d)">D</strong> (Calciferol)</td>
+            <td>Bone health, Ca/P absorption, brain, immunity, gene regulation</td>
+            <td>Rickets, osteomalacia, osteoporosis</td>
+            <td>Highest — kidney stones, hardened vessels</td>
+            <td>Sunlight, fortified milk, fatty fish</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--vit-e)">E</strong> (Tocopherol)</td>
+            <td>Antioxidant; protects cell membranes and LDLs from oxidation</td>
+            <td>Rare — erythrocyte hemolysis, neuromuscular dysfunction</td>
+            <td>Low — UL is 65× RDA</td>
+            <td>Vegetable oils, nuts, seeds, fresh produce</td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--vit-k)">K</strong> (Phylloquinone)</td>
+            <td>Blood clotting (prothrombin), bone protein metabolism (osteocalcin)</td>
+            <td>Rare — impaired clotting; newborns at risk</td>
+            <td>Rare — no UL; caution with anticoagulants</td>
+            <td>Leafy greens, avocado, kiwi, vegetable oils</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Progress panel -->
+    <div class="progress-panel">
+      <div class="pp-title">📊 Your Progress Tracker</div>
+      <div class="pp-grid">
+        <div class="pp-stat"><div class="pp-num" id="pp-cards" style="color:var(--primary)">0</div><div class="pp-lbl">Flashcards Done</div></div>
+        <div class="pp-stat"><div class="pp-num" id="pp-easy" style="color:var(--accent)">0</div><div class="pp-lbl">Marked Easy</div></div>
+        <div class="pp-stat"><div class="pp-num" id="pp-hard" style="color:var(--accent3)">0</div><div class="pp-lbl">Marked Hard</div></div>
+        <div class="pp-stat"><div class="pp-num" id="pp-match" style="color:var(--accent2)">—</div><div class="pp-lbl">Match Score</div></div>
+      </div>
+      <div class="pp-bars">
+        <div class="pp-bar-row">
+          <span class="pp-bar-lbl">Vitamin A</span>
+          <div class="pp-bar-track"><div class="pp-bar-fill" id="bar-a" style="background:var(--vit-a)"></div></div>
+          <span class="pp-bar-pct" id="pct-a">0%</span>
+        </div>
+        <div class="pp-bar-row">
+          <span class="pp-bar-lbl">Vitamin D</span>
+          <div class="pp-bar-track"><div class="pp-bar-fill" id="bar-d" style="background:var(--vit-d)"></div></div>
+          <span class="pp-bar-pct" id="pct-d">0%</span>
+        </div>
+        <div class="pp-bar-row">
+          <span class="pp-bar-lbl">Vitamin E</span>
+          <div class="pp-bar-track"><div class="pp-bar-fill" id="bar-e" style="background:var(--vit-e)"></div></div>
+          <span class="pp-bar-pct" id="pct-e">0%</span>
+        </div>
+        <div class="pp-bar-row">
+          <span class="pp-bar-lbl">Vitamin K</span>
+          <div class="pp-bar-track"><div class="pp-bar-fill" id="bar-k" style="background:var(--vit-k)"></div></div>
+          <span class="pp-bar-pct" id="pct-k">0%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== VITAMIN A ===================== -->
+  <div class="tab-panel" id="panel-vitA" role="tabpanel">
+    <div class="section-head">
+      <div class="section-head-inner">
+        <div class="section-big-badge big-a">A</div>
+        <div>
+          <div class="section-title" style="color:var(--vit-a)">Vitamin A &amp; Beta-Carotene</div>
+          <div class="section-subtitle">Objective 11.1 — Roles, deficiency, toxicity, and food sources</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sub-tabs -->
+    <div class="sub-tabs" role="tablist" aria-label="Vitamin A sections">
+      <button class="sub-tab active" onclick="switchSub('a','notes',this)" role="tab">📖 Study Notes</button>
+      <button class="sub-tab" onclick="switchSub('a','flash',this)" role="tab">🃏 Flashcards</button>
+      <button class="sub-tab" onclick="switchSub('a','match',this)" role="tab">🔗 Matching</button>
+      <button class="sub-tab" onclick="switchSub('a','disc',this)" role="tab">💬 Discussion</button>
+    </div>
+
+    <!-- Notes -->
+    <div class="sub-panel active" id="a-notes">
+      <div class="two-col" style="margin-bottom:16px;">
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:rgba(246,173,85,0.12)">👁️</div><span class="card-head-title">Vision</span></div>
+          <div class="card-body"><ul>
+            <li>Maintains clear <strong>cornea</strong></li>
+            <li>Converts light energy to nerve impulses in the <strong>retina</strong></li>
+            <li>Photosensitive cells contain <strong>rhodopsin</strong> — requires retinal</li>
+            <li>Repeated small losses of retinal require constant replenishment</li>
+          </ul></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:rgba(246,173,85,0.12)">🧬</div><span class="card-head-title">Cell Differentiation &amp; Reproduction</span></div>
+          <div class="card-body"><ul>
+            <li><strong>Epithelial cells</strong> form skin and line body surfaces</li>
+            <li>Mucous membranes line the inside of the body</li>
+            <li><strong>Goblet cells</strong> synthesize and secrete mucus</li>
+            <li><strong>Retinoic acid</strong> regulates cell differentiation, growth, and embryonic development</li>
+            <li>Supports <strong>sperm development</strong> and normal fetal development</li>
+            <li>Beta-carotene functions as an <em>antioxidant</em></li>
+          </ul></div>
+        </div>
+      </div>
+      <div class="three-col">
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:rgba(252,129,129,0.12)">📉</div><span class="card-head-title">Deficiency</span></div>
+          <div class="card-body"><ul>
+            <li>Large problem in <strong>developing countries</strong></li>
+            <li><strong>Night blindness</strong> → total blindness</li>
+            <li>Increased risk of <em>infectious diseases</em></li>
+            <li>Can result in <strong>death</strong></li>
+            <li>Worsened by poor protein status</li>
+          </ul></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:rgba(246,173,85,0.12)">📈</div><span class="card-head-title">Toxicity</span></div>
+          <div class="card-body"><ul>
+            <li>Binding proteins become <strong>saturated</strong></li>
+            <li>Free vitamin A <em>damages cells</em></li>
+            <li>Children most vulnerable → <strong>bone defects</strong></li>
+            <li>Risk from animal sources, supplements, fortified foods</li>
+            <li>No effect on acne</li>
+          </ul></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:rgba(246,173,85,0.12)">🥕</div><span class="card-head-title">Food Sources</span></div>
+          <div class="card-body"><ul>
+            <li><strong>Liver</strong> — highest animal source</li>
+            <li>Dark leafy greens, deep orange/yellow produce</li>
+            <li>Golden rice and biofortified foods</li>
+            <li>Measured in <em>RAE</em> (Retinol Activity Equivalents)</li>
+          </ul></div>
+        </div>
+      </div>
+      <div class="info-box ib-amber" style="margin-top:16px;">
+        <div class="ib-label" style="color:var(--accent2)">Forms of Vitamin A (Retinoids)</div>
+        <div class="ib-text"><strong>Retinol</strong> — active in vision &nbsp;·&nbsp; <strong>Retinal</strong> — supports reproduction; major transport/storage form &nbsp;·&nbsp; <strong>Retinoic acid</strong> — regulates cell differentiation &amp; embryonic development &nbsp;·&nbsp; <strong>Beta-carotene</strong> — provitamin A; antioxidant</div>
+      </div>
+    </div>
+
+    <!-- Flashcards A -->
+    <div class="sub-panel" id="a-flash">
+      <div id="fc-a-container"></div>
+    </div>
+
+    <!-- Matching A -->
+    <div class="sub-panel" id="a-match">
+      <div class="match-wrap">
+        <div class="match-intro">🔗 Match each description to the correct Vitamin A term or form</div>
+        <div class="match-row"><div class="match-row-label">The active form involved in vision; also the major transport and storage form of vitamin A</div>
+          <select class="match-select" id="ma-1"><option value="">— Select —</option><option>Retinol</option><option>Retinal</option><option>Retinoic acid</option><option>Beta-carotene</option></select></div>
+        <div class="match-row"><div class="match-row-label">Regulates cell differentiation, growth, and embryonic development</div>
+          <select class="match-select" id="ma-2"><option value="">— Select —</option><option>Retinol</option><option>Retinal</option><option>Retinoic acid</option><option>Beta-carotene</option></select></div>
+        <div class="match-row"><div class="match-row-label">A provitamin A; functions as an antioxidant in the body</div>
+          <select class="match-select" id="ma-3"><option value="">— Select —</option><option>Retinol</option><option>Retinal</option><option>Retinoic acid</option><option>Beta-carotene</option></select></div>
+        <div class="match-row"><div class="match-row-label">The first product when vitamin A is activated for use in photosensitive cells (rhodopsin)</div>
+          <select class="match-select" id="ma-4"><option value="">— Select —</option><option>Retinol</option><option>Retinal</option><option>Retinoic acid</option><option>Beta-carotene</option></select></div>
+        <div class="feedback-msg" id="ma-fb"></div>
+        <div class="match-actions">
+          <button class="check-btn" onclick="checkMatch('ma',{'ma-1':'Retinal','ma-2':'Retinoic acid','ma-3':'Beta-carotene','ma-4':'Retinal'},'ma-fb','ma-reveal','a')">Check Answers</button>
+          <button class="reset-btn" onclick="resetMatch('ma',['ma-1','ma-2','ma-3','ma-4'],'ma-fb','ma-reveal')">Reset</button>
+        </div>
+        <div class="answer-reveal" id="ma-reveal">
+          <div class="ar-label">✅ Answers</div>
+          <ol>
+            <li>Transport/storage form → <strong>Retinal</strong></li>
+            <li>Cell differentiation &amp; embryonic development → <strong>Retinoic acid</strong></li>
+            <li>Provitamin A antioxidant → <strong>Beta-carotene</strong></li>
+            <li>Component of rhodopsin in vision → <strong>Retinal</strong></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- Discussion A -->
+    <div class="sub-panel" id="a-disc">
+      <div class="disc-wrap">
+        <div class="disc-q-block">
+          <div class="disc-label">💬 Discussion Question — Vitamin A</div>
+          <div class="disc-q">Why is vitamin A deficiency particularly devastating in developing countries, and what two-pronged approach does it take — both through direct effects and through protein status?</div>
+        </div>
+        <div class="disc-think"><div class="disc-think-lbl">📝 Your Thoughts</div>
+          <textarea class="disc-textarea" placeholder="Consider the role of protein in vitamin A transport, and the consequences of immune and vision impairment..."></textarea></div>
+        <div class="disc-answer" id="disc-a-ans">
+          <div class="disc-ans-label">✅ Answer</div>
+          <div class="disc-ans-text">
+            Vitamin A deficiency is a major problem in developing countries, where it is a leading cause of <strong>preventable blindness</strong> in children and dramatically increases risk of death from infectious diseases. The deficiency progresses from <em>night blindness</em> to total blindness as rhodopsin cannot be replenished without retinal.<br><br>
+            There is also a nutritional catch: vitamin A requires <strong>transport proteins</strong> to move through the bloodstream. In populations with inadequate protein intake, there are fewer transport proteins — meaning even when some vitamin A is consumed, it cannot be effectively utilized. This <em>protein-vitamin A interaction</em> compounds the deficiency in food-insecure regions. Additionally, vitamin A supports <strong>epithelial integrity</strong>, so deficiency weakens the body's first line of defense against pathogens.
+          </div>
+        </div>
+        <div class="disc-footer">
+          <button class="reveal-btn" id="disc-a-rbtn" onclick="revealDisc('disc-a')">Reveal Answer</button>
+          <button class="hide-btn" id="disc-a-hbtn" onclick="hideDisc('disc-a')" style="display:none">Hide</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== VITAMIN D ===================== -->
+  <div class="tab-panel" id="panel-vitD" role="tabpanel">
+    <div class="section-head">
+      <div class="section-head-inner">
+        <div class="section-big-badge big-d">D</div>
+        <div>
+          <div class="section-title" style="color:var(--vit-d)">Vitamin D</div>
+          <div class="section-subtitle">Objective 11.2 — The sunshine vitamin; hormone-like roles, deficiency, and toxicity</div>
+        </div>
+      </div>
+    </div>
+    <div class="sub-tabs">
+      <button class="sub-tab active" onclick="switchSub('d','notes',this)">📖 Study Notes</button>
+      <button class="sub-tab" onclick="switchSub('d','flash',this)">🃏 Flashcards</button>
+      <button class="sub-tab" onclick="switchSub('d','match',this)">🔗 Matching</button>
+      <button class="sub-tab" onclick="switchSub('d','disc',this)">💬 Discussion</button>
+    </div>
+
+    <div class="sub-panel active" id="d-notes">
+      <div class="two-col" style="margin-bottom:16px;">
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:rgba(99,179,237,0.12)">☀️</div><span class="card-head-title">Roles in the Body</span></div>
+          <div class="card-body"><ul>
+            <li>Active form functions as a <strong>hormone</strong></li>
+            <li>Essential for <strong>making and maintaining bones</strong></li>
+            <li>Assists absorption of <strong>calcium and phosphorus</strong></li>
+            <li>Protects against <em>cognitive decline</em>; slows Parkinson's progression</li>
+            <li>Regulates <strong>adipose cells</strong> — may influence obesity development</li>
+            <li>Signals <strong>immune cells</strong> to defend against infection</li>
+            <li>May protect against heart disease, type 2 diabetes, some cancers</li>
+          </ul></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:rgba(99,179,237,0.12)">🦴</div><span class="card-head-title">Deficiency Conditions</span></div>
+          <div class="card-body"><ul>
+            <li>~<strong>10%</strong> of Americans are deficient</li>
+            <li><strong>Rickets</strong> — children; bones fail to calcify; can affect &gt;50% of children in some countries</li>
+            <li><strong>Osteomalacia</strong> — adults; soft, flexible, brittle, deformed bones</li>
+            <li><strong>Osteoporosis</strong> — fractures; calcium loss from bones; especially elderly</li>
+            <li>Deficiency causes secondary <em>calcium deficiency</em></li>
+          </ul>
+          <div class="info-box ib-blue">
+            <div class="ib-label" style="color:var(--primary)">Contributing Factors to Deficiency</div>
+            <div class="ib-text">Dark skin · breastfeeding without supplementation · lack of sunlight exposure · not consuming fortified milk</div>
+          </div>
+          </div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:rgba(252,129,129,0.12)">⚠️</div><span class="card-head-title">Toxicity</span></div>
+          <div class="card-body"><ul>
+            <li><strong>Most likely</strong> of all vitamins to cause toxicity</li>
+            <li>Raises blood calcium → <em>kidney stones in soft tissues</em></li>
+            <li>May <strong>harden blood vessels</strong>; can cause death</li>
+            <li>Risk from high-dose single supplements</li>
+            <li>Vitamin D<sub>3</sub> more effective than D<sub>2</sub></li>
+          </ul></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:rgba(99,179,237,0.12)">🔬</div><span class="card-head-title">Synthesis &amp; Sources</span></div>
+          <div class="card-body"><ul>
+            <li>Synthesized in skin from <strong>sunlight (UV-B)</strong></li>
+            <li>Activated in <strong>liver</strong> then <strong>kidneys</strong></li>
+            <li>Fortified milk, fortified cereals, <em>fatty fish</em></li>
+            <li>Elderly have <strong>reduced ability</strong> to activate vitamin D</li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-panel" id="d-flash">
+      <div id="fc-d-container"></div>
+    </div>
+
+    <div class="sub-panel" id="d-match">
+      <div class="match-wrap">
+        <div class="match-intro">🔗 Match each description to the correct vitamin D condition or concept</div>
+        <div class="match-row"><div class="match-row-label">Children; bones fail to calcify normally and bend</div>
+          <select class="match-select" id="md-1"><option value="">— Select —</option><option>Rickets</option><option>Osteomalacia</option><option>Osteoporosis</option><option>The Elderly</option><option>Calbindin</option></select></div>
+        <div class="match-row"><div class="match-row-label">Adults; poor mineralization causes soft, brittle, deformed bones</div>
+          <select class="match-select" id="md-2"><option value="">— Select —</option><option>Rickets</option><option>Osteomalacia</option><option>Osteoporosis</option><option>The Elderly</option><option>Calbindin</option></select></div>
+        <div class="match-row"><div class="match-row-label">Fractures often result from calcium loss from bones</div>
+          <select class="match-select" id="md-3"><option value="">— Select —</option><option>Rickets</option><option>Osteomalacia</option><option>Osteoporosis</option><option>The Elderly</option><option>Calbindin</option></select></div>
+        <div class="match-row"><div class="match-row-label">Reduced ability to activate and synthesize vitamin D; deficiency especially likely in this group</div>
+          <select class="match-select" id="md-4"><option value="">— Select —</option><option>Rickets</option><option>Osteomalacia</option><option>Osteoporosis</option><option>The Elderly</option><option>Calbindin</option></select></div>
+        <div class="match-row"><div class="match-row-label">Calcium-transport protein whose production slows during vitamin D deficiency</div>
+          <select class="match-select" id="md-5"><option value="">— Select —</option><option>Rickets</option><option>Osteomalacia</option><option>Osteoporosis</option><option>The Elderly</option><option>Calbindin</option></select></div>
+        <div class="feedback-msg" id="md-fb"></div>
+        <div class="match-actions">
+          <button class="check-btn" onclick="checkMatch('md',{'md-1':'Rickets','md-2':'Osteomalacia','md-3':'Osteoporosis','md-4':'The Elderly','md-5':'Calbindin'},'md-fb','md-reveal','d')">Check Answers</button>
+          <button class="reset-btn" onclick="resetMatch('md',['md-1','md-2','md-3','md-4','md-5'],'md-fb','md-reveal')">Reset</button>
+        </div>
+        <div class="answer-reveal" id="md-reveal">
+          <div class="ar-label">✅ Answers</div>
+          <ol>
+            <li>Children, bones bend → <strong>Rickets</strong></li>
+            <li>Adults, soft brittle bones → <strong>Osteomalacia</strong></li>
+            <li>Fractures from calcium loss → <strong>Osteoporosis</strong></li>
+            <li>Reduced D activation → <strong>The Elderly</strong></li>
+            <li>Calcium transport protein → <strong>Calbindin</strong></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-panel" id="d-disc">
+      <div class="disc-wrap">
+        <div class="disc-q-block">
+          <div class="disc-label">💬 Discussion Question — Vitamin D</div>
+          <div class="disc-q">In what ways does vitamin D protect against disease beyond just bone health? Consider multiple body systems.</div>
+        </div>
+        <div class="disc-think"><div class="disc-think-lbl">📝 Your Thoughts</div>
+          <textarea class="disc-textarea" placeholder="Think about the brain, muscles, immune system, and adipose tissue..."></textarea></div>
+        <div class="disc-answer" id="disc-d-ans">
+          <div class="disc-ans-label">✅ Answer</div>
+          <div class="disc-ans-text">
+            In the <strong>brain and nerve cells</strong>, vitamin D protects against cognitive decline and slows the progression of Parkinson's disease. In <strong>muscle cells</strong>, it encourages growth in children and preserves strength in adults. Vitamin D signals <strong>immune system cells</strong> to defend against infectious diseases, and may regulate <strong>adipose tissue cells</strong> in ways that influence the development of obesity.<br><br>
+            In many cases, vitamin D enhances or suppresses the activity of <em>genes that regulate cell growth</em>. Recent research suggests vitamin D may protect against <strong>heart disease, type 2 diabetes, inflammation, brain disorders, macular degeneration, hypertension, and some cancers</strong>.
+          </div>
+        </div>
+        <div class="disc-footer">
+          <button class="reveal-btn" id="disc-d-rbtn" onclick="revealDisc('disc-d')">Reveal Answer</button>
+          <button class="hide-btn" id="disc-d-hbtn" onclick="hideDisc('disc-d')" style="display:none">Hide</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== VITAMIN E ===================== -->
+  <div class="tab-panel" id="panel-vitE" role="tabpanel">
+    <div class="section-head">
+      <div class="section-head-inner">
+        <div class="section-big-badge big-e">E</div>
+        <div>
+          <div class="section-title" style="color:var(--vit-e)">Vitamin E</div>
+          <div class="section-subtitle">Objective 11.3 — The body's primary fat-soluble antioxidant</div>
+        </div>
+      </div>
+    </div>
+    <div class="sub-tabs">
+      <button class="sub-tab active" onclick="switchSub('e','notes',this)">📖 Study Notes</button>
+      <button class="sub-tab" onclick="switchSub('e','flash',this)">🃏 Flashcards</button>
+      <button class="sub-tab" onclick="switchSub('e','match',this)">🔗 Matching</button>
+      <button class="sub-tab" onclick="switchSub('e','disc',this)">💬 Discussion</button>
+    </div>
+
+    <div class="sub-panel active" id="e-notes">
+      <div class="two-col" style="margin-bottom:16px;">
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:rgba(104,211,145,0.12)">🛡️</div><span class="card-head-title">Antioxidant Role</span></div>
+          <div class="card-body"><ul>
+            <li>Two subgroups: <strong>tocopherols</strong> and <strong>tocotrienols</strong></li>
+            <li>Each has alpha, beta, gamma, and delta forms</li>
+            <li>Only <strong>alpha-tocopherol</strong> is maintained in the human body</li>
+            <li>Stops the <em>chain reaction of free radicals</em></li>
+            <li>Protects <strong>cells and their membranes</strong></li>
+            <li>Protects <strong>LDLs from oxidation</strong> → may reduce heart disease risk</li>
+          </ul></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:rgba(104,211,145,0.12)">🍃</div><span class="card-head-title">Recommendations &amp; Sources</span></div>
+          <div class="card-body"><ul>
+            <li>RDA based on <strong>alpha-tocopherol form only</strong></li>
+            <li>Widespread in foods; primary source = <strong>vegetable oils</strong></li>
+            <li><em>Fresh foods</em> preferred — destroyed by oxidation and heat</li>
+            <li>Also found in nuts, seeds, fortified cereals</li>
+          </ul>
+          <div class="info-box ib-green">
+            <div class="ib-label" style="color:var(--accent)">💡 Tip</div>
+            <div class="ib-text">Because vitamin E is destroyed by heat and oxidation, raw or lightly cooked foods are significantly better sources than highly processed ones.</div>
+          </div>
+          </div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:rgba(252,129,129,0.12)">📉</div><span class="card-head-title">Deficiency</span></div>
+          <div class="card-body"><ul>
+            <li>Primary deficiency is <strong>rare</strong></li>
+            <li>Secondary deficiency from <em>fat malabsorption</em></li>
+            <li>Red blood cells break open → <strong>erythrocyte hemolysis</strong></li>
+            <li>Causes <strong>neuromuscular dysfunction</strong></li>
+          </ul></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:rgba(246,173,85,0.12)">📈</div><span class="card-head-title">Toxicity</span></div>
+          <div class="card-body"><ul>
+            <li>Liver regulates vitamin E; <strong>toxicity rare</strong></li>
+            <li>UL is <strong>65 times greater</strong> than RDA for adults</li>
+            <li>Extremely high doses may interfere with <em>vitamin K activity</em></li>
+            <li>Can cause <strong>hemorrhage</strong> at very high supplemental doses</li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-panel" id="e-flash">
+      <div id="fc-e-container"></div>
+    </div>
+
+    <div class="sub-panel" id="e-match">
+      <div class="match-wrap">
+        <div class="match-intro">🔗 Match each clue to the correct Vitamin E concept</div>
+        <div class="match-row"><div class="match-row-label">The only form of vitamin E that the body actively maintains</div>
+          <select class="match-select" id="me-1"><option value="">— Select —</option><option>Alpha-tocopherol</option><option>Erythrocyte hemolysis</option><option>Free radicals</option><option>Tocotrienols</option><option>Fat malabsorption</option></select></div>
+        <div class="match-row"><div class="match-row-label">The chain reaction that vitamin E stops as an antioxidant</div>
+          <select class="match-select" id="me-2"><option value="">— Select —</option><option>Alpha-tocopherol</option><option>Erythrocyte hemolysis</option><option>Free radicals</option><option>Tocotrienols</option><option>Fat malabsorption</option></select></div>
+        <div class="match-row"><div class="match-row-label">The deficiency symptom where red blood cells rupture</div>
+          <select class="match-select" id="me-3"><option value="">— Select —</option><option>Alpha-tocopherol</option><option>Erythrocyte hemolysis</option><option>Free radicals</option><option>Tocotrienols</option><option>Fat malabsorption</option></select></div>
+        <div class="match-row"><div class="match-row-label">Common cause of secondary vitamin E deficiency</div>
+          <select class="match-select" id="me-4"><option value="">— Select —</option><option>Alpha-tocopherol</option><option>Erythrocyte hemolysis</option><option>Free radicals</option><option>Tocotrienols</option><option>Fat malabsorption</option></select></div>
+        <div class="feedback-msg" id="me-fb"></div>
+        <div class="match-actions">
+          <button class="check-btn" onclick="checkMatch('me',{'me-1':'Alpha-tocopherol','me-2':'Free radicals','me-3':'Erythrocyte hemolysis','me-4':'Fat malabsorption'},'me-fb','me-reveal','e')">Check Answers</button>
+          <button class="reset-btn" onclick="resetMatch('me',['me-1','me-2','me-3','me-4'],'me-fb','me-reveal')">Reset</button>
+        </div>
+        <div class="answer-reveal" id="me-reveal">
+          <div class="ar-label">✅ Answers</div>
+          <ol>
+            <li>Only maintained form → <strong>Alpha-tocopherol</strong></li>
+            <li>Chain reaction stopped by vitamin E → <strong>Free radicals</strong></li>
+            <li>Red blood cells rupture → <strong>Erythrocyte hemolysis</strong></li>
+            <li>Cause of secondary deficiency → <strong>Fat malabsorption</strong></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-panel" id="e-disc">
+      <div class="disc-wrap">
+        <div class="disc-q-block">
+          <div class="disc-label">💬 Discussion Question — Vitamin E</div>
+          <div class="disc-q">How does vitamin E's role as an antioxidant potentially reduce the risk of heart disease? What is the mechanism, and why might fresh food sources be preferable to supplements?</div>
+        </div>
+        <div class="disc-think"><div class="disc-think-lbl">📝 Your Thoughts</div>
+          <textarea class="disc-textarea" placeholder="Consider LDL oxidation, free radical chain reactions, and what heat/processing does to vitamin E..."></textarea></div>
+        <div class="disc-answer" id="disc-e-ans">
+          <div class="disc-ans-label">✅ Answer</div>
+          <div class="disc-ans-text">
+            Vitamin E acts as the body's primary <strong>fat-soluble antioxidant</strong>. Its key role in heart disease prevention relates to <em>LDL cholesterol</em>: when LDL is oxidized by free radicals, it becomes more likely to contribute to arterial plaque buildup. Vitamin E <strong>stops the chain reaction of free radical oxidation</strong>, protecting LDL particles and cell membranes from damage.<br><br>
+            Fresh food sources are generally preferred over supplements because vitamin E is <em>easily destroyed by heat and oxidation during processing</em>. Additionally, whole foods provide the full spectrum of tocopherol and tocotrienol forms, whereas supplements typically supply only alpha-tocopherol. Very high supplemental doses also carry risk: they can <strong>interfere with vitamin K activity</strong>, potentially leading to impaired blood clotting and hemorrhage.
+          </div>
+        </div>
+        <div class="disc-footer">
+          <button class="reveal-btn" id="disc-e-rbtn" onclick="revealDisc('disc-e')">Reveal Answer</button>
+          <button class="hide-btn" id="disc-e-hbtn" onclick="hideDisc('disc-e')" style="display:none">Hide</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== VITAMIN K ===================== -->
+  <div class="tab-panel" id="panel-vitK" role="tabpanel">
+    <div class="section-head">
+      <div class="section-head-inner">
+        <div class="section-big-badge big-k">K</div>
+        <div>
+          <div class="section-title" style="color:var(--vit-k)">Vitamin K</div>
+          <div class="section-subtitle">Objective 11.4 — Blood clotting, bone health, and gut bacteria</div>
+        </div>
+      </div>
+    </div>
+    <div class="sub-tabs">
+      <button class="sub-tab active" onclick="switchSub('k','notes',this)">📖 Study Notes</button>
+      <button class="sub-tab" onclick="switchSub('k','flash',this)">🃏 Flashcards</button>
+      <button class="sub-tab" onclick="switchSub('k','match',this)">🔗 Matching</button>
+      <button class="sub-tab" onclick="switchSub('k','disc',this)">💬 Discussion</button>
+    </div>
+
+    <div class="sub-panel active" id="k-notes">
+      <div class="two-col" style="margin-bottom:16px;">
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:rgba(183,148,244,0.12)">🩸</div><span class="card-head-title">Roles in the Body</span></div>
+          <div class="card-body"><ul>
+            <li>Primary action: <strong>blood clotting</strong> — activates prothrombin</li>
+            <li>Metabolism of <strong>bone proteins</strong> — activates osteocalcin</li>
+            <li>Low vitamin K linked to <em>low bone density</em></li>
+          </ul>
+          <div class="info-box ib-purple">
+            <div class="ib-label" style="color:var(--accent4)">Key Proteins</div>
+            <div class="ib-text"><strong>Prothrombin</strong> — clotting factor activated by vitamin K<br><strong>Osteocalcin</strong> — bone protein requiring vitamin K for activation</div>
+          </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:rgba(183,148,244,0.12)">🌿</div><span class="card-head-title">Food Sources &amp; Non-Food Sources</span></div>
+          <div class="card-body"><ul>
+            <li><strong>Leafy greens</strong> — kale, spinach (richest sources)</li>
+            <li><strong>Fruits</strong> — avocado, kiwi</li>
+            <li>Vegetable oils</li>
+            <li>Synthesized by <em>intestinal bacteria</em> — but insufficient to meet needs</li>
+            <li>Bioavailability from gut bacteria is <strong>limited</strong></li>
+          </ul></div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:rgba(252,129,129,0.12)">📉</div><span class="card-head-title">Deficiency</span></div>
+          <div class="card-body"><ul>
+            <li><strong>Primary:</strong> inadequate dietary intake — rare</li>
+            <li><strong>Secondary:</strong> antibiotics kill vitamin K–producing gut bacteria</li>
+            <li>Failure of <em>bile production</em> impairs absorption</li>
+            <li><strong>Newborns at risk</strong> — sterile gut, no bacteria → vitamin K injection at birth</li>
+          </ul></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-icon" style="background:rgba(246,173,85,0.12)">📈</div><span class="card-head-title">Toxicity &amp; Drug Interactions</span></div>
+          <div class="card-body"><ul>
+            <li>Toxicity <strong>not common</strong>; no UL established</li>
+            <li>No adverse effects with high dietary intakes</li>
+            <li>High doses can <strong>reduce effectiveness of anticoagulant drugs</strong> (e.g., warfarin)</li>
+            <li>Patients on warfarin must maintain <em>consistent</em> vitamin K intake</li>
+          </ul></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-panel" id="k-flash">
+      <div id="fc-k-container"></div>
+    </div>
+
+    <div class="sub-panel" id="k-match">
+      <div class="match-wrap">
+        <div class="match-intro">🔗 Match each clue to the correct Vitamin K concept</div>
+        <div class="match-row"><div class="match-row-label">The clotting protein activated by vitamin K</div>
+          <select class="match-select" id="mk-1"><option value="">— Select —</option><option>Prothrombin</option><option>Osteocalcin</option><option>Warfarin</option><option>Intestinal bacteria</option><option>Newborns</option></select></div>
+        <div class="match-row"><div class="match-row-label">The bone protein whose metabolism depends on vitamin K</div>
+          <select class="match-select" id="mk-2"><option value="">— Select —</option><option>Prothrombin</option><option>Osteocalcin</option><option>Warfarin</option><option>Intestinal bacteria</option><option>Newborns</option></select></div>
+        <div class="match-row"><div class="match-row-label">Non-food source that synthesizes vitamin K — but in insufficient amounts</div>
+          <select class="match-select" id="mk-3"><option value="">— Select —</option><option>Prothrombin</option><option>Osteocalcin</option><option>Warfarin</option><option>Intestinal bacteria</option><option>Newborns</option></select></div>
+        <div class="match-row"><div class="match-row-label">Anticoagulant drug whose effectiveness can be reduced by high vitamin K intake</div>
+          <select class="match-select" id="mk-4"><option value="">— Select —</option><option>Prothrombin</option><option>Osteocalcin</option><option>Warfarin</option><option>Intestinal bacteria</option><option>Newborns</option></select></div>
+        <div class="match-row"><div class="match-row-label">Group most at risk from vitamin K deficiency due to a sterile gut at birth</div>
+          <select class="match-select" id="mk-5"><option value="">— Select —</option><option>Prothrombin</option><option>Osteocalcin</option><option>Warfarin</option><option>Intestinal bacteria</option><option>Newborns</option></select></div>
+        <div class="feedback-msg" id="mk-fb"></div>
+        <div class="match-actions">
+          <button class="check-btn" onclick="checkMatch('mk',{'mk-1':'Prothrombin','mk-2':'Osteocalcin','mk-3':'Intestinal bacteria','mk-4':'Warfarin','mk-5':'Newborns'},'mk-fb','mk-reveal','k')">Check Answers</button>
+          <button class="reset-btn" onclick="resetMatch('mk',['mk-1','mk-2','mk-3','mk-4','mk-5'],'mk-fb','mk-reveal')">Reset</button>
+        </div>
+        <div class="answer-reveal" id="mk-reveal">
+          <div class="ar-label">✅ Answers</div>
+          <ol>
+            <li>Clotting protein → <strong>Prothrombin</strong></li>
+            <li>Bone protein → <strong>Osteocalcin</strong></li>
+            <li>Non-food synthesis source → <strong>Intestinal bacteria</strong></li>
+            <li>Anticoagulant drug → <strong>Warfarin</strong></li>
+            <li>Sterile gut at birth → <strong>Newborns</strong></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-panel" id="k-disc">
+      <div class="disc-wrap">
+        <div class="disc-q-block">
+          <div class="disc-label">💬 Discussion Question — Vitamin K</div>
+          <div class="disc-q">What are the non-food sources of vitamin K, and are they sufficient to meet the body's needs? What food sources are most reliable, and why must patients on anticoagulants be careful?</div>
+        </div>
+        <div class="disc-think"><div class="disc-think-lbl">📝 Your Thoughts</div>
+          <textarea class="disc-textarea" placeholder="Think about gut bacteria, bioavailability, food sources, and drug-nutrient interactions..."></textarea></div>
+        <div class="disc-answer" id="disc-k-ans">
+          <div class="disc-ans-label">✅ Answer</div>
+          <div class="disc-ans-text">
+            <strong>Non-food sources</strong>: Vitamin K is synthesized by <em>intestinal bacteria</em> in the gut. However, the amount produced is <strong>insufficient to meet the body's needs</strong>, and bioavailability from this source is limited — so diet remains essential.<br><br>
+            <strong>Food sources</strong>: The richest sources are <strong>leafy greens</strong> such as kale and spinach. Fruits like avocado and kiwi, as well as vegetable oils, also contribute. Newborns are especially at risk because their gut is sterile at birth, which is why a vitamin K injection is given at delivery.<br><br>
+            <strong>Drug interaction</strong>: Patients on <em>warfarin</em> (an anticoagulant) must be careful because vitamin K <strong>directly opposes warfarin's mechanism</strong>. Warfarin works by blocking vitamin K's role in activating clotting factors; high vitamin K intake can therefore reduce warfarin's effectiveness. These patients are advised to keep vitamin K consumption <em>consistent</em> rather than eliminating it entirely.
+          </div>
+        </div>
+        <div class="disc-footer">
+          <button class="reveal-btn" id="disc-k-rbtn" onclick="revealDisc('disc-k')">Reveal Answer</button>
+          <button class="hide-btn" id="disc-k-hbtn" onclick="hideDisc('disc-k')" style="display:none">Hide</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <span class="footer-text">Understanding Nutrition, 16e · Chapter 11 · ©2022 Cengage Learning</span>
+  <span class="ada-note">♿ Keyboard accessible · Tab key navigates all interactive elements</span>
+</footer>
+
+<script>
+// ============================================================
+// FLASHCARD DATA
+// ============================================================
+const flashData = {
+  a: [
+    { cat:'Vitamin A', emoji:'👁️', q:'What is the primary role of retinal in the eye?', a:'Retinal is a component of <strong>rhodopsin</strong>, the photosensitive pigment in the retina. It allows the eye to convert light energy into nerve impulses, enabling vision — especially in low light.' },
+    { cat:'Vitamin A', emoji:'🧬', q:'What is retinoic acid responsible for in the body?', a:'<strong>Retinoic acid</strong> regulates cell differentiation, growth, and embryonic development. It acts at the genetic level, influencing how cells specialize into different types.' },
+    { cat:'Vitamin A', emoji:'🩹', q:'What are the key deficiency consequences of vitamin A?', a:'Deficiency leads to <strong>night blindness</strong> that can progress to complete blindness, increased susceptibility to infectious diseases, and in severe cases, death. It is a leading preventable cause of blindness in developing countries.' },
+    { cat:'Vitamin A', emoji:'⚠️', q:'Why are children especially vulnerable to vitamin A toxicity?', a:'Children are more vulnerable because they are smaller and their <strong>binding proteins</strong> become saturated more quickly with less vitamin A. Once saturated, free vitamin A circulates and can cause <strong>bone defects</strong> and cell damage.' },
+    { cat:'Vitamin A', emoji:'🥕', q:'What colors in foods signal high beta-carotene content?', a:'Foods with <strong>deep orange, rich yellow, and dark leafy green</strong> colors tend to be rich in beta-carotene. Examples: carrots, sweet potatoes, spinach, kale, and broccoli.' },
+    { cat:'Vitamin A', emoji:'🔁', q:'What is the relationship between beta-carotene and vitamin A?', a:'Beta-carotene is a <strong>provitamin A</strong> — a precursor the body converts into retinol. It also functions independently as a fat-soluble <strong>antioxidant</strong>, neutralizing free radicals.' },
+  ],
+  d: [
+    { cat:'Vitamin D', emoji:'☀️', q:'Why is vitamin D described as functioning like a hormone?', a:'Vitamin D is converted to an <strong>active hormone form (calcitriol)</strong> in the kidneys. It then travels through the bloodstream and regulates gene expression in target cells — exactly how hormones work.' },
+    { cat:'Vitamin D', emoji:'🦴', q:'What is the difference between rickets and osteomalacia?', a:'<strong>Rickets</strong> affects children — bones fail to calcify and can bend. <strong>Osteomalacia</strong> affects adults — bones lose mineral density becoming soft, flexible, brittle, and deformed. Both result from vitamin D (and therefore calcium) deficiency.' },
+    { cat:'Vitamin D', emoji:'🧠', q:'How does vitamin D protect the brain?', a:'Vitamin D protects against <strong>cognitive decline</strong> and may slow the progression of Parkinson\'s disease. It also plays roles in nerve cell function and may protect against depression and other brain disorders.' },
+    { cat:'Vitamin D', emoji:'💀', q:'What makes vitamin D the most likely vitamin to cause toxicity?', a:'Because vitamin D raises blood calcium levels when consumed in excess, toxicity leads to <strong>calcium deposits in soft tissues</strong>, kidney stones, hardened blood vessels, and can ultimately cause death. It has a narrow therapeutic window.' },
+    { cat:'Vitamin D', emoji:'🔬', q:'What four factors increase risk of vitamin D deficiency?', a:'1. <strong>Dark skin</strong> (melanin reduces UV-B absorption) · 2. <strong>Breastfeeding without supplementation</strong> · 3. <strong>Lack of sunlight</strong> exposure · 4. <strong>Not consuming fortified milk</strong>. The elderly also have reduced capacity to synthesize vitamin D.' },
+    { cat:'Vitamin D', emoji:'⚗️', q:'What is the activation pathway for vitamin D?', a:'Vitamin D<sub>3</sub> is synthesized in the <strong>skin</strong> from sunlight. It travels to the <strong>liver</strong> for first activation, then to the <strong>kidneys</strong> for final activation into calcitriol, the active hormonal form.' },
+  ],
+  e: [
+    { cat:'Vitamin E', emoji:'🛡️', q:'How does vitamin E function as an antioxidant?', a:'Vitamin E <strong>stops the chain reaction of free radical oxidation</strong> by donating an electron to neutralize the free radical. This protects cell membranes, DNA, and proteins — particularly in fatty tissues where it is concentrated.' },
+    { cat:'Vitamin E', emoji:'❤️', q:'How might vitamin E reduce heart disease risk?', a:'Vitamin E protects <strong>LDL cholesterol from oxidation</strong>. Oxidized LDL is more prone to contributing to arterial plaque (atherosclerosis). By keeping LDL intact, vitamin E may reduce cardiovascular disease risk.' },
+    { cat:'Vitamin E', emoji:'🩸', q:'What is erythrocyte hemolysis and what causes it?', a:'<strong>Erythrocyte hemolysis</strong> is the rupture of red blood cells. Without sufficient vitamin E to protect the cell membranes from oxidation, the membranes weaken and break open — releasing hemoglobin into the bloodstream.' },
+    { cat:'Vitamin E', emoji:'🌿', q:'Why are fresh foods better vitamin E sources than cooked ones?', a:'Vitamin E is <strong>destroyed by heat and oxidation</strong>. High-temperature cooking, deep frying, and food processing significantly reduce the vitamin E content of foods. Fresh, raw, or lightly cooked foods retain much more.' },
+    { cat:'Vitamin E', emoji:'💊', q:'What toxicity risk exists with very high vitamin E supplements?', a:'Very high supplemental doses can <strong>interfere with vitamin K activity</strong>, reducing the production of blood clotting factors and potentially causing <strong>hemorrhage</strong>. The UL is 65 times the RDA — still showing a wide safety margin, but caution is warranted at extreme doses.' },
+  ],
+  k: [
+    { cat:'Vitamin K', emoji:'🩸', q:'What is vitamin K\'s primary role in the body?', a:'<strong>Blood clotting</strong>. Vitamin K activates <strong>prothrombin</strong> and several other clotting factors. Without vitamin K, blood cannot clot properly, leading to excessive bleeding.' },
+    { cat:'Vitamin K', emoji:'🦴', q:'What role does vitamin K play in bone health?', a:'Vitamin K activates <strong>osteocalcin</strong>, a bone protein involved in bone mineralization. Low vitamin K is associated with low bone density and increased fracture risk, making it an important nutrient for skeletal health beyond its clotting role.' },
+    { cat:'Vitamin K', emoji:'🦠', q:'Why are newborns given a vitamin K injection at birth?', a:'Newborns have a <strong>sterile gut</strong> — no intestinal bacteria yet to synthesize vitamin K. They are born with minimal stores and cannot produce their own. The injection prevents <strong>hemorrhagic disease of the newborn</strong>.' },
+    { cat:'Vitamin K', emoji:'💊', q:'Why must warfarin patients be careful about vitamin K intake?', a:'<strong>Warfarin</strong> is an anticoagulant that works by blocking vitamin K\'s role in activating clotting factors. High vitamin K intake <strong>directly opposes warfarin\'s effect</strong>, reducing its anticoagulant activity. Patients must keep intake consistent.' },
+    { cat:'Vitamin K', emoji:'🥬', q:'What are the best food sources of vitamin K?', a:'The richest sources are <strong>leafy greens</strong> — especially kale, spinach, and broccoli. Other sources include <strong>avocado, kiwi, and vegetable oils</strong>. Intestinal bacteria also synthesize vitamin K, but in insufficient and poorly bioavailable amounts.' },
+  ]
+};
+
+// ============================================================
+// FLASHCARD STATE
+// ============================================================
+const fcState = {};
+['a','d','e','k'].forEach(v => {
+  fcState[v] = { idx: 0, done: 0, easy: 0, hard: 0, filter: 'all' };
+});
+
+const matchScores = {};
+let totalCardsViewed = 0;
+
+function buildFlashcards(vit) {
+  const container = document.getElementById('fc-' + vit + '-container');
+  if (container.innerHTML !== '') return; // already built
+
+  const cards = flashData[vit];
+  const s = fcState[vit];
+
+  container.innerHTML = `
+    <div class="fc-section">
+      <div class="fc-controls">
+        <div class="fc-count">Card <span id="fcc-num-${vit}">1</span> of <span>${cards.length}</span></div>
+        <div class="fc-btns">
+          <button class="fc-filter active" id="fcf-all-${vit}" onclick="setFilter('${vit}','all',this)">All (${cards.length})</button>
+        </div>
+      </div>
+      <div class="card-arena">
+        <div class="fc-wrap">
+          <div class="flashcard" id="fc-card-${vit}" onclick="flipCard('${vit}')" role="button" tabindex="0" aria-label="Flashcard — click to flip">
+            <div class="card-face card-front">
+              <div class="card-cat" id="fc-cat-${vit}"></div>
+              <div class="card-emoji" id="fc-emoji-${vit}"></div>
+              <div class="card-q" id="fc-q-${vit}"></div>
+              <div class="card-hint">Click to reveal answer</div>
+              <div class="card-flip-hint">click to flip</div>
+            </div>
+            <div class="card-face card-back">
+              <div class="card-cat" id="fc-cat2-${vit}"></div>
+              <div class="card-a" id="fc-a-${vit}"></div>
+              <div class="card-flip-hint">click to flip back</div>
+            </div>
+          </div>
+        </div>
+        <div class="conf-row">
+          <span class="conf-lbl">How did you do?</span>
+          <button class="conf-btn conf-easy" onclick="markConf('${vit}','easy')">✓ Got it</button>
+          <button class="conf-btn conf-hard" onclick="markConf('${vit}','hard')">✗ Still learning</button>
+        </div>
+        <div class="fc-nav">
+          <button class="fc-nav-btn" id="fc-prev-${vit}" onclick="fcNav('${vit}',-1)" disabled>← Prev</button>
+          <button class="fc-nav-btn" id="fc-next-${vit}" onclick="fcNav('${vit}',1)">Next →</button>
+        </div>
+      </div>
+      <div class="fc-done-banner" id="fc-done-${vit}">
+        <div class="fc-done-title">🎉 Deck Complete!</div>
+        <div class="fc-done-sub" id="fc-done-sub-${vit}"></div>
+        <button class="restart-fc-btn" onclick="restartFC('${vit}')">Restart Deck</button>
+      </div>
+    </div>
+  `;
+
+  // keyboard support
+  document.getElementById('fc-card-'+vit).addEventListener('keydown', e => {
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(vit); }
+  });
+
+  loadCard(vit);
+}
+
+function loadCard(vit) {
+  const cards = flashData[vit];
+  const s = fcState[vit];
+  const card = cards[s.idx];
+  document.getElementById('fc-cat-'+vit).textContent = card.cat;
+  document.getElementById('fc-cat2-'+vit).textContent = card.cat;
+  document.getElementById('fc-emoji-'+vit).textContent = card.emoji;
+  document.getElementById('fc-q-'+vit).textContent = card.q;
+  document.getElementById('fc-a-'+vit).innerHTML = card.a;
+  document.getElementById('fcc-num-'+vit).textContent = s.idx + 1;
+  document.getElementById('fc-card-'+vit).classList.remove('flipped');
+  // nav btn states
+  const prevBtn = document.getElementById('fc-prev-'+vit);
+  const nextBtn = document.getElementById('fc-next-'+vit);
+  if (prevBtn) prevBtn.disabled = s.idx === 0;
+  if (nextBtn) nextBtn.disabled = s.idx === cards.length - 1;
+}
+
+function flipCard(vit) {
+  const card = document.getElementById('fc-card-'+vit);
+  card.classList.toggle('flipped');
+}
+
+function fcNav(vit, dir) {
+  const cards = flashData[vit];
+  const s = fcState[vit];
+  s.idx = Math.max(0, Math.min(cards.length - 1, s.idx + dir));
+  loadCard(vit);
+}
+
+function markConf(vit, type) {
+  const s = fcState[vit];
+  const cards = flashData[vit];
+  if (type === 'easy') s.easy++;
+  else s.hard++;
+  s.done++;
+  totalCardsViewed++;
+  updateScores();
+  updateVitProgress(vit);
+  // advance
+  if (s.idx < cards.length - 1) {
+    s.idx++;
+    loadCard(vit);
+  } else {
+    // done
+    const arena = document.querySelector('#fc-' + vit + '-container .card-arena');
+    if (arena) arena.style.display = 'none';
+    const banner = document.getElementById('fc-done-'+vit);
+    if (banner) {
+      banner.classList.add('show');
+      document.getElementById('fc-done-sub-'+vit).textContent =
+        `You reviewed all ${cards.length} cards. Got it: ${s.easy} · Still learning: ${s.hard}`;
+    }
+    // mark tab complete
+    document.getElementById('tc-vit'+vit.toUpperCase())?.classList.add('show');
+    updateScores();
+  }
+}
+
+function setFilter(vit, filter, btn) {
+  // simplified — in this build, we just have 'all'
+  document.querySelectorAll('#fc-'+vit+'-container .fc-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function restartFC(vit) {
+  const s = fcState[vit];
+  s.idx = 0; s.done = 0; s.easy = 0; s.hard = 0;
+  const arena = document.querySelector('#fc-' + vit + '-container .card-arena');
+  if (arena) arena.style.display = '';
+  const banner = document.getElementById('fc-done-'+vit);
+  if (banner) banner.classList.remove('show');
+  loadCard(vit);
+}
+
+// ============================================================
+// MATCHING
+// ============================================================
+function checkMatch(prefix, answers, fbId, revealId, vitKey) {
+  let correct = 0;
+  const total = Object.keys(answers).length;
+  Object.entries(answers).forEach(([id, ans]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('correct','wrong');
+    if (el.value === ans) { el.classList.add('correct'); correct++; }
+    else if (el.value !== '') el.classList.add('wrong');
+  });
+  const fb = document.getElementById(fbId);
+  fb.className = 'feedback-msg show';
+  if (correct === total) {
+    fb.className += ' fb-good';
+    fb.textContent = '🎉 Perfect score! All matched correctly!';
+    matchScores[vitKey] = 100;
+    document.getElementById('tc-vit'+vitKey.toUpperCase())?.classList.add('show');
+  } else {
+    fb.className += ' fb-partial';
+    fb.textContent = correct + ' of ' + total + ' correct — review the answers below.';
+    matchScores[vitKey] = Math.round((correct/total)*100);
+    document.getElementById(revealId).classList.add('show');
+  }
+  updateScores();
+}
+
+function resetMatch(prefix, ids, fbId, revealId) {
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.value = ''; el.classList.remove('correct','wrong'); }
+  });
+  const fb = document.getElementById(fbId);
+  fb.className = 'feedback-msg';
+  document.getElementById(revealId).classList.remove('show');
+}
+
+// ============================================================
+// DISCUSSION
+// ============================================================
+function revealDisc(id) {
+  document.getElementById(id+'-ans').classList.add('show');
+  document.getElementById(id+'-rbtn').style.display = 'none';
+  document.getElementById(id+'-hbtn').style.display = '';
+}
+function hideDisc(id) {
+  document.getElementById(id+'-ans').classList.remove('show');
+  document.getElementById(id+'-rbtn').style.display = '';
+  document.getElementById(id+'-hbtn').style.display = 'none';
+}
+
+// ============================================================
+// TAB SWITCHING
+// ============================================================
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+  document.getElementById('panel-'+name).classList.add('active');
+  btn.classList.add('active');
+  btn.setAttribute('aria-selected','true');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function switchTabByName(name) {
+  const btn = document.querySelector('[data-tab="'+name+'"]');
+  if (btn) switchTab(name, btn);
+}
+
+function switchSub(vit, panel, btn) {
+  const prefix = vit + '-';
+  document.querySelectorAll('#panel-vit'+vit.toUpperCase()+' .sub-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#panel-vit'+vit.toUpperCase()+' .sub-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(prefix + panel).classList.add('active');
+  btn.classList.add('active');
+  if (panel === 'flash') buildFlashcards(vit);
+}
+
+// ============================================================
+// SCORE / PROGRESS UPDATE
+// ============================================================
+function updateScores() {
+  // header
+  document.getElementById('hdr-cards').textContent = totalCardsViewed;
+  const matchVals = Object.values(matchScores);
+  const avgMatch = matchVals.length ? Math.round(matchVals.reduce((a,b)=>a+b,0)/matchVals.length) : 0;
+  document.getElementById('hdr-match').textContent = matchVals.length ? avgMatch + '%' : '—';
+
+  // overall bar: combine cards and match
+  const totalCards = Object.values(flashData).reduce((s,a)=>s+a.length,0);
+  const cardPct = Math.min(100, (totalCardsViewed / totalCards) * 100);
+  const overall = matchVals.length ? (cardPct * 0.6 + avgMatch * 0.4) : cardPct;
+  document.getElementById('overall-bar').style.width = Math.round(overall) + '%';
+  document.getElementById('overall-bar').parentElement.setAttribute('aria-valuenow', Math.round(overall));
+
+  // progress panel
+  document.getElementById('pp-cards').textContent = totalCardsViewed;
+  const totalEasy = ['a','d','e','k'].reduce((s,v) => s + fcState[v].easy, 0);
+  const totalHard = ['a','d','e','k'].reduce((s,v) => s + fcState[v].hard, 0);
+  document.getElementById('pp-easy').textContent = totalEasy;
+  document.getElementById('pp-hard').textContent = totalHard;
+  document.getElementById('pp-match').textContent = matchVals.length ? avgMatch + '%' : '—';
+}
+
+function updateVitProgress(vit) {
+  const total = flashData[vit].length;
+  const done = fcState[vit].done;
+  const pct = Math.min(100, Math.round((done / total) * 100));
+  const barEl = document.getElementById('bar-' + vit);
+  const pctEl = document.getElementById('pct-' + vit);
+  if (barEl) barEl.style.width = pct + '%';
+  if (pctEl) pctEl.textContent = pct + '%';
+}
+
+// init
+updateScores();
+</script>
+</body>
+</html>

@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Integumentary System Interactive Study Tool</title>
+<style>
+  :root {
+    /* Palette selected for WCAG AA contrast: dark text on light surfaces, strong blue focus, and high-contrast state colors. */
+    --bg: #f4f7fb;
+    --surface: #ffffff;
+    --surface-2: #eef4fb;
+    --surface-3: #dfeaf6;
+    --text: #17212b;
+    --muted: #4a5968;
+    --border: #9db3c8;
+    --primary: #174c8f;
+    --primary-dark: #0c3567;
+    --primary-light: #d8e9fb;
+    --accent: #6b3d91;
+    --accent-light: #eee3f6;
+    --success: #146c43;
+    --success-light: #dff3e8;
+    --warning: #7a4b00;
+    --warning-light: #fff0cc;
+    --danger: #9b1c31;
+    --danger-light: #f9d9df;
+    --focus: #ffbf47;
+    --shadow: 0 10px 30px rgba(23, 33, 43, 0.12);
+    --radius: 18px;
+    --radius-sm: 10px;
+    --max: 1180px;
+  }
+
+
+{
+box-sizing: border-box;
+}
+
+
+html {
+scroll-behavior: smooth;
+}
+body {
+margin: 0;
+font-family: Arial, Helvetica, sans-serif;
+background: var(--bg);
+color: var(--text);
+font-size: 16px;
+line-height: 1.6;
+}
+a {
+color: var(--primary-dark);
+}
+.skip-link {
+position: absolute;
+left: 16px;
+top: -120px;
+z-index: 9999;
+background: var(--focus);
+color: #111111;
+padding: 12px 18px;
+border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+font-weight: 700;
+}
+.skip-link:focus {
+top: 0;
+outline: 3px solid #111111;
+outline-offset: 2px;
+}
+header {
+background: linear-gradient(135deg, #0c3567 0%, #174c8f 60%, #2d6fb6 100%);
+color: #ffffff;
+padding: 28px 18px;
+}
+.header-inner {
+max-width: var(--max);
+margin: 0 auto;
+display: grid;
+grid-template-columns: 1fr auto;
+gap: 22px;
+align-items: center;
+}
+.brand {
+display: flex;
+align-items: center;
+gap: 16px;
+}
+.brand-mark {
+width: 58px;
+height: 58px;
+border-radius: 16px;
+background: #ffffff;
+color: var(--primary-dark);
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: 800;
+font-size: 1.15rem;
+box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+}
+h1 {
+margin: 0;
+font-size: clamp(1.45rem, 3vw, 2.15rem);
+line-height: 1.15;
+}
+.subtitle {
+margin: 6px 0 0;
+color: #e8f2ff;
+max-width: 760px;
+}
+.progress-summary {
+background: rgba(255,255,255,0.14);
+border: 1px solid rgba(255,255,255,0.36);
+border-radius: var(--radius);
+padding: 16px;
+min-width: 245px;
+}
+.progress-summary strong {
+display: block;
+font-size: 1.6rem;
+line-height: 1;
+}
+.progress-label {
+display: block;
+margin-top: 4px;
+color: #e8f2ff;
+font-size: 0.9rem;
+}
+.progress-track {
+margin-top: 12px;
+width: 100%;
+height: 12px;
+background: rgba(255,255,255,0.26);
+border-radius: 999px;
+overflow: hidden;
+border: 1px solid rgba(255,255,255,0.45);
+}
+.progress-fill {
+height: 100%;
+width: 0%;
+background: #ffffff;
+border-radius: 999px;
+transition: width 0.3s ease;
+}
+nav {
+background: var(--surface);
+border-bottom: 1px solid var(--border);
+position: sticky;
+top: 0;
+z-index: 20;
+}
+.tabs {
+max-width: var(--max);
+margin: 0 auto;
+padding: 0 18px;
+display: flex;
+gap: 6px;
+overflow-x: auto;
+}
+.tab {
+min-height: 48px;
+padding: 12px 16px;
+border: 0;
+border-bottom: 4px solid transparent;
+background: transparent;
+color: var(--muted);
+font-weight: 700;
+white-space: nowrap;
+cursor: pointer;
+}
+.tab:hover {
+color: var(--primary-dark);
+background: var(--surface-2);
+}
+.tab[aria-selected="true"] {
+color: var(--primary-dark);
+border-bottom-color: var(--primary);
+background: var(--primary-light);
+}
+button:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+outline: 4px solid var(--focus);
+outline-offset: 3px;
+}
+main {
+max-width: var(--max);
+margin: 0 auto;
+padding: 30px 18px 70px;
+}
+.panel {
+display: none;
+}
+.panel.active {
+display: block;
+}
+.hero,
+.card,
+.activity,
+.reflection,
+.progress-panel {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: var(--radius);
+box-shadow: var(--shadow);
+}
+.hero {
+padding: clamp(22px, 4vw, 40px);
+margin-bottom: 22px;
+}
+.kicker {
+display: inline-flex;
+align-items: center;
+min-height: 32px;
+padding: 4px 12px;
+border-radius: 999px;
+background: var(--primary-light);
+color: var(--primary-dark);
+font-weight: 800;
+font-size: 0.84rem;
+letter-spacing: 0.03em;
+text-transform: uppercase;
+}
+h2 {
+margin: 16px 0 10px;
+font-size: clamp(1.5rem, 3vw, 2rem);
+line-height: 1.2;
+}
+h3 {
+margin: 0 0 12px;
+font-size: 1.2rem;
+line-height: 1.25;
+}
+h4 {
+margin: 0 0 8px;
+font-size: 1rem;
+}
+p {
+margin: 0 0 14px;
+}
+.grid {
+display: grid;
+grid-template-columns: repeat(12, 1fr);
+gap: 18px;
+margin-top: 18px;
+}
+.col-4 {
+grid-column: span 4;
+}
+.col-6 {
+grid-column: span 6;
+}
+.col-8 {
+grid-column: span 8;
+}
+.col-12 {
+grid-column: span 12;
+}
+.card {
+padding: 20px;
+}
+.card-label {
+display: inline-block;
+margin-bottom: 10px;
+color: var(--primary-dark);
+font-weight: 800;
+font-size: 0.85rem;
+text-transform: uppercase;
+letter-spacing: 0.04em;
+}
+ul,
+ol {
+margin: 0;
+padding-left: 22px;
+}
+li + li {
+margin-top: 6px;
+}
+.note-list {
+list-style: none;
+padding-left: 0;
+}
+.note-list li {
+border-left: 5px solid var(--primary);
+background: var(--surface-2);
+padding: 10px 12px;
+border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+.term {
+font-weight: 800;
+color: var(--primary-dark);
+}
+.callout {
+border: 1px solid var(--border);
+border-left: 6px solid var(--accent);
+background: var(--accent-light);
+padding: 14px 16px;
+border-radius: var(--radius-sm);
+margin-top: 14px;
+}
+.table-wrap {
+overflow-x: auto;
+border: 1px solid var(--border);
+border-radius: var(--radius);
+background: var(--surface);
+}
+table {
+width: 100%;
+border-collapse: collapse;
+}
+th,
+td {
+padding: 13px 14px;
+border-bottom: 1px solid var(--border);
+text-align: left;
+vertical-align: top;
+}
+th {
+background: var(--primary-dark);
+color: #ffffff;
+}
+tr:last-child td {
+border-bottom: 0;
+}
+.section-tools {
+margin-top: 20px;
+display: grid;
+gap: 18px;
+}
+.flashcard-area,
+.matching-area,
+.discussion-area {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: var(--radius);
+padding: 20px;
+}
+.tool-heading {
+display: flex;
+align-items: start;
+justify-content: space-between;
+gap: 14px;
+margin-bottom: 16px;
+}
+.tool-heading p {
+color: var(--muted);
+margin: 4px 0 0;
+}
+.flashcard {
+width: 100%;
+min-height: 210px;
+border: 2px solid var(--primary);
+border-radius: var(--radius);
+background: var(--primary-light);
+color: var(--text);
+cursor: pointer;
+padding: 22px;
+text-align: left;
+display: grid;
+align-content: center;
+transition: transform 0.2s ease, background 0.2s ease;
+}
+.flashcard:hover {
+transform: translateY(-2px);
+}
+.flashcard .side-label {
+display: inline-block;
+width: fit-content;
+margin-bottom: 12px;
+padding: 4px 10px;
+border-radius: 999px;
+background: var(--primary-dark);
+color: #ffffff;
+font-size: 0.78rem;
+font-weight: 800;
+text-transform: uppercase;
+letter-spacing: 0.05em;
+}
+.flashcard .question {
+font-size: 1.2rem;
+font-weight: 800;
+line-height: 1.35;
+}
+.flashcard .answer {
+font-size: 1.05rem;
+}
+.flashcard-controls {
+margin-top: 14px;
+display: flex;
+gap: 10px;
+flex-wrap: wrap;
+align-items: center;
+}
+.btn {
+min-height: 44px;
+border: 2px solid var(--primary-dark);
+border-radius: 999px;
+padding: 9px 16px;
+background: var(--primary);
+color: #ffffff;
+font-weight: 800;
+cursor: pointer;
+}
+.btn:hover {
+background: var(--primary-dark);
+}
+.btn.secondary {
+background: #ffffff;
+color: var(--primary-dark);
+}
+.btn.secondary:hover {
+background: var(--primary-light);
+}
+.btn.success {
+background: var(--success);
+border-color: var(--success);
+}
+.btn.success:hover {
+background: #0d4f31;
+}
+.counter {
+color: var(--muted);
+font-weight: 700;
+}
+.match-row {
+display: grid;
+grid-template-columns: minmax(210px, 1fr) minmax(220px, 0.8fr);
+gap: 12px;
+align-items: center;
+padding: 12px 0;
+border-bottom: 1px solid var(--surface-3);
+}
+.match-row:last-of-type {
+border-bottom: 0;
+}
+select {
+min-height: 44px;
+width: 100%;
+padding: 8px 10px;
+border: 2px solid var(--border);
+border-radius: var(--radius-sm);
+background: #ffffff;
+color: var(--text);
+font-size: 1rem;
+}
+select.correct {
+border-color: var(--success);
+background: var(--success-light);
+}
+select.incorrect {
+border-color: var(--danger);
+background: var(--danger-light);
+}
+.feedback {
+margin-top: 14px;
+padding: 12px 14px;
+border-radius: var(--radius-sm);
+border: 2px solid var(--border);
+background: var(--surface-2);
+font-weight: 800;
+}
+.feedback.good {
+border-color: var(--success);
+background: var(--success-light);
+color: #0b3d26;
+}
+.feedback.needs-work {
+border-color: var(--warning);
+background: var(--warning-light);
+color: #4f3000;
+}
+.discussion-card {
+border: 1px solid var(--border);
+border-radius: var(--radius);
+overflow: hidden;
+background: var(--surface);
+}
+.discussion-question {
+padding: 18px;
+background: var(--surface-2);
+border-bottom: 1px solid var(--border);
+}
+textarea {
+width: 100%;
+min-height: 110px;
+resize: vertical;
+border: 2px solid var(--border);
+border-radius: var(--radius-sm);
+padding: 12px;
+font-size: 1rem;
+font-family: inherit;
+color: var(--text);
+background: #ffffff;
+}
+.discussion-body {
+padding: 18px;
+}
+.model-answer {
+display: none;
+margin-top: 14px;
+border-left: 6px solid var(--success);
+background: var(--success-light);
+padding: 14px 16px;
+border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+.model-answer.show {
+display: block;
+}
+.progress-panel {
+padding: 22px;
+margin-top: 24px;
+}
+.progress-grid {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 14px;
+margin-top: 14px;
+}
+.progress-stat {
+background: var(--surface-2);
+border: 1px solid var(--border);
+border-radius: var(--radius-sm);
+padding: 16px;
+text-align: center;
+}
+.progress-stat strong {
+display: block;
+font-size: 1.6rem;
+color: var(--primary-dark);
+}
+.topic-progress-list {
+margin-top: 18px;
+display: grid;
+gap: 10px;
+}
+.topic-progress {
+display: grid;
+grid-template-columns: 170px 1fr 52px;
+gap: 12px;
+align-items: center;
+}
+.mini-track {
+height: 12px;
+background: var(--surface-3);
+border: 1px solid var(--border);
+border-radius: 999px;
+overflow: hidden;
+}
+.mini-fill {
+height: 100%;
+width: 0%;
+background: var(--primary);
+}
+.sr-only {
+position: absolute;
+width: 1px;
+height: 1px;
+padding: 0;
+overflow: hidden;
+clip: rect(0,0,0,0);
+white-space: nowrap;
+border: 0;
+}
+footer {
+max-width: var(--max);
+margin: 0 auto;
+padding: 20px 18px 40px;
+color: var(--muted);
+}
+@media (max-width: 860px) {
+.header-inner {
+grid-template-columns: 1fr;
+}
+.progress-summary {  width: 100%;}.col-4,.col-6,.col-8 {  grid-column: span 12;}.progress-grid {  grid-template-columns: repeat(2, 1fr);}.match-row {  grid-template-columns: 1fr;}.topic-progress {  grid-template-columns: 1fr;  gap: 6px;}
+}
+@media (max-width: 560px) {
+.brand {
+align-items: flex-start;
+}
+.brand-mark {  width: 48px;  height: 48px;  font-size: 1rem;}.tabs {  padding: 0 10px;}.tab {  padding: 12px 12px;}.progress-grid {  grid-template-columns: 1fr;}
+}
+@media (prefers-reduced-motion: reduce) {
+*,
+*::before,
+*::after {
+scroll-behavior: auto !important;
+transition: none !important;
+animation: none !important;
+}
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">CH 5</div>
+      <div>
+        <h1>The Integumentary System</h1>
+        <p class="subtitle">Interactive study tool for skin, epidermis, dermis, subcutaneous layer, accessory structures, and injury repair.</p>
+      </div>
+    </div>
+    <div class="progress-summary" aria-label="Overall study progress">
+      <strong id="overallPercentText">0%</strong>
+      <span class="progress-label">Overall completion</span>
+      <div class="progress-track" role="progressbar" aria-label="Overall completion" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="overallProgressBar">
+        <div class="progress-fill" id="overallProgressFill"></div>
+      </div>
+    </div>
+  </div>
+</header>
+<nav aria-label="Major lesson topics">
+  <div class="tabs" role="tablist" aria-label="Study sections">
+    <button class="tab" id="tab-overview" role="tab" aria-selected="true" aria-controls="panel-overview" data-tab="overview">Overview</button>
+    <button class="tab" id="tab-epidermis" role="tab" aria-selected="false" aria-controls="panel-epidermis" data-tab="epidermis">Epidermis</button>
+    <button class="tab" id="tab-dermis" role="tab" aria-selected="false" aria-controls="panel-dermis" data-tab="dermis">Dermis and Hypodermis</button>
+    <button class="tab" id="tab-accessory" role="tab" aria-selected="false" aria-controls="panel-accessory" data-tab="accessory">Accessory Structures</button>
+    <button class="tab" id="tab-injury" role="tab" aria-selected="false" aria-controls="panel-injury" data-tab="injury">Injury Repair</button>
+    <button class="tab" id="tab-progress" role="tab" aria-selected="false" aria-controls="panel-progress" data-tab="progress">Progress</button>
+  </div>
+</nav>
+<main id="main-content">
+  <section class="panel active" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
+    <div class="hero">
+      <span class="kicker">Subject overview</span>
+      <h2>What this chapter covers</h2>
+      <p>The integumentary system is the body system made up of the skin and its accessory structures. It is the largest body system, accounting for about 16 percent of body weight and covering about 1.5 to 2 square meters of area. This lesson focuses on how the skin is organized, how it protects the body, how it interacts with blood vessels and sensory receptors, and how it repairs itself after injury.</p>
+      <div class="grid">
+        <div class="card col-4">
+          <span class="card-label">Major objective 1</span>
+          <h3>Identify the parts of the integument</h3>
+          <p>Distinguish the cutaneous membrane from accessory structures and describe how epidermis, dermis, and hypodermis relate to one another.</p>
+        </div>
+        <div class="card col-4">
+          <span class="card-label">Major objective 2</span>
+          <h3>Explain the epidermis</h3>
+          <p>Describe thin skin, thick skin, keratinocyte layers, keratinization, pigments, and vitamin D production.</p>
+        </div>
+        <div class="card col-4">
+          <span class="card-label">Major objective 3</span>
+          <h3>Connect structure to function</h3>
+          <p>Relate dermal layers, subcutaneous tissue, hair, glands, nails, and repair steps to protection, sensation, temperature control, and healing.</p>
+        </div>
+      </div>
+    </div>
+<div class="grid">  <div class="card col-6">    <span class="card-label">Core organization</span>    <ul class="note-list">      <li><span class="term">Cutaneous membrane:</span> the skin, made of the epidermis and dermis.</li>      <li><span class="term">Epidermis:</span> outer superficial epithelium made of epithelial tissue.</li>      <li><span class="term">Dermis:</span> inner connective tissue layer containing vessels, nerves, and accessory structures.</li>      <li><span class="term">Accessory structures:</span> hair, nails, sebaceous glands, sweat glands, mammary glands, and ceruminous glands.</li>      <li><span class="term">Hypodermis:</span> subcutaneous layer below the dermis, also called superficial fascia.</li>    </ul>  </div>  <div class="card col-6">    <span class="card-label">Functions of skin and subcutaneous layer</span>    <ul>      <li>Protects against shock, abrasion, fluid loss, and chemical attack.</li>      <li>Excretes salts, water, and organic wastes through glands.</li>      <li>Maintains body temperature through insulation and sweat evaporation.</li>      <li>Synthesizes vitamin D3, later converted to calcitriol for calcium regulation.</li>      <li>Stores lipids in the subcutaneous layer.</li>      <li>Detects touch, pressure, pain, and temperature.</li>    </ul>  </div>  <div class="card col-12">    <span class="card-label">Quick comparison</span>    <div class="table-wrap">      <table>        <thead>          <tr>            <th>Structure</th>            <th>Main tissue or feature</th>            <th>Key idea</th>          </tr>        </thead>        <tbody>          <tr>            <td>Epidermis</td>            <td>Avascular stratified squamous epithelium</td>            <td>Relies on diffusion from dermal capillaries and contains keratinocytes and melanocytes.</td>          </tr>          <tr>            <td>Dermis</td>            <td>Connective tissue</td>            <td>Contains vessels, nerves, collagen and elastic fibers, papillary layer, and reticular layer.</td>          </tr>          <tr>            <td>Hypodermis</td>            <td>Areolar and adipose tissue</td>            <td>Stabilizes skin position but allows separate movement; common site of subcutaneous injections.</td>          </tr>          <tr>            <td>Accessory structures</td>            <td>Epidermal derivatives extending into dermis</td>            <td>Include hair, glands, and nails; support protection, lubrication, cooling, and sensation.</td>          </tr>        </tbody>      </table>    </div>  </div></div>
+  </section>
+  <section class="panel" id="panel-epidermis" role="tabpanel" aria-labelledby="tab-epidermis">
+    <div class="hero">
+      <span class="kicker">Topic 1</span>
+      <h2>The Epidermis</h2>
+      <p>The epidermis is an avascular stratified squamous epithelium. Its most abundant cells are keratinocytes, which contain the protein keratin. Thin skin has four epidermal layers, while thick skin on the palms and soles has five layers.</p>
+    </div>
+<div class="grid">  <div class="card col-6">    <span class="card-label">Study notes: epidermal layers</span>    <ol>      <li><span class="term">Stratum germinativum or basale:</span> deepest layer; contains basal stem cells and melanocytes; forms epidermal ridges.</li>      <li><span class="term">Stratum spinosum:</span> spiny layer; cells produced by division of stem cells; 8 to 10 layers of keratinocytes.</li>      <li><span class="term">Stratum granulosum:</span> grainy layer; cells stop dividing, produce keratin, dehydrate, and die.</li>      <li><span class="term">Stratum lucidum:</span> clear layer found only in thick skin.</li>      <li><span class="term">Stratum corneum:</span> outer horn layer; 15 to 30 layers of keratinized cells.</li>    </ol>  </div>  <div class="card col-6">    <span class="card-label">Study notes: skin color and vitamin D</span>    <ul>      <li>Skin color depends on pigment and circulation.</li>      <li><span class="term">Carotene</span> is an orange-yellow pigment that accumulates in epidermal cells and fatty dermal tissues.</li>      <li><span class="term">Melanin</span> is produced by melanocytes and protects against ultraviolet radiation.</li>      <li>Skin color depends on the rate of melanin production, not the number of melanocytes.</li>      <li>Heat-related vessel dilation can redden skin; reduced blood flow can make skin pale; severe oxygen reduction can cause cyanosis.</li>      <li>With ultraviolet radiation, epidermal cells convert a steroid into vitamin D3, which the liver and kidneys convert into calcitriol.</li>    </ul>    <div class="callout">      <strong>Important process:</strong> Keratinization forms a layer of dead, protective cells filled with keratin. It takes about 15 to 30 days for a cell to move from the stratum germinativum to the stratum corneum.    </div>  </div></div><div class="section-tools" data-topic="epidermis">  <div class="flashcard-area" data-completable="epidermis-flashcards">    <div class="tool-heading">      <div>        <h3>Flashcards</h3>        <p>Activate the card to flip it. Use Previous and Next to review.</p>      </div>      <span class="counter" id="epidermis-card-counter">1 of 5</span>    </div>    <button class="flashcard" type="button" id="epidermis-flashcard" aria-pressed="false">      <span class="side-label">Question</span>      <span class="question"></span>      <span class="answer" hidden></span>    </button>    <div class="flashcard-controls">      <button class="btn secondary" type="button" data-fc-prev="epidermis">Previous</button>      <button class="btn secondary" type="button" data-fc-next="epidermis">Next</button>      <button class="btn success" type="button" data-complete="epidermis-flashcards">Mark flashcards reviewed</button>    </div>  </div>  <div class="matching-area" data-completable="epidermis-matching">    <div class="tool-heading">      <div>        <h3>Matching activity</h3>        <p>Match each description to the correct epidermal term.</p>      </div>    </div>    <div class="match-row">      <label for="ep-match-1">Deepest layer with basal cells and melanocytes</label>      <select id="ep-match-1" data-answer="Stratum germinativum or basale">        <option value="">Select an answer</option>        <option>Stratum corneum</option>        <option>Stratum lucidum</option>        <option>Stratum granulosum</option>        <option>Stratum germinativum or basale</option>      </select>    </div>    <div class="match-row">      <label for="ep-match-2">Clear layer found only in thick skin</label>      <select id="ep-match-2" data-answer="Stratum lucidum">        <option value="">Select an answer</option>        <option>Stratum spinosum</option>        <option>Stratum lucidum</option>        <option>Melanin</option>        <option>Carotene</option>      </select>    </div>    <div class="match-row">      <label for="ep-match-3">Outer surface layer with 15 to 30 layers of keratinized cells</label>      <select id="ep-match-3" data-answer="Stratum corneum">        <option value="">Select an answer</option>        <option>Stratum granulosum</option>        <option>Stratum corneum</option>        <option>Dermis</option>        <option>Hypodermis</option>      </select>    </div>    <div class="match-row">      <label for="ep-match-4">Pigment produced by melanocytes that protects against ultraviolet radiation</label>      <select id="ep-match-4" data-answer="Melanin">        <option value="">Select an answer</option>        <option>Carotene</option>        <option>Keratin</option>        <option>Melanin</option>        <option>Calcitriol</option>      </select>    </div>    <div class="flashcard-controls">      <button class="btn" type="button" data-check-match="epidermis">Check answers</button>      <button class="btn secondary" type="button" data-reset-match="epidermis">Reset</button>    </div>    <div class="feedback" id="epidermis-match-feedback" aria-live="polite">No answers checked yet.</div>  </div>  <div class="discussion-area" data-completable="epidermis-discussion">    <h3>Discussion and reflection</h3>    <div class="discussion-card">      <div class="discussion-question">        <h4>Explain how the epidermis can be protective even though its surface cells are dead.</h4>      </div>      <div class="discussion-body">        <label for="epidermis-response">Your response</label>        <textarea id="epidermis-response"></textarea>        <div class="flashcard-controls">          <button class="btn" type="button" aria-expanded="false" aria-controls="epidermis-answer" data-toggle-answer="epidermis-answer">Reveal model answer</button>          <button class="btn success" type="button" data-complete="epidermis-discussion">Mark reflection complete</button>        </div>        <div class="model-answer" id="epidermis-answer">          The epidermis protects the body through keratinization. As keratinocytes move upward from the stratum germinativum, they produce keratin, dehydrate, and die. The stratum corneum is therefore made of dead, keratinized cells, but this makes it tough, water resistant, and protective against abrasion and fluid loss.        </div>      </div>    </div>  </div></div>
+  </section>
+  <section class="panel" id="panel-dermis" role="tabpanel" aria-labelledby="tab-dermis">
+    <div class="hero">
+      <span class="kicker">Topic 2</span>
+      <h2>The Dermis and Subcutaneous Layer</h2>
+      <p>The dermis lies between the epidermis and subcutaneous layer. It contains connective tissue, vessels, nerves, and many accessory structures. Beneath it, the hypodermis stabilizes skin while allowing movement.</p>
+    </div>
+<div class="grid">  <div class="card col-6">    <span class="card-label">Study notes: dermal organization</span>    <ul>      <li><span class="term">Papillary layer:</span> outer dermal layer made of areolar tissue; contains smaller capillaries, lymphatics, sensory neurons, and dermal papillae.</li>      <li><span class="term">Reticular layer:</span> deeper layer made of dense irregular connective tissue; contains larger blood vessels, lymph vessels, nerve fibers, collagen, and elastic fibers.</li>      <li>Dermal papillae project between epidermal ridges, increasing surface area and strengthening attachment.</li>      <li>Hair follicles and sweat glands extend into the dermis.</li>    </ul>  </div>  <div class="card col-6">    <span class="card-label">Study notes: hypodermis</span>    <ul>      <li>Also called the subcutaneous layer or superficial fascia.</li>      <li>Made of elastic areolar and adipose tissues.</li>      <li>Connected to the reticular layer by interwoven connective tissue fibers.</li>      <li>Stabilizes skin position but permits separate movement.</li>      <li>Has few capillaries and no vital organs, making it a site for subcutaneous injections.</li>    </ul>  </div></div><div class="section-tools" data-topic="dermis">  <div class="flashcard-area" data-completable="dermis-flashcards">    <div class="tool-heading">      <div>        <h3>Flashcards</h3>        <p>Review the dermis and subcutaneous layer.</p>      </div>      <span class="counter" id="dermis-card-counter">1 of 4</span>    </div>    <button class="flashcard" type="button" id="dermis-flashcard" aria-pressed="false">      <span class="side-label">Question</span>      <span class="question"></span>      <span class="answer" hidden></span>    </button>    <div class="flashcard-controls">      <button class="btn secondary" type="button" data-fc-prev="dermis">Previous</button>      <button class="btn secondary" type="button" data-fc-next="dermis">Next</button>      <button class="btn success" type="button" data-complete="dermis-flashcards">Mark flashcards reviewed</button>    </div>  </div>  <div class="matching-area" data-completable="dermis-matching">    <h3>Check your understanding</h3>    <div class="match-row">      <label for="de-match-1">Outer dermal layer with areolar tissue and dermal papillae</label>      <select id="de-match-1" data-answer="Papillary layer">        <option value="">Select an answer</option>        <option>Papillary layer</option>        <option>Reticular layer</option>        <option>Stratum corneum</option>        <option>Hair follicle</option>      </select>    </div>    <div class="match-row">      <label for="de-match-2">Deeper dermal layer with dense irregular connective tissue</label>      <select id="de-match-2" data-answer="Reticular layer">        <option value="">Select an answer</option>        <option>Hypodermis</option>        <option>Papillary layer</option>        <option>Reticular layer</option>        <option>Epidermis</option>      </select>    </div>    <div class="match-row">      <label for="de-match-3">Layer below the integument that stores lipids and allows skin movement</label>      <select id="de-match-3" data-answer="Hypodermis">        <option value="">Select an answer</option>        <option>Hypodermis</option>        <option>Dermal papillae</option>        <option>Stratum lucidum</option>        <option>Keratinocytes</option>      </select>    </div>    <div class="flashcard-controls">      <button class="btn" type="button" data-check-match="dermis">Check answers</button>      <button class="btn secondary" type="button" data-reset-match="dermis">Reset</button>    </div>    <div class="feedback" id="dermis-match-feedback" aria-live="polite">No answers checked yet.</div>  </div>  <div class="discussion-area" data-completable="dermis-discussion">    <h3>Discussion and reflection</h3>    <div class="discussion-card">      <div class="discussion-question">        <h4>Compare the papillary layer, reticular layer, and hypodermis in terms of tissue type and function.</h4>      </div>      <div class="discussion-body">        <label for="dermis-response">Your response</label>        <textarea id="dermis-response"></textarea>        <div class="flashcard-controls">          <button class="btn" type="button" aria-expanded="false" aria-controls="dermis-answer" data-toggle-answer="dermis-answer">Reveal model answer</button>          <button class="btn success" type="button" data-complete="dermis-discussion">Mark reflection complete</button>        </div>        <div class="model-answer" id="dermis-answer">          The papillary layer is the outer dermal layer of areolar tissue and includes smaller vessels, lymphatics, sensory neurons, and dermal papillae. The reticular layer is deeper and made of dense irregular connective tissue with larger vessels, nerves, collagen, and elastic fibers. The hypodermis is not part of the skin itself; it is a subcutaneous layer of areolar and adipose tissue that stores lipids, stabilizes skin, and allows movement.        </div>      </div>    </div>  </div></div>
+  </section>
+  <section class="panel" id="panel-accessory" role="tabpanel" aria-labelledby="tab-accessory">
+    <div class="hero">
+      <span class="kicker">Topic 3</span>
+      <h2>Accessory Structures</h2>
+      <p>Accessory structures include hair, hair follicles, glands, and nails. These structures originate from the epidermis during development, are located in the dermis, and project through the epidermis to the surface.</p>
+    </div>
+<div class="grid">  <div class="card col-4">    <span class="card-label">Hair and follicles</span>    <ul>      <li>Hair covers most of the body except palms, soles, lips, and parts of the external sex organs.</li>      <li>Hair protects, insulates, guards openings, and detects very light touch.</li>      <li>Each hair follicle has a sebaceous gland that lubricates the hair.</li>      <li>Hair is keratinized as it is produced.</li>      <li>Hair color is determined genetically and produced by melanocytes at the hair papilla.</li>    </ul>  </div>  <div class="card col-4">    <span class="card-label">Glands</span>    <ul>      <li><span class="term">Sebaceous glands:</span> holocrine oil glands that secrete sebum to lubricate, protect, and inhibit bacteria.</li>      <li><span class="term">Apocrine sweat glands:</span> found in armpits, around nipples, and groin; produce sticky secretions associated with odors.</li>      <li><span class="term">Merocrine sweat glands:</span> widely distributed; coiled tubular glands that discharge onto the skin for evaporative cooling.</li>      <li><span class="term">Ceruminous glands:</span> produce cerumen, or earwax.</li>      <li><span class="term">Mammary glands:</span> produce milk.</li>    </ul>  </div>  <div class="card col-4">    <span class="card-label">Nails</span>    <ul>      <li>Fingernails and toenails protect delicate digit tips.</li>      <li>Nails are dead cells packed with keratin.</li>      <li>Nail production occurs in a deep epidermal fold near the bone called the nail root.</li>    </ul>  </div></div><div class="section-tools" data-topic="accessory">  <div class="flashcard-area" data-completable="accessory-flashcards">    <div class="tool-heading">      <div>        <h3>Flashcards</h3>        <p>Review hair, glands, and nails.</p>      </div>      <span class="counter" id="accessory-card-counter">1 of 5</span>    </div>    <button class="flashcard" type="button" id="accessory-flashcard" aria-pressed="false">      <span class="side-label">Question</span>      <span class="question"></span>      <span class="answer" hidden></span>    </button>    <div class="flashcard-controls">      <button class="btn secondary" type="button" data-fc-prev="accessory">Previous</button>      <button class="btn secondary" type="button" data-fc-next="accessory">Next</button>      <button class="btn success" type="button" data-complete="accessory-flashcards">Mark flashcards reviewed</button>    </div>  </div>  <div class="matching-area" data-completable="accessory-matching">    <h3>Matching activity</h3>    <div class="match-row">      <label for="ac-match-1">Oil glands that secrete sebum</label>      <select id="ac-match-1" data-answer="Sebaceous glands">        <option value="">Select an answer</option>        <option>Sebaceous glands</option>        <option>Merocrine glands</option>        <option>Ceruminous glands</option>        <option>Nail root</option>      </select>    </div>    <div class="match-row">      <label for="ac-match-2">Widely distributed glands important for sweat evaporation</label>      <select id="ac-match-2" data-answer="Merocrine sweat glands">        <option value="">Select an answer</option>        <option>Apocrine sweat glands</option>        <option>Merocrine sweat glands</option>        <option>Sebaceous glands</option>        <option>Mammary glands</option>      </select>    </div>    <div class="match-row">      <label for="ac-match-3">Glands that produce earwax</label>      <select id="ac-match-3" data-answer="Ceruminous glands">        <option value="">Select an answer</option>        <option>Ceruminous glands</option>        <option>Mammary glands</option>        <option>Hair follicles</option>        <option>Apocrine glands</option>      </select>    </div>    <div class="match-row">      <label for="ac-match-4">Deep epidermal fold where nail production occurs</label>      <select id="ac-match-4" data-answer="Nail root">        <option value="">Select an answer</option>        <option>Nail root</option>        <option>Hair papilla</option>        <option>Sebum</option>        <option>Dermal papilla</option>      </select>    </div>    <div class="flashcard-controls">      <button class="btn" type="button" data-check-match="accessory">Check answers</button>      <button class="btn secondary" type="button" data-reset-match="accessory">Reset</button>    </div>    <div class="feedback" id="accessory-match-feedback" aria-live="polite">No answers checked yet.</div>  </div>  <div class="discussion-area" data-completable="accessory-discussion">    <h3>Discussion and reflection</h3>    <div class="discussion-card">      <div class="discussion-question">        <h4>How do accessory structures support protection, temperature control, and sensory function?</h4>      </div>      <div class="discussion-body">        <label for="accessory-response">Your response</label>        <textarea id="accessory-response"></textarea>        <div class="flashcard-controls">          <button class="btn" type="button" aria-expanded="false" aria-controls="accessory-answer" data-toggle-answer="accessory-answer">Reveal model answer</button>          <button class="btn success" type="button" data-complete="accessory-discussion">Mark reflection complete</button>        </div>        <div class="model-answer" id="accessory-answer">          Hair protects and insulates, guards openings such as the nose, and is sensitive to light touch. Sebaceous glands secrete sebum, which lubricates and protects the epidermis and inhibits bacteria. Merocrine sweat glands cool the skin by evaporation, excrete water and electrolytes, and flush microorganisms or chemicals from the surface. Nails protect the delicate tips of digits.        </div>      </div>    </div>  </div></div>
+  </section>
+  <section class="panel" id="panel-injury" role="tabpanel" aria-labelledby="tab-injury">
+    <div class="hero">
+      <span class="kicker">Topic 4</span>
+      <h2>Response of the Integument to Injury</h2>
+      <p>Because skin contains many active germinative cells, it can respond rapidly to changes in health, activity, and localized injury. Repair involves inflammation, scab formation, migration of cells, granulation tissue, scar formation, and strengthening.</p>
+    </div>
+<div class="grid">  <div class="card col-12">    <span class="card-label">Study notes: four steps in repair</span>    <ol>      <li><span class="term">Bleeding and inflammation:</span> bleeding occurs and mast cells trigger inflammation by releasing histamine.</li>      <li><span class="term">Scab and granulation tissue:</span> blood clots form a scab; germinative cells migrate around the wound; macrophages clean the area; fibroblasts and endothelial cells divide, producing granulation tissue.</li>      <li><span class="term">Scar tissue:</span> fibroblasts replace damaged tissues with a fibrous repair called scar tissue; inflammation decreases and the clot begins to disintegrate.</li>      <li><span class="term">Strengthening and keloid:</span> fibroblasts continue strengthening the area until a raised section of scar tissue, called a keloid, forms.</li>    </ol>  </div></div><div class="section-tools" data-topic="injury">  <div class="flashcard-area" data-completable="injury-flashcards">    <div class="tool-heading">      <div>        <h3>Flashcards</h3>        <p>Review localized injury repair.</p>      </div>      <span class="counter" id="injury-card-counter">1 of 4</span>    </div>    <button class="flashcard" type="button" id="injury-flashcard" aria-pressed="false">      <span class="side-label">Question</span>      <span class="question"></span>      <span class="answer" hidden></span>    </button>    <div class="flashcard-controls">      <button class="btn secondary" type="button" data-fc-prev="injury">Previous</button>      <button class="btn secondary" type="button" data-fc-next="injury">Next</button>      <button class="btn success" type="button" data-complete="injury-flashcards">Mark flashcards reviewed</button>    </div>  </div>  <div class="matching-area" data-completable="injury-matching">    <h3>Sequence check</h3>    <p>Match each event to the repair step where it belongs.</p>    <div class="match-row">      <label for="in-match-1">Mast cells release histamine</label>      <select id="in-match-1" data-answer="Step 1">        <option value="">Select an answer</option>        <option>Step 1</option>        <option>Step 2</option>        <option>Step 3</option>        <option>Step 4</option>      </select>    </div>    <div class="match-row">      <label for="in-match-2">A scab stabilizes and protects the area</label>      <select id="in-match-2" data-answer="Step 2">        <option value="">Select an answer</option>        <option>Step 1</option>        <option>Step 2</option>        <option>Step 3</option>        <option>Step 4</option>      </select>    </div>    <div class="match-row">      <label for="in-match-3">Fibroblasts replace damaged tissue with scar tissue</label>      <select id="in-match-3" data-answer="Step 3">        <option value="">Select an answer</option>        <option>Step 1</option>        <option>Step 2</option>        <option>Step 3</option>        <option>Step 4</option>      </select>    </div>    <div class="match-row">      <label for="in-match-4">A raised section of scar tissue called a keloid forms</label>      <select id="in-match-4" data-answer="Step 4">        <option value="">Select an answer</option>        <option>Step 1</option>        <option>Step 2</option>        <option>Step 3</option>        <option>Step 4</option>      </select>    </div>    <div class="flashcard-controls">      <button class="btn" type="button" data-check-match="injury">Check answers</button>      <button class="btn secondary" type="button" data-reset-match="injury">Reset</button>    </div>    <div class="feedback" id="injury-match-feedback" aria-live="polite">No answers checked yet.</div>  </div>  <div class="discussion-area" data-completable="injury-discussion">    <h3>Discussion and reflection</h3>    <div class="discussion-card">      <div class="discussion-question">        <h4>Why are inflammation, macrophages, fibroblasts, and scab formation all necessary for repair?</h4>      </div>      <div class="discussion-body">        <label for="injury-response">Your response</label>        <textarea id="injury-response"></textarea>        <div class="flashcard-controls">          <button class="btn" type="button" aria-expanded="false" aria-controls="injury-answer" data-toggle-answer="injury-answer">Reveal model answer</button>          <button class="btn success" type="button" data-complete="injury-discussion">Mark reflection complete</button>        </div>        <div class="model-answer" id="injury-answer">          Inflammation begins the repair response and helps recruit cells to the wound. The scab stabilizes and protects the area. Macrophages clean the wound by removing debris. Fibroblasts move in, divide, and produce the fibrous repair tissue that becomes scar tissue. Together, these steps protect the wound, remove damaged material, rebuild tissue, and strengthen the repair.        </div>      </div>    </div>  </div></div>
+  </section>
+  <section class="panel" id="panel-progress" role="tabpanel" aria-labelledby="tab-progress">
+    <div class="hero">
+      <span class="kicker">Progress tracker</span>
+      <h2>Your study progress</h2>
+      <p>Use this panel to monitor completed flashcards, matching activities, and reflection prompts. Progress is stored only while this page is open.</p>
+    </div>
+<div class="progress-panel">  <h3>Completion summary</h3>  <div class="progress-grid">    <div class="progress-stat">      <strong id="completedCount">0</strong>      <span>Activities complete</span>    </div>    <div class="progress-stat">      <strong id="totalCount">0</strong>      <span>Total activities</span>    </div>    <div class="progress-stat">      <strong id="matchingAverage">0%</strong>      <span>Average matching score</span>    </div>    <div class="progress-stat">      <strong id="cardsViewed">0</strong>      <span>Flashcards viewed</span>    </div>  </div>  <div class="topic-progress-list" aria-label="Progress by topic">    <div class="topic-progress">      <strong>Epidermis</strong>      <div class="mini-track"><div class="mini-fill" id="topic-epidermis"></div></div>      <span id="topic-epidermis-text">0%</span>    </div>    <div class="topic-progress">      <strong>Dermis and Hypodermis</strong>      <div class="mini-track"><div class="mini-fill" id="topic-dermis"></div></div>      <span id="topic-dermis-text">0%</span>    </div>    <div class="topic-progress">      <strong>Accessory Structures</strong>      <div class="mini-track"><div class="mini-fill" id="topic-accessory"></div></div>      <span id="topic-accessory-text">0%</span>    </div>    <div class="topic-progress">      <strong>Injury Repair</strong>      <div class="mini-track"><div class="mini-fill" id="topic-injury"></div></div>      <span id="topic-injury-text">0%</span>    </div>  </div>  <div class="flashcard-controls">    <button class="btn secondary" type="button" id="resetProgress">Reset progress</button>  </div>  <p class="sr-only" id="progressLive" aria-live="polite"></p></div>
+  </section>
+</main>
+<footer>
+  <p>Interactive study tool based on the Chapter 5 lecture notes on the integumentary system. Designed with keyboard-accessible controls and high-contrast styling.</p>
+</footer>
+<script>
+(function () {
+  const flashcards = {
+    epidermis: [
+      {
+        q: "What type of tissue is the epidermis, and why does it rely on the dermis?",
+        a: "The epidermis is an avascular stratified squamous epithelium. Because it has no blood vessels, it relies on diffusion of nutrients and oxygen from capillaries in the dermis."
+      },
+      {
+        q: "What is the main cell type in the epidermis?",
+        a: "Keratinocytes are the most abundant epidermal cells. They contain large amounts of keratin."
+      },
+      {
+        q: "How are thin skin and thick skin different?",
+        a: "Thin skin covers most of the body and has four epidermal layers. Thick skin covers palms and soles and has five layers, including the stratum lucidum."
+      },
+      {
+        q: "What determines fingerprint patterns?",
+        a: "Epidermal ridges formed by the stratum germinativum help determine fingerprint patterns."
+      },
+      {
+        q: "What causes cyanosis?",
+        a: "Cyanosis is a bluish skin tint caused by severe reduction in blood flow or oxygenation."
+      }
+    ],
+    dermis: [
+      {
+        q: "What are the two layers of the dermis?",
+        a: "The dermis has an outer papillary layer and a deeper reticular layer."
+      },
+      {
+        q: "What is found in the papillary layer?",
+        a: "The papillary layer contains areolar tissue, smaller capillaries, lymphatics, sensory neurons, and dermal papillae."
+      },
+      {
+        q: "What makes the reticular layer strong and flexible?",
+        a: "The reticular layer contains dense irregular connective tissue with collagen and elastic fibers."
+      },
+      {
+        q: "Why is the hypodermis used for subcutaneous injections?",
+        a: "It has few capillaries and no vital organs, so it is a practical site for injections with hypodermic needles."
+      }
+    ],
+    accessory: [
+      {
+        q: "What are the major accessory structures of the integument?",
+        a: "Accessory structures include hair, hair follicles, sebaceous glands, sweat glands, mammary glands, ceruminous glands, and nails."
+      },
+      {
+        q: "What does sebum do?",
+        a: "Sebum lubricates and protects the epidermis and helps inhibit bacteria."
+      },
+      {
+        q: "How do apocrine and merocrine sweat glands differ?",
+        a: "Apocrine glands are associated with hair follicles and produce sticky secretions in certain regions. Merocrine glands are widely distributed and discharge directly onto the skin for cooling by evaporation."
+      },
+      {
+        q: "What are three functions of merocrine sweat?",
+        a: "Merocrine sweat cools the skin, excretes water and electrolytes, and flushes microorganisms or harmful chemicals from the skin surface."
+      },
+      {
+        q: "What are nails made of?",
+        a: "Nails are dead cells packed with keratin."
+      }
+    ],
+    injury: [
+      {
+        q: "What happens first during localized skin injury repair?",
+        a: "Bleeding occurs, and mast cells trigger inflammation by releasing histamine."
+      },
+      {
+        q: "What is the role of the scab?",
+        a: "A scab stabilizes and protects the injured area."
+      },
+      {
+        q: "What is granulation tissue?",
+        a: "Granulation tissue forms as fibroblasts and endothelial cells divide while macrophages clean the area."
+      },
+      {
+        q: "What is a keloid?",
+        a: "A keloid is a raised section of scar tissue that can form as fibroblasts continue to strengthen the repaired area."
+      }
+    ]
+  };
+
+  const state = {
+    completed: new Set(),
+    matchScores: {},
+    cardsViewed: 0,
+    cardIndex: {
+      epidermis: 0,
+      dermis: 0,
+      accessory: 0,
+      injury: 0
+    },
+    flipped: {
+      epidermis: false,
+      dermis: false,
+      accessory: false,
+      injury: false
+    }
+  };
+
+  const topics = ["epidermis", "dermis", "accessory", "injury"];
+  const totalActivities = document.querySelectorAll("[data-completable]").length;
+
+  function selectTab(tabName) {
+    document.querySelectorAll(".tab").forEach((tab) => {
+      const isSelected = tab.dataset.tab === tabName;
+      tab.setAttribute("aria-selected", String(isSelected));
+    });
+
+    document.querySelectorAll(".panel").forEach((panel) => {
+      panel.classList.remove("active");
+    });
+
+    const target = document.getElementById("panel-" + tabName);
+    if (target) {
+      target.classList.add("active");
+      target.focus({ preventScroll: true });
+    }
+  }
+
+  document.querySelectorAll(".tab").forEach((tab) => {
+    tab.addEventListener("click", () => selectTab(tab.dataset.tab));
+    tab.addEventListener("keydown", (event) => {
+      const tabs = Array.from(document.querySelectorAll(".tab"));
+      const current = tabs.indexOf(event.currentTarget);
+      let nextIndex = current;
+
+      if (event.key === "ArrowRight") nextIndex = (current + 1) % tabs.length;
+      if (event.key === "ArrowLeft") nextIndex = (current - 1 + tabs.length) % tabs.length;
+      if (event.key === "Home") nextIndex = 0;
+      if (event.key === "End") nextIndex = tabs.length - 1;
+
+      if (nextIndex !== current) {
+        event.preventDefault();
+        tabs[nextIndex].focus();
+        selectTab(tabs[nextIndex].dataset.tab);
+      }
+    });
+  });
+
+  function renderCard(topic) {
+    const card = document.getElementById(topic + "-flashcard");
+    const data = flashcards[topic][state.cardIndex[topic]];
+    const label = card.querySelector(".side-label");
+    const question = card.querySelector(".question");
+    const answer = card.querySelector(".answer");
+    const counter = document.getElementById(topic + "-card-counter");
+
+    state.flipped[topic] = false;
+    card.setAttribute("aria-pressed", "false");
+    label.textContent = "Question";
+    question.textContent = data.q;
+    question.hidden = false;
+    answer.textContent = data.a;
+    answer.hidden = true;
+    counter.textContent = (state.cardIndex[topic] + 1) + " of " + flashcards[topic].length;
+  }
+
+  function flipCard(topic) {
+    const card = document.getElementById(topic + "-flashcard");
+    const label = card.querySelector(".side-label");
+    const question = card.querySelector(".question");
+    const answer = card.querySelector(".answer");
+
+    state.flipped[topic] = !state.flipped[topic];
+    card.setAttribute("aria-pressed", String(state.flipped[topic]));
+
+    if (state.flipped[topic]) {
+      label.textContent = "Answer";
+      question.hidden = true;
+      answer.hidden = false;
+      state.cardsViewed += 1;
+      updateProgress();
+    } else {
+      label.textContent = "Question";
+      question.hidden = false;
+      answer.hidden = true;
+    }
+  }
+
+  Object.keys(flashcards).forEach((topic) => {
+    renderCard(topic);
+
+    const card = document.getElementById(topic + "-flashcard");
+    card.addEventListener("click", () => flipCard(topic));
+    card.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        flipCard(topic);
+      }
+    });
+  });
+
+  document.querySelectorAll("[data-fc-prev]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const topic = button.dataset.fcPrev;
+      state.cardIndex[topic] = Math.max(0, state.cardIndex[topic] - 1);
+      renderCard(topic);
+    });
+  });
+
+  document.querySelectorAll("[data-fc-next]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const topic = button.dataset.fcNext;
+      state.cardIndex[topic] = Math.min(flashcards[topic].length - 1, state.cardIndex[topic] + 1);
+      renderCard(topic);
+    });
+  });
+
+  function markComplete(id) {
+    state.completed.add(id);
+    const section = document.querySelector('[data-completable="' + id + '"]');
+    if (section) {
+      section.style.borderColor = "var(--success)";
+    }
+    updateProgress();
+  }
+
+  document.querySelectorAll("[data-complete]").forEach((button) => {
+    button.addEventListener("click", () => {
+      markComplete(button.dataset.complete);
+    });
+  });
+
+  function checkMatch(topic) {
+    const area = document.querySelector('#panel-' + topic + ' .matching-area');
+    const selects = Array.from(area.querySelectorAll("select"));
+    let correct = 0;
+
+    selects.forEach((select) => {
+      select.classList.remove("correct", "incorrect");
+      if (select.value === select.dataset.answer) {
+        select.classList.add("correct");
+        correct += 1;
+      } else {
+        select.classList.add("incorrect");
+      }
+    });
+
+    const percent = Math.round((correct / selects.length) * 100);
+    state.matchScores[topic] = percent;
+
+    const feedback = document.getElementById(topic + "-match-feedback");
+    feedback.className = "feedback " + (percent === 100 ? "good" : "needs-work");
+    feedback.textContent = percent === 100
+      ? "Correct. You matched all items accurately."
+      : correct + " of " + selects.length + " correct. Review the highlighted choices and try again.";
+
+    if (percent === 100) {
+      markComplete(topic + "-matching");
+    }
+
+    updateProgress();
+  }
+
+  function resetMatch(topic) {
+    const area = document.querySelector('#panel-' + topic + ' .matching-area');
+    area.querySelectorAll("select").forEach((select) => {
+      select.value = "";
+      select.classList.remove("correct", "incorrect");
+    });
+    const feedback = document.getElementById(topic + "-match-feedback");
+    feedback.className = "feedback";
+    feedback.textContent = "No answers checked yet.";
+    delete state.matchScores[topic];
+    updateProgress();
+  }
+
+  document.querySelectorAll("[data-check-match]").forEach((button) => {
+    button.addEventListener("click", () => checkMatch(button.dataset.checkMatch));
+  });
+
+  document.querySelectorAll("[data-reset-match]").forEach((button) => {
+    button.addEventListener("click", () => resetMatch(button.dataset.resetMatch));
+  });
+
+  document.querySelectorAll("[data-toggle-answer]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const target = document.getElementById(button.dataset.toggleAnswer);
+      const isOpen = target.classList.toggle("show");
+      button.setAttribute("aria-expanded", String(isOpen));
+      button.textContent = isOpen ? "Hide model answer" : "Reveal model answer";
+    });
+  });
+
+  function updateProgress() {
+    const completedCount = state.completed.size;
+    const overall = totalActivities ? Math.round((completedCount / totalActivities) * 100) : 0;
+
+    document.getElementById("overallPercentText").textContent = overall + "%";
+    document.getElementById("overallProgressFill").style.width = overall + "%";
+    document.getElementById("overallProgressBar").setAttribute("aria-valuenow", String(overall));
+    document.getElementById("completedCount").textContent = completedCount;
+    document.getElementById("totalCount").textContent = totalActivities;
+    document.getElementById("cardsViewed").textContent = state.cardsViewed;
+
+    const scores = Object.values(state.matchScores);
+    const average = scores.length ? Math.round(scores.reduce((sum, val) => sum + val, 0) / scores.length) : 0;
+    document.getElementById("matchingAverage").textContent = average + "%";
+
+    topics.forEach((topic) => {
+      const topicItems = Array.from(document.querySelectorAll('[data-completable^="' + topic + '-"]'));
+      const topicDone = topicItems.filter((item) => state.completed.has(item.dataset.completable)).length;
+      const topicPercent = topicItems.length ? Math.round((topicDone / topicItems.length) * 100) : 0;
+      document.getElementById("topic-" + topic).style.width = topicPercent + "%";
+      document.getElementById("topic-" + topic + "-text").textContent = topicPercent + "%";
+    });
+
+    document.getElementById("progressLive").textContent = "Progress updated to " + overall + " percent complete.";
+  }
+
+  document.getElementById("resetProgress").addEventListener("click", () => {
+    state.completed.clear();
+    state.matchScores = {};
+    state.cardsViewed = 0;
+
+    document.querySelectorAll("[data-completable]").forEach((item) => {
+      item.style.borderColor = "";
+    });
+
+    topics.forEach((topic) => resetMatch(topic));
+    updateProgress();
+  });
+
+  updateProgress();
+})();
+</script>
+</body>
+</html>

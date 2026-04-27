@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Genetic Code and Transcription: Interactive Study Tool</title>
+<style>
+  :root {
+    /* Palette selected for WCAG AA contrast: dark text on light surfaces, strong focus and state colors. */
+    --bg: #f5f7fb;
+    --surface: #ffffff;
+    --surface-2: #eef3f8;
+    --surface-3: #e3ebf5;
+    --text: #172033;
+    --muted: #4d5f76;
+    --border: #7b8da6;
+    --primary: #174a7c;
+    --primary-2: #0f355d;
+    --accent: #7a3e00;
+    --success: #1f6b3a;
+    --warning: #8a4b00;
+    --danger: #9b1c1c;
+    --focus: #111827;
+    --shadow: 0 12px 28px rgba(23, 32, 51, 0.12);
+    --radius: 18px;
+    --radius-small: 10px;
+    --max: 1180px;
+  }
+
+
+{
+box-sizing: border-box;
+}
+
+
+html {
+scroll-behavior: smooth;
+}
+body {
+margin: 0;
+font-family: Arial, Helvetica, sans-serif;
+background: var(--bg);
+color: var(--text);
+font-size: 16px;
+line-height: 1.6;
+}
+@media (prefers-reduced-motion: reduce) {
+*, *::before, *::after {
+animation-duration: 0.001ms !important;
+animation-iteration-count: 1 !important;
+scroll-behavior: auto !important;
+transition-duration: 0.001ms !important;
+}
+}
+a,
+button,
+select,
+textarea {
+font: inherit;
+}
+button,
+select,
+textarea {
+min-height: 44px;
+}
+button {
+cursor: pointer;
+}
+button:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible,
+[tabindex]:focus-visible {
+outline: 4px solid var(--focus);
+outline-offset: 3px;
+}
+.skip-link {
+position: absolute;
+left: 1rem;
+top: -100px;
+z-index: 1000;
+background: var(--focus);
+color: #ffffff;
+padding: 0.85rem 1rem;
+border-radius: 0 0 var(--radius-small) var(--radius-small);
+font-weight: 700;
+}
+.skip-link:focus {
+top: 0;
+}
+header {
+background: linear-gradient(135deg, #0f355d, #174a7c);
+color: #ffffff;
+padding: 1.25rem 1rem;
+border-bottom: 6px solid #0b2745;
+}
+.header-inner {
+max-width: var(--max);
+margin: 0 auto;
+display: grid;
+grid-template-columns: 1fr auto;
+gap: 1rem;
+align-items: center;
+}
+.eyebrow {
+margin: 0 0 0.35rem;
+font-size: 0.9rem;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+font-weight: 700;
+}
+h1 {
+margin: 0;
+font-size: clamp(1.45rem, 3vw, 2.35rem);
+line-height: 1.2;
+}
+.subtitle {
+margin: 0.45rem 0 0;
+color: #e7eef7;
+max-width: 70ch;
+}
+.progress-summary {
+background: rgba(255,255,255,0.12);
+border: 1px solid rgba(255,255,255,0.42);
+border-radius: var(--radius);
+padding: 0.85rem;
+min-width: 250px;
+}
+.progress-summary strong {
+display: block;
+font-size: 1rem;
+margin-bottom: 0.45rem;
+}
+.progress-track {
+background: #dbe7f3;
+border-radius: 999px;
+height: 14px;
+overflow: hidden;
+border: 1px solid #ffffff;
+}
+.progress-fill {
+background: #1f6b3a;
+height: 100%;
+width: 0%;
+transition: width 240ms ease;
+}
+.progress-text {
+margin: 0.4rem 0 0;
+font-size: 0.92rem;
+color: #ffffff;
+}
+nav {
+background: var(--surface);
+border-bottom: 1px solid var(--border);
+position: sticky;
+top: 0;
+z-index: 20;
+}
+.tabs {
+max-width: var(--max);
+margin: 0 auto;
+display: flex;
+gap: 0.25rem;
+overflow-x: auto;
+padding: 0.5rem 1rem;
+}
+.tab {
+flex: 0 0 auto;
+border: 2px solid transparent;
+background: transparent;
+color: var(--primary-2);
+padding: 0.75rem 1rem;
+border-radius: 999px;
+font-weight: 700;
+}
+.tab[aria-selected="true"] {
+background: var(--primary);
+color: #ffffff;
+border-color: var(--primary-2);
+}
+.tab:hover {
+border-color: var(--primary);
+}
+main {
+max-width: var(--max);
+margin: 0 auto;
+padding: 1.5rem 1rem 3rem;
+}
+.panel {
+display: none;
+}
+.panel.active {
+display: block;
+}
+.hero-card,
+.activity-card,
+.note-card,
+.question-card {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: var(--radius);
+box-shadow: var(--shadow);
+}
+.hero-card {
+padding: clamp(1.2rem, 3vw, 2rem);
+margin-bottom: 1.25rem;
+}
+h2 {
+margin: 0 0 0.45rem;
+color: var(--primary-2);
+font-size: clamp(1.35rem, 2.5vw, 2rem);
+line-height: 1.25;
+}
+h3 {
+margin: 0 0 0.75rem;
+color: var(--primary-2);
+font-size: 1.15rem;
+line-height: 1.3;
+}
+h4 {
+margin: 0 0 0.5rem;
+color: var(--text);
+font-size: 1rem;
+}
+.lead {
+margin: 0;
+color: var(--muted);
+max-width: 78ch;
+}
+.grid {
+display: grid;
+gap: 1rem;
+}
+.grid.two {
+grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.grid.three {
+grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.grid.four {
+grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.note-card {
+padding: 1rem;
+}
+.note-label {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+min-width: 2.1rem;
+min-height: 2.1rem;
+border-radius: 999px;
+background: var(--surface-2);
+border: 2px solid var(--primary);
+color: var(--primary-2);
+font-weight: 800;
+margin-bottom: 0.75rem;
+}
+ul,
+ol {
+margin-top: 0.5rem;
+padding-left: 1.35rem;
+}
+li + li {
+margin-top: 0.45rem;
+}
+.callout {
+background: var(--surface-2);
+border-left: 6px solid var(--accent);
+border-radius: var(--radius-small);
+padding: 1rem;
+margin-top: 1rem;
+}
+.callout strong {
+color: var(--accent);
+}
+.section-block {
+margin-top: 1.25rem;
+}
+.section-title-row {
+display: flex;
+justify-content: space-between;
+align-items: end;
+gap: 1rem;
+margin-bottom: 0.75rem;
+}
+.section-title-row p {
+margin: 0;
+color: var(--muted);
+}
+.flash-area {
+display: grid;
+grid-template-columns: minmax(0, 1fr) 270px;
+gap: 1rem;
+}
+.flashcard {
+min-height: 280px;
+border: 2px solid var(--primary);
+border-radius: var(--radius);
+background: var(--surface);
+box-shadow: var(--shadow);
+padding: 1.25rem;
+display: grid;
+place-items: center;
+text-align: center;
+position: relative;
+}
+.flashcard button {
+position: absolute;
+inset: 0;
+width: 100%;
+height: 100%;
+border: 0;
+background: transparent;
+color: inherit;
+padding: 1.25rem;
+border-radius: var(--radius);
+}
+.flash-content {
+pointer-events: none;
+max-width: 720px;
+}
+.flash-kicker {
+display: inline-block;
+color: #ffffff;
+background: var(--primary);
+padding: 0.25rem 0.65rem;
+border-radius: 999px;
+font-size: 0.82rem;
+font-weight: 700;
+margin-bottom: 1rem;
+}
+.flash-prompt {
+font-size: clamp(1.15rem, 2.4vw, 1.7rem);
+line-height: 1.35;
+font-weight: 800;
+margin: 0;
+}
+.flash-answer {
+display: none;
+margin: 0.75rem auto 0;
+max-width: 62ch;
+color: var(--text);
+}
+.flashcard.flipped {
+background: #edf6ef;
+border-color: var(--success);
+}
+.flashcard.flipped .flash-answer {
+display: block;
+}
+.flash-hint {
+margin-top: 1rem;
+color: var(--muted);
+font-size: 0.95rem;
+}
+.flash-controls,
+.matching-controls,
+.reflection-controls {
+display: flex;
+flex-wrap: wrap;
+gap: 0.65rem;
+margin-top: 1rem;
+}
+.btn {
+border: 2px solid var(--primary);
+background: var(--primary);
+color: #ffffff;
+border-radius: 999px;
+padding: 0.65rem 1rem;
+font-weight: 800;
+}
+.btn.secondary {
+background: #ffffff;
+color: var(--primary-2);
+}
+.btn.success {
+background: var(--success);
+border-color: var(--success);
+}
+.btn.warning {
+background: var(--warning);
+border-color: var(--warning);
+}
+.btn:disabled {
+opacity: 0.55;
+cursor: not-allowed;
+}
+.side-progress {
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: var(--radius);
+padding: 1rem;
+}
+.side-progress dl {
+margin: 0;
+}
+.side-progress div {
+display: grid;
+grid-template-columns: 1fr auto;
+gap: 0.5rem;
+border-bottom: 1px solid var(--surface-3);
+padding: 0.55rem 0;
+}
+.side-progress div:last-child {
+border-bottom: 0;
+}
+.side-progress dt {
+color: var(--muted);
+}
+.side-progress dd {
+margin: 0;
+font-weight: 800;
+}
+.activity-card {
+padding: 1rem;
+}
+.match-row {
+display: grid;
+grid-template-columns: minmax(0, 1fr) minmax(220px, 320px);
+gap: 0.75rem;
+align-items: center;
+padding: 0.75rem 0;
+border-bottom: 1px solid var(--surface-3);
+}
+.match-row:last-of-type {
+border-bottom: 0;
+}
+select,
+textarea {
+width: 100%;
+border: 2px solid var(--border);
+border-radius: var(--radius-small);
+background: #ffffff;
+color: var(--text);
+padding: 0.65rem;
+}
+select.correct {
+border-color: var(--success);
+background: #edf6ef;
+}
+select.incorrect {
+border-color: var(--danger);
+background: #fff1f1;
+}
+.feedback {
+margin-top: 0.75rem;
+padding: 0.85rem;
+border-radius: var(--radius-small);
+border: 2px solid var(--border);
+background: var(--surface-2);
+font-weight: 700;
+}
+.feedback.good {
+border-color: var(--success);
+background: #edf6ef;
+color: var(--success);
+}
+.feedback.needs-work {
+border-color: var(--warning);
+background: #fff7e8;
+color: var(--warning);
+}
+.question-card {
+margin-bottom: 1rem;
+overflow: hidden;
+}
+.question-main {
+padding: 1rem;
+background: var(--surface-2);
+border-bottom: 1px solid var(--border);
+}
+textarea {
+min-height: 110px;
+resize: vertical;
+margin-top: 0.7rem;
+}
+.model-answer {
+display: none;
+padding: 1rem;
+border-top: 1px solid var(--border);
+background: #edf6ef;
+}
+.model-answer.show {
+display: block;
+}
+.topic-complete {
+display: inline-block;
+background: #edf6ef;
+color: var(--success);
+border: 2px solid var(--success);
+border-radius: 999px;
+font-weight: 800;
+padding: 0.25rem 0.65rem;
+font-size: 0.9rem;
+}
+table {
+width: 100%;
+border-collapse: collapse;
+background: var(--surface);
+border: 1px solid var(--border);
+border-radius: var(--radius);
+overflow: hidden;
+}
+th,
+td {
+border-bottom: 1px solid var(--border);
+padding: 0.75rem;
+text-align: left;
+vertical-align: top;
+}
+th {
+background: var(--primary);
+color: #ffffff;
+}
+tr:last-child td {
+border-bottom: 0;
+}
+.table-wrap {
+overflow-x: auto;
+border-radius: var(--radius);
+}
+.visually-hidden {
+position: absolute;
+width: 1px;
+height: 1px;
+overflow: hidden;
+white-space: nowrap;
+clip: rect(0 0 0 0);
+clip-path: inset(50%);
+}
+footer {
+max-width: var(--max);
+margin: 0 auto;
+padding: 1.5rem 1rem 2rem;
+color: var(--muted);
+border-top: 1px solid var(--border);
+}
+@media (max-width: 900px) {
+.header-inner,
+.flash-area,
+.grid.two,
+.grid.three,
+.grid.four {
+grid-template-columns: 1fr;
+}
+.progress-summary {  width: 100%;}
+}
+@media (max-width: 650px) {
+.match-row {
+grid-template-columns: 1fr;
+}
+.section-title-row {  align-items: start;  flex-direction: column;}.tabs {  padding-inline: 0.5rem;}.tab {  padding: 0.65rem 0.85rem;}
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<header>
+  <div class="header-inner">
+    <div>
+      <p class="eyebrow">Interactive Study Tool</p>
+      <h1>The Genetic Code and Transcription</h1>
+      <p class="subtitle">Study the genetic code, codon assignment, transcription, RNA polymerase, eukaryotic RNA processing, introns, splicing, RNA editing, and visualization of transcription.</p>
+    </div>
+    <div class="progress-summary" aria-label="Progress summary">
+      <strong>Progress Summary</strong>
+      <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="overallProgressBar">
+        <div class="progress-fill" id="overallProgressFill"></div>
+      </div>
+      <p class="progress-text" id="overallProgressText">0 percent complete</p>
+    </div>
+  </div>
+</header>
+<nav aria-label="Major lesson topics">
+  <div class="tabs" role="tablist" aria-label="Study tool sections">
+    <button class="tab" id="tab-overview" role="tab" aria-selected="true" aria-controls="panel-overview" data-target="overview">Overview</button>
+    <button class="tab" id="tab-code" role="tab" aria-selected="false" aria-controls="panel-code" data-target="code">Genetic Code</button>
+    <button class="tab" id="tab-decoding" role="tab" aria-selected="false" aria-controls="panel-decoding" data-target="decoding">Deciphering the Code</button>
+    <button class="tab" id="tab-dictionary" role="tab" aria-selected="false" aria-controls="panel-dictionary" data-target="dictionary">Coding Dictionary</button>
+    <button class="tab" id="tab-transcription" role="tab" aria-selected="false" aria-controls="panel-transcription" data-target="transcription">Transcription</button>
+    <button class="tab" id="tab-eukaryotes" role="tab" aria-selected="false" aria-controls="panel-eukaryotes" data-target="eukaryotes">Eukaryotes and Processing</button>
+  </div>
+</nav>
+<main id="main-content">
+  <p class="visually-hidden" id="liveStatus" aria-live="polite"></p>
+  <section class="panel active" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview">
+    <div class="hero-card">
+      <h2>Overview</h2>
+      <p class="lead">DNA stores genetic information as a linear sequence of deoxyribonucleotides. One DNA strand can serve as a template for transcription into messenger RNA. The mRNA is then read by ribosomes during translation, using triplet codons to specify amino acids in a protein.</p>
+      <div class="callout">
+        <strong>Core idea:</strong> Information flows from DNA to RNA to protein. This lesson explains how the genetic code is organized, how scientists deciphered codons, and how transcription creates RNA from DNA templates.
+      </div>
+    </div>
+<div class="section-block">  <div class="section-title-row">    <div>      <h2>Learning Objectives</h2>      <p>Use these objectives as a checklist while studying.</p>    </div>  </div>  <div class="grid three">    <article class="note-card">      <span class="note-label">1</span>      <h3>Explain the code</h3>      <p>Describe why codons are triplets and how the code is unambiguous, degenerate, commaless, nonoverlapping, and nearly universal.</p>    </article>    <article class="note-card">      <span class="note-label">2</span>      <h3>Analyze key experiments</h3>      <p>Connect frameshift mutations, synthetic RNA, homopolymers, mixed heteropolymers, triplet binding assays, and repeating copolymers to codon assignments.</p>    </article>    <article class="note-card">      <span class="note-label">3</span>      <h3>Use the coding dictionary</h3>      <p>Distinguish start, stop, wobble, degeneracy, nonsense mutation, overlapping genes, and exceptions to the nearly universal code.</p>    </article>    <article class="note-card">      <span class="note-label">4</span>      <h3>Describe transcription</h3>      <p>Explain how RNA polymerase binds promoters, initiates RNA synthesis, elongates transcripts, and terminates transcription.</p>    </article>    <article class="note-card">      <span class="note-label">5</span>      <h3>Compare bacteria and eukaryotes</h3>      <p>Identify eukaryotic RNA polymerases, general transcription factors, enhancers, silencers, chromatin accessibility, and RNA processing.</p>    </article>    <article class="note-card">      <span class="note-label">6</span>      <h3>Interpret RNA processing</h3>      <p>Describe 5 prime caps, poly-A tails, introns, exons, splicing, spliceosomes, RNA editing, and electron microscopy visualization.</p>    </article>  </div></div><div class="section-block">  <h2>Topic Map</h2>  <div class="table-wrap">    <table>      <thead>        <tr>          <th scope="col">Topic</th>          <th scope="col">Key Questions</th>          <th scope="col">Study Focus</th>        </tr>      </thead>      <tbody>        <tr>          <td>Genetic Code</td>          <td>How is mRNA read? What does a codon specify?</td>          <td>Triplets, codons, degeneracy, start and stop signals, reading frame.</td>        </tr>        <tr>          <td>Deciphering the Code</td>          <td>How did researchers assign codons to amino acids?</td>          <td>Frameshifts, synthetic RNA, Nirenberg and Matthaei, triplet binding assays.</td>        </tr>        <tr>          <td>Coding Dictionary</td>          <td>What do the 64 triplets do?</td>          <td>AUG, UAA, UAG, UGA, wobble, ordered code, mitochondrial exceptions.</td>        </tr>        <tr>          <td>Transcription</td>          <td>How is RNA synthesized from DNA?</td>          <td>Template strand, coding strand, RNA polymerase, sigma factor, promoters.</td>        </tr>        <tr>          <td>Eukaryotes and Processing</td>          <td>How does eukaryotic transcription differ, and how is RNA modified?</td>          <td>RNA polymerases I, II, III; TATA box; capping; polyadenylation; introns; splicing; editing.</td>        </tr>      </tbody>    </table>  </div></div><div class="section-block">  <h2>Progress Tracker</h2>  <div class="grid four">    <article class="note-card">      <h3>Flashcards Reviewed</h3>      <p><strong id="cardsReviewed">0</strong> of <span id="cardsTotal">0</span></p>    </article>    <article class="note-card">      <h3>Check Activities</h3>      <p><strong id="checksComplete">0</strong> of <span id="checksTotal">5</span></p>    </article>    <article class="note-card">      <h3>Reflections Opened</h3>      <p><strong id="reflectionsComplete">0</strong> of <span id="reflectionsTotal">5</span></p>    </article>    <article class="note-card">      <h3>Topics Started</h3>      <p><strong id="topicsStarted">0</strong> of <span>5</span></p>    </article>  </div></div>
+  </section>
+  <section class="panel" id="panel-code" role="tabpanel" aria-labelledby="tab-code">
+    <div class="hero-card">
+      <h2>Genetic Code Characteristics</h2>
+      <p class="lead">The genetic code is written in mRNA as three-ribonucleotide words called codons. Each codon is read in a specific reading frame during translation.</p>
+    </div>
+<div class="section-block">  <h2>Study Notes</h2>  <div class="grid three">    <article class="note-card">      <span class="note-label">A</span>      <h3>Triplet code</h3>      <ul>        <li>Each codon contains three ribonucleotide bases.</li>        <li>Codons are read from mRNA during translation.</li>        <li>Each codon corresponds to an amino acid or a translation signal.</li>      </ul>    </article>    <article class="note-card">      <span class="note-label">B</span>      <h3>Unambiguous and degenerate</h3>      <ul>        <li>Unambiguous means one codon specifies only one amino acid.</li>        <li>Degenerate means one amino acid can be specified by more than one codon.</li>        <li>Degeneracy helps explain how 64 triplets can encode 20 amino acids plus signals.</li>      </ul>    </article>    <article class="note-card">      <span class="note-label">C</span>      <h3>Reading frame</h3>      <ul>        <li>The code is commaless once translation begins.</li>        <li>The code is nonoverlapping: one mRNA ribonucleotide belongs to only one codon in a given reading frame.</li>        <li>Insertions or deletions can shift the reading frame and alter downstream codons.</li>      </ul>    </article>  </div>  <div class="callout">    <strong>Nearly universal:</strong> Viruses, prokaryotes, archaea, and eukaryotes generally use the same coding dictionary, although important exceptions exist.  </div></div><div class="section-block">  <div class="section-title-row">    <div>      <h2>Flashcards</h2>      <p>Press the card, Enter, or Space to reveal the answer.</p>    </div>    <span class="topic-complete" id="status-code">Not started</span>  </div>  <div class="flash-area" data-topic="code"></div></div><div class="section-block">  <h2>Matching Activity</h2>  <div class="activity-card" data-check="code">    <p><strong>Match each genetic code feature with its meaning.</strong></p>    <div class="match-row">      <label for="code-m1">Each triplet specifies only one amino acid.</label>      <select id="code-m1" data-answer="Unambiguous">        <option value="">Select an answer</option>        <option>Degenerate</option>        <option>Unambiguous</option>        <option>Commaless</option>        <option>Nonoverlapping</option>      </select>    </div>    <div class="match-row">      <label for="code-m2">A given amino acid may be specified by more than one codon.</label>      <select id="code-m2" data-answer="Degenerate">        <option value="">Select an answer</option>        <option>Degenerate</option>        <option>Unambiguous</option>        <option>Commaless</option>        <option>Nonoverlapping</option>      </select>    </div>    <div class="match-row">      <label for="code-m3">Codons are read with no breaks after translation begins.</label>      <select id="code-m3" data-answer="Commaless">        <option value="">Select an answer</option>        <option>Degenerate</option>        <option>Unambiguous</option>        <option>Commaless</option>        <option>Nonoverlapping</option>      </select>    </div>    <div class="match-row">      <label for="code-m4">A single ribonucleotide is part of only one triplet in a reading frame.</label>      <select id="code-m4" data-answer="Nonoverlapping">        <option value="">Select an answer</option>        <option>Degenerate</option>        <option>Unambiguous</option>        <option>Commaless</option>        <option>Nonoverlapping</option>      </select>    </div>    <div class="matching-controls">      <button class="btn" type="button" data-check-button>Check Answers</button>      <button class="btn secondary" type="button" data-reset-button>Reset</button>    </div>    <div class="feedback" aria-live="polite" data-feedback>Choose answers, then check your work.</div>  </div></div><div class="section-block">  <h2>Discussion and Reflection</h2>  <article class="question-card" data-reflection="code">    <div class="question-main">      <h3>Reflection Prompt</h3>      <p>Why does a single-nucleotide insertion usually cause a more disruptive frameshift than a three-nucleotide insertion?</p>      <textarea aria-label="Your reflection on frameshift mutations"></textarea>      <div class="reflection-controls">        <button class="btn" type="button" data-reveal-button>Reveal Model Answer</button>        <button class="btn secondary" type="button" data-hide-button>Hide Answer</button>      </div>    </div>    <div class="model-answer">      <h4>Model Answer</h4>      <p>A single-nucleotide insertion changes how every downstream triplet is grouped, so the reading frame shifts and many codons after the insertion are altered. A three-nucleotide insertion adds one extra codon, but because codons are read in groups of three, the original reading frame can be reestablished after the inserted triplet.</p>    </div>  </article></div>
+  </section>
+  <section class="panel" id="panel-decoding" role="tabpanel" aria-labelledby="tab-decoding">
+    <div class="hero-card">
+      <h2>Deciphering the Genetic Code</h2>
+      <p class="lead">Early studies used mutations and synthetic RNAs to determine how nucleotide triplets correspond to amino acids.</p>
+    </div>
+<div class="section-block">  <h2>Study Notes</h2>  <div class="grid three">    <article class="note-card">      <span class="note-label">A</span>      <h3>Frameshift evidence</h3>      <ul>        <li>Sydney Brenner proposed that the code was a triplet code.</li>        <li>Francis Crick's phage T4 studies used insertions and deletions to show that frameshifts alter downstream codons.</li>        <li>Triplet-based recovery after three insertions or deletions supported the triplet model.</li>      </ul>    </article>    <article class="note-card">      <span class="note-label">B</span>      <h3>Synthetic RNA systems</h3>      <ul>        <li>Polynucleotide phosphorylase can produce synthetic RNAs.</li>        <li>Artificial mRNAs were translated in cell-free systems containing ribosomes, tRNAs, amino acids, and other factors.</li>        <li>Radioactively tagged amino acids helped identify which amino acid was incorporated into a polypeptide.</li>      </ul>    </article>    <article class="note-card">      <span class="note-label">C</span>      <h3>Assays and copolymers</h3>      <ul>        <li>Homopolymers used one ribonucleotide type, such as poly-U.</li>        <li>Mixed heteropolymers tested base composition, but not exact sequence.</li>        <li>The triplet binding assay linked a single codon to a charged tRNA and its amino acid.</li>        <li>Repeating copolymers generated repeating triplets for additional assignments.</li>      </ul>    </article>  </div>  <div class="callout">    <strong>Key example:</strong> Poly-U caused phenylalanine incorporation at very high levels, supporting the assignment of UUU to phenylalanine.  </div></div><div class="section-block">  <div class="section-title-row">    <div>      <h2>Flashcards</h2>      <p>Use these cards to connect each experiment to its conclusion.</p>    </div>    <span class="topic-complete" id="status-decoding">Not started</span>  </div>  <div class="flash-area" data-topic="decoding"></div></div><div class="section-block">  <h2>Check Your Understanding</h2>  <div class="activity-card" data-check="decoding">    <p><strong>Choose the method that best matches each description.</strong></p>    <div class="match-row">      <label for="decoding-m1">Uses RNA made from only one ribonucleotide type, such as poly-U.</label>      <select id="decoding-m1" data-answer="Homopolymer experiment">        <option value="">Select an answer</option>        <option>Homopolymer experiment</option>        <option>Mixed heteropolymer experiment</option>        <option>Triplet binding assay</option>        <option>Frameshift mutation study</option>      </select>    </div>    <div class="match-row">      <label for="decoding-m2">Determines codon assignments by binding a single triplet, ribosome, and charged tRNA.</label>      <select id="decoding-m2" data-answer="Triplet binding assay">        <option value="">Select an answer</option>        <option>Homopolymer experiment</option>        <option>Mixed heteropolymer experiment</option>        <option>Triplet binding assay</option>        <option>Frameshift mutation study</option>      </select>    </div>    <div class="match-row">      <label for="decoding-m3">Shows that insertions or deletions shift the reading frame.</label>      <select id="decoding-m3" data-answer="Frameshift mutation study">        <option value="">Select an answer</option>        <option>Homopolymer experiment</option>        <option>Mixed heteropolymer experiment</option>        <option>Triplet binding assay</option>        <option>Frameshift mutation study</option>      </select>    </div>    <div class="match-row">      <label for="decoding-m4">Uses mixtures such as 1A:5C to infer base composition of codons.</label>      <select id="decoding-m4" data-answer="Mixed heteropolymer experiment">        <option value="">Select an answer</option>        <option>Homopolymer experiment</option>        <option>Mixed heteropolymer experiment</option>        <option>Triplet binding assay</option>        <option>Frameshift mutation study</option>      </select>    </div>    <div class="matching-controls">      <button class="btn" type="button" data-check-button>Check Answers</button>      <button class="btn secondary" type="button" data-reset-button>Reset</button>    </div>    <div class="feedback" aria-live="polite" data-feedback>Choose answers, then check your work.</div>  </div></div><div class="section-block">  <h2>Discussion and Reflection</h2>  <article class="question-card" data-reflection="decoding">    <div class="question-main">      <h3>Reflection Prompt</h3>      <p>Why did mixed heteropolymers help decipher codons, but still leave an important limitation?</p>      <textarea aria-label="Your reflection on mixed heteropolymer experiments"></textarea>      <div class="reflection-controls">        <button class="btn" type="button" data-reveal-button>Reveal Model Answer</button>        <button class="btn secondary" type="button" data-hide-button>Hide Answer</button>      </div>    </div>    <div class="model-answer">      <h4>Model Answer</h4>      <p>Mixed heteropolymers helped because researchers could control the proportions of different ribonucleotides and compare the expected triplet compositions with the amino acids incorporated into polypeptides. The limitation was that this approach revealed likely base composition, not the exact sequence of each triplet. A codon with one A and two C bases could be ACC, CAC, or CCA, so more precise methods were needed.</p>    </div>  </article></div>
+  </section>
+  <section class="panel" id="panel-dictionary" role="tabpanel" aria-labelledby="tab-dictionary">
+    <div class="hero-card">
+      <h2>Coding Dictionary, Wobble, and Universality</h2>
+      <p class="lead">The coding dictionary assigns functions to 64 possible triplets. Most triplets encode amino acids, while three act as termination signals.</p>
+    </div>
+<div class="section-block">  <h2>Study Notes</h2>  <div class="grid three">    <article class="note-card">      <span class="note-label">A</span>      <h3>Start and stop signals</h3>      <ul>        <li>AUG encodes methionine and initiates most polypeptide chains.</li>        <li>In bacteria, the initial methionine is a modified form called N-formylmethionine.</li>        <li>UAA, UAG, and UGA are termination codons and do not encode amino acids.</li>        <li>A mutation that creates a stop codon within a gene is a nonsense mutation.</li>      </ul>    </article>    <article class="note-card">      <span class="note-label">B</span>      <h3>Wobble and order</h3>      <ul>        <li>The first two bases of a codon are often more critical than the third.</li>        <li>Wobble allows relaxed base pairing at the third codon position.</li>        <li>Chemically similar amino acids often share one or two middle bases in their codons.</li>        <li>This ordered pattern may buffer some mutations.</li>      </ul>    </article>    <article class="note-card">      <span class="note-label">C</span>      <h3>Universality and exceptions</h3>      <ul>        <li>The genetic code is nearly universal across major groups of organisms.</li>        <li>Bacteriophage MS2 studies helped confirm the genetic code through sequencing of gene products.</li>        <li>Mitochondrial DNA and some organisms show exceptions, such as UGA encoding tryptophan in human and yeast mitochondria.</li>      </ul>    </article>  </div></div><div class="section-block">  <h2>Selected Code Facts</h2>  <div class="table-wrap">    <table>      <thead>        <tr>          <th scope="col">Codon or Concept</th>          <th scope="col">Function</th>          <th scope="col">Study Note</th>        </tr>      </thead>      <tbody>        <tr>          <td>AUG</td>          <td>Methionine; initiation codon</td>          <td>Can appear internally to code for methionine without bacterial formylation.</td>        </tr>        <tr>          <td>UGG</td>          <td>Tryptophan</td>          <td>Tryptophan is encoded by a single codon.</td>        </tr>        <tr>          <td>UAA, UAG, UGA</td>          <td>Termination signals</td>          <td>Recognized as stop signals rather than by tRNAs carrying amino acids.</td>        </tr>        <tr>          <td>Wobble</td>          <td>Relaxed pairing at third codon position</td>          <td>Helps explain how fewer tRNAs can recognize multiple codons.</td>        </tr>        <tr>          <td>Overlapping genes</td>          <td>Different initiation points create different reading frames</td>          <td>A single mRNA can specify more than one polypeptide if reading begins at different sites.</td>        </tr>      </tbody>    </table>  </div></div><div class="section-block">  <div class="section-title-row">    <div>      <h2>Flashcards</h2>      <p>Review codon signals, wobble, and exceptions.</p>    </div>    <span class="topic-complete" id="status-dictionary">Not started</span>  </div>  <div class="flash-area" data-topic="dictionary"></div></div><div class="section-block">  <h2>Matching Activity</h2>  <div class="activity-card" data-check="dictionary">    <p><strong>Match each item with its best description.</strong></p>    <div class="match-row">      <label for="dictionary-m1">AUG</label>      <select id="dictionary-m1" data-answer="Methionine and initiation">        <option value="">Select an answer</option>        <option>Methionine and initiation</option>        <option>Termination codons</option>        <option>Relaxed third-position pairing</option>        <option>Different reading frames from one mRNA</option>      </select>    </div>    <div class="match-row">      <label for="dictionary-m2">UAA, UAG, and UGA</label>      <select id="dictionary-m2" data-answer="Termination codons">        <option value="">Select an answer</option>        <option>Methionine and initiation</option>        <option>Termination codons</option>        <option>Relaxed third-position pairing</option>        <option>Different reading frames from one mRNA</option>      </select>    </div>    <div class="match-row">      <label for="dictionary-m3">Wobble hypothesis</label>      <select id="dictionary-m3" data-answer="Relaxed third-position pairing">        <option value="">Select an answer</option>        <option>Methionine and initiation</option>        <option>Termination codons</option>        <option>Relaxed third-position pairing</option>        <option>Different reading frames from one mRNA</option>      </select>    </div>    <div class="match-row">      <label for="dictionary-m4">Overlapping genes</label>      <select id="dictionary-m4" data-answer="Different reading frames from one mRNA">        <option value="">Select an answer</option>        <option>Methionine and initiation</option>        <option>Termination codons</option>        <option>Relaxed third-position pairing</option>        <option>Different reading frames from one mRNA</option>      </select>    </div>    <div class="matching-controls">      <button class="btn" type="button" data-check-button>Check Answers</button>      <button class="btn secondary" type="button" data-reset-button>Reset</button>    </div>    <div class="feedback" aria-live="polite" data-feedback>Choose answers, then check your work.</div>  </div></div><div class="section-block">  <h2>Discussion and Reflection</h2>  <article class="question-card" data-reflection="dictionary">    <div class="question-main">      <h3>Reflection Prompt</h3>      <p>How can the code be both nonoverlapping and still allow overlapping genes?</p>      <textarea aria-label="Your reflection on nonoverlapping codons and overlapping genes"></textarea>      <div class="reflection-controls">        <button class="btn" type="button" data-reveal-button>Reveal Model Answer</button>        <button class="btn secondary" type="button" data-hide-button>Hide Answer</button>      </div>    </div>    <div class="model-answer">      <h4>Model Answer</h4>      <p>For any one reading frame, the genetic code is nonoverlapping: each ribonucleotide is part of only one codon. Overlapping genes occur when a single mRNA has different initiation points, causing translation to begin in different reading frames. Each individual frame is read nonoverlappingly, but different frames can use the same RNA sequence in different groupings.</p>    </div>  </article></div>
+  </section>
+  <section class="panel" id="panel-transcription" role="tabpanel" aria-labelledby="tab-transcription">
+    <div class="hero-card">
+      <h2>Transcription and RNA Polymerase</h2>
+      <p class="lead">Transcription synthesizes RNA on a DNA template. RNA polymerase directs this process and, in bacteria, uses a sigma factor to recognize promoters during initiation.</p>
+    </div>
+<div class="section-block">  <h2>Study Notes</h2>  <div class="grid three">    <article class="note-card">      <span class="note-label">A</span>      <h3>Template and coding strands</h3>      <ul>        <li>The template strand is transcribed into RNA.</li>        <li>The complementary DNA strand is called the coding strand.</li>        <li>The RNA transcript is single-stranded and is complementary to the DNA template.</li>      </ul>    </article>    <article class="note-card">      <span class="note-label">B</span>      <h3>RNA polymerase</h3>      <ul>        <li>RNA polymerase synthesizes RNA using DNA as a template.</li>        <li>It uses ribonucleotide substrates.</li>        <li>No primer is required for initiation.</li>        <li>In E. coli, the holoenzyme includes a sigma factor for promoter recognition.</li>      </ul>    </article>    <article class="note-card">      <span class="note-label">C</span>      <h3>Promoters and termination</h3>      <ul>        <li>Promoters are DNA sequences upstream of the transcription start site.</li>        <li>E. coli promoters commonly include consensus sequences near the -35 and -10 regions.</li>        <li>The -10 region is called the Pribnow box.</li>        <li>Termination can involve RNA hairpin formation or rho factor.</li>      </ul>    </article>  </div>  <div class="callout">    <strong>Cis and trans:</strong> Cis-acting DNA elements are nearby DNA sequences on the same molecule. Trans-acting factors are molecules that bind cis elements to influence gene expression.  </div></div><div class="section-block">  <h2>Bacterial Transcription Stages</h2>  <div class="grid three">    <article class="note-card">      <h3>1. Initiation</h3>      <p>RNA polymerase holoenzyme binds the promoter. The DNA helix unwinds near the transcription start site so the template strand is accessible.</p>    </article>    <article class="note-card">      <h3>2. Elongation</h3>      <p>The sigma factor dissociates. The core enzyme moves along the DNA template while the growing RNA transcript extends from its 5 prime end toward its 3 prime end.</p>    </article>    <article class="note-card">      <h3>3. Termination</h3>      <p>RNA polymerase reaches a termination sequence. In bacteria, the transcript may fold into a hairpin, or termination may require rho factor.</p>    </article>  </div></div><div class="section-block">  <div class="section-title-row">    <div>      <h2>Flashcards</h2>      <p>Practice promoter, polymerase, and termination vocabulary.</p>    </div>    <span class="topic-complete" id="status-transcription">Not started</span>  </div>  <div class="flash-area" data-topic="transcription"></div></div><div class="section-block">  <h2>Check Your Understanding</h2>  <div class="activity-card" data-check="transcription">    <p><strong>Match each transcription term with its role.</strong></p>    <div class="match-row">      <label for="transcription-m1">Sigma factor</label>      <select id="transcription-m1" data-answer="Promoter recognition">        <option value="">Select an answer</option>        <option>Promoter recognition</option>        <option>RNA chain growth</option>        <option>Upstream DNA sequence</option>        <option>Transcript hairpin or rho-dependent stopping</option>      </select>    </div>    <div class="match-row">      <label for="transcription-m2">Promoter</label>      <select id="transcription-m2" data-answer="Upstream DNA sequence">        <option value="">Select an answer</option>        <option>Promoter recognition</option>        <option>RNA chain growth</option>        <option>Upstream DNA sequence</option>        <option>Transcript hairpin or rho-dependent stopping</option>      </select>    </div>    <div class="match-row">      <label for="transcription-m3">Core enzyme during elongation</label>      <select id="transcription-m3" data-answer="RNA chain growth">        <option value="">Select an answer</option>        <option>Promoter recognition</option>        <option>RNA chain growth</option>        <option>Upstream DNA sequence</option>        <option>Transcript hairpin or rho-dependent stopping</option>      </select>    </div>    <div class="match-row">      <label for="transcription-m4">Termination in bacteria</label>      <select id="transcription-m4" data-answer="Transcript hairpin or rho-dependent stopping">        <option value="">Select an answer</option>        <option>Promoter recognition</option>        <option>RNA chain growth</option>        <option>Upstream DNA sequence</option>        <option>Transcript hairpin or rho-dependent stopping</option>      </select>    </div>    <div class="matching-controls">      <button class="btn" type="button" data-check-button>Check Answers</button>      <button class="btn secondary" type="button" data-reset-button>Reset</button>    </div>    <div class="feedback" aria-live="polite" data-feedback>Choose answers, then check your work.</div>  </div></div><div class="section-block">  <h2>Discussion and Reflection</h2>  <article class="question-card" data-reflection="transcription">    <div class="question-main">      <h3>Reflection Prompt</h3>      <p>Why is promoter recognition important for regulating transcription efficiency?</p>      <textarea aria-label="Your reflection on promoter recognition"></textarea>      <div class="reflection-controls">        <button class="btn" type="button" data-reveal-button>Reveal Model Answer</button>        <button class="btn secondary" type="button" data-hide-button>Hide Answer</button>      </div>    </div>    <div class="model-answer">      <h4>Model Answer</h4>      <p>Promoters determine where RNA polymerase binds and where transcription begins. The interaction between promoter sequences and RNA polymerase affects how easily initiation occurs. Stronger promoter recognition can make transcription more efficient, while weaker recognition can reduce RNA production. In bacteria, the sigma factor is especially important because it helps RNA polymerase recognize promoter sequences.</p>    </div>  </article></div>
+  </section>
+  <section class="panel" id="panel-eukaryotes" role="tabpanel" aria-labelledby="tab-eukaryotes">
+    <div class="hero-card">
+      <h2>Eukaryotic Transcription and RNA Processing</h2>
+      <p class="lead">Eukaryotic transcription occurs in the nucleus, involves multiple RNA polymerases and transcription factors, and produces primary transcripts that must be processed before translation.</p>
+    </div>
+<div class="section-block">  <h2>Study Notes</h2>  <div class="grid three">    <article class="note-card">      <span class="note-label">A</span>      <h3>Eukaryotic transcription</h3>      <ul>        <li>Occurs within the nucleus.</li>        <li>mRNA must leave the nucleus for translation.</li>        <li>Chromatin must uncoil or remodel to make DNA accessible.</li>        <li>General transcription factors help RNA polymerase bind DNA.</li>        <li>Enhancers and silencers regulate transcription.</li>      </ul>    </article>    <article class="note-card">      <span class="note-label">B</span>      <h3>RNA polymerases</h3>      <ul>        <li>RNA polymerase I transcribes rRNA in the nucleolus.</li>        <li>RNA polymerase II transcribes mRNA and snRNA in the nucleoplasm.</li>        <li>RNA polymerase III transcribes 5S rRNA and tRNA in the nucleoplasm.</li>        <li>RNA polymerase II is highly regulated for protein-coding genes.</li>      </ul>    </article>    <article class="note-card">      <span class="note-label">C</span>      <h3>RNA processing</h3>      <ul>        <li>Primary transcripts become mature RNA through processing.</li>        <li>A 5 prime cap protects the transcript and helps it function.</li>        <li>A poly-A tail is added at the 3 prime end after cleavage near the AAUAAA signal.</li>        <li>Introns are removed and exons are joined by splicing.</li>      </ul>    </article>  </div>  <div class="callout">    <strong>Introns and exons:</strong> Introns are intervening sequences removed during RNA processing. Exons are retained and represented in the mature mRNA.  </div></div><div class="section-block">  <h2>Splicing and Editing</h2>  <div class="grid three">    <article class="note-card">      <h3>Alternative splicing</h3>      <p>Different mature mRNAs can be produced from the same pre-mRNA by removing introns and joining exons in different combinations.</p>    </article>    <article class="note-card">      <h3>Spliceosome</h3>      <p>Pre-mRNA introns are removed by spliceosomes. Small nuclear ribonucleoproteins, called snRNPs, help form the spliceosome and guide excision.</p>    </article>    <article class="note-card">      <h3>RNA editing</h3>      <p>Posttranscriptional RNA editing can insert or delete nucleotides, or substitute one base identity for another, modifying the final transcript.</p>    </article>  </div></div><div class="section-block">  <h2>Eukaryotic RNA Polymerases</h2>  <div class="table-wrap">    <table>      <thead>        <tr>          <th scope="col">Polymerase</th>          <th scope="col">Primary Products</th>          <th scope="col">Location</th>        </tr>      </thead>      <tbody>        <tr>          <td>RNA polymerase I</td>          <td>rRNA</td>          <td>Nucleolus</td>        </tr>        <tr>          <td>RNA polymerase II</td>          <td>mRNA and snRNA; also other RNA types</td>          <td>Nucleoplasm</td>        </tr>        <tr>          <td>RNA polymerase III</td>          <td>5S rRNA and tRNA</td>          <td>Nucleoplasm</td>        </tr>      </tbody>    </table>  </div></div><div class="section-block">  <div class="section-title-row">    <div>      <h2>Flashcards</h2>      <p>Review eukaryotic regulation and RNA processing.</p>    </div>    <span class="topic-complete" id="status-eukaryotes">Not started</span>  </div>  <div class="flash-area" data-topic="eukaryotes"></div></div><div class="section-block">  <h2>Matching Activity</h2>  <div class="activity-card" data-check="eukaryotes">    <p><strong>Match each eukaryotic transcription or processing term with its role.</strong></p>    <div class="match-row">      <label for="eukaryotes-m1">TATA box</label>      <select id="eukaryotes-m1" data-answer="Core promoter element bound by TBP">        <option value="">Select an answer</option>        <option>Core promoter element bound by TBP</option>        <option>Removed sequence</option>        <option>Retained sequence</option>        <option>Protein-RNA complex for intron removal</option>        <option>Signal for cleavage and poly-A tail addition</option>      </select>    </div>    <div class="match-row">      <label for="eukaryotes-m2">Intron</label>      <select id="eukaryotes-m2" data-answer="Removed sequence">        <option value="">Select an answer</option>        <option>Core promoter element bound by TBP</option>        <option>Removed sequence</option>        <option>Retained sequence</option>        <option>Protein-RNA complex for intron removal</option>        <option>Signal for cleavage and poly-A tail addition</option>      </select>    </div>    <div class="match-row">      <label for="eukaryotes-m3">Exon</label>      <select id="eukaryotes-m3" data-answer="Retained sequence">        <option value="">Select an answer</option>        <option>Core promoter element bound by TBP</option>        <option>Removed sequence</option>        <option>Retained sequence</option>        <option>Protein-RNA complex for intron removal</option>        <option>Signal for cleavage and poly-A tail addition</option>      </select>    </div>    <div class="match-row">      <label for="eukaryotes-m4">Spliceosome</label>      <select id="eukaryotes-m4" data-answer="Protein-RNA complex for intron removal">        <option value="">Select an answer</option>        <option>Core promoter element bound by TBP</option>        <option>Removed sequence</option>        <option>Retained sequence</option>        <option>Protein-RNA complex for intron removal</option>        <option>Signal for cleavage and poly-A tail addition</option>      </select>    </div>    <div class="match-row">      <label for="eukaryotes-m5">AAUAAA</label>      <select id="eukaryotes-m5" data-answer="Signal for cleavage and poly-A tail addition">        <option value="">Select an answer</option>        <option>Core promoter element bound by TBP</option>        <option>Removed sequence</option>        <option>Retained sequence</option>        <option>Protein-RNA complex for intron removal</option>        <option>Signal for cleavage and poly-A tail addition</option>      </select>    </div>    <div class="matching-controls">      <button class="btn" type="button" data-check-button>Check Answers</button>      <button class="btn secondary" type="button" data-reset-button>Reset</button>    </div>    <div class="feedback" aria-live="polite" data-feedback>Choose answers, then check your work.</div>  </div></div><div class="section-block">  <h2>Discussion and Reflection</h2>  <article class="question-card" data-reflection="eukaryotes">    <div class="question-main">      <h3>Reflection Prompt</h3>      <p>Why does eukaryotic gene expression require more processing and regulation than bacterial transcription?</p>      <textarea aria-label="Your reflection on eukaryotic transcription and processing"></textarea>      <div class="reflection-controls">        <button class="btn" type="button" data-reveal-button>Reveal Model Answer</button>        <button class="btn secondary" type="button" data-hide-button>Hide Answer</button>      </div>    </div>    <div class="model-answer">      <h4>Model Answer</h4>      <p>Eukaryotic DNA is packaged in chromatin, so DNA must become accessible before transcription can occur. Eukaryotes also use multiple RNA polymerases, general transcription factors, core promoters, enhancers, and silencers to regulate transcription on a gene-by-gene basis. After transcription, pre-mRNAs must be processed with a 5 prime cap, poly-A tail, and intron removal before mature mRNA can leave the nucleus and be translated.</p>    </div>  </article></div>
+  </section>
+</main>
+<footer>
+  <p>This self-contained study tool was generated from the uploaded lecture content. All interactions work with keyboard navigation, visible focus states, and accessible status feedback.</p>
+</footer>
+<script>
+  const flashcards = {
+    code: [
+      {
+        term: "Triplet code",
+        question: "What does it mean that the genetic code is a triplet code?",
+        answer: "It means each codon is made of three ribonucleotide bases in mRNA. Each triplet functions as a word that specifies an amino acid or a translation signal."
+      },
+      {
+        term: "Degeneracy",
+        question: "How can the genetic code be degenerate but still unambiguous?",
+        answer: "Degenerate means more than one codon can specify the same amino acid. Unambiguous means any single codon specifies only one amino acid."
+      },
+      {
+        term: "Commaless code",
+        question: "What does commaless mean in translation?",
+        answer: "Once translation begins, codons are read continuously in groups of three with no punctuation or gaps between codons."
+      },
+      {
+        term: "Nonoverlapping code",
+        question: "In one reading frame, how many codons can include a single ribonucleotide?",
+        answer: "Only one. In a given reading frame, each ribonucleotide belongs to a single triplet codon."
+      }
+    ],
+    decoding: [
+      {
+        term: "Frameshift mutations",
+        question: "What did frameshift mutations reveal about the genetic code?",
+        answer: "They showed that insertions or deletions can shift the reading frame and change downstream codons, supporting the triplet nature of the code."
+      },
+      {
+        term: "Polynucleotide phosphorylase",
+        question: "Why was polynucleotide phosphorylase important to deciphering the code?",
+        answer: "It allowed researchers to make synthetic RNA templates that could be used in cell-free translation systems."
+      },
+      {
+        term: "Homopolymers",
+        question: "What did the poly-U experiment demonstrate?",
+        answer: "When poly-U was used as synthetic mRNA, phenylalanine was incorporated into protein, supporting the assignment of UUU to phenylalanine."
+      },
+      {
+        term: "Triplet binding assay",
+        question: "What did the triplet binding assay determine more precisely than mixed heteropolymer experiments?",
+        answer: "It connected specific three-base codons to charged tRNAs and their amino acids, allowing direct codon assignments."
+      }
+    ],
+    dictionary: [
+      {
+        term: "AUG",
+        question: "What is the special function of AUG?",
+        answer: "AUG encodes methionine and serves as the initiation codon for most polypeptide chains."
+      },
+      {
+        term: "Stop codons",
+        question: "Which codons are termination signals?",
+        answer: "UAA, UAG, and UGA are termination codons. They do not encode amino acids and are not recognized by amino acid-carrying tRNAs."
+      },
+      {
+        term: "Wobble",
+        question: "What is the wobble hypothesis?",
+        answer: "It proposes that base pairing at the third position of a codon is less strict, allowing some tRNAs to recognize more than one codon."
+      },
+      {
+        term: "Nearly universal code",
+        question: "Give one example of an exception to the standard genetic code.",
+        answer: "In human and yeast mitochondria, UGA can encode tryptophan instead of serving as a termination codon."
+      }
+    ],
+    transcription: [
+      {
+        term: "Template strand",
+        question: "What is the template strand?",
+        answer: "It is the DNA strand that RNA polymerase reads to synthesize a complementary RNA transcript."
+      },
+      {
+        term: "RNA polymerase",
+        question: "How does RNA polymerase differ from DNA polymerase in initiation?",
+        answer: "RNA polymerase does not require a primer to begin RNA synthesis."
+      },
+      {
+        term: "Sigma factor",
+        question: "What role does sigma factor play in bacterial transcription?",
+        answer: "Sigma factor helps RNA polymerase recognize and bind promoter sequences during transcription initiation."
+      },
+      {
+        term: "Polycistronic mRNA",
+        question: "What is polycistronic mRNA?",
+        answer: "It is a large mRNA that encodes more than one protein, often produced from clustered bacterial genes whose products function together."
+      }
+    ],
+    eukaryotes: [
+      {
+        term: "RNA polymerase II",
+        question: "Which eukaryotic RNA polymerase transcribes protein-coding genes?",
+        answer: "RNA polymerase II transcribes mRNA for protein-coding genes and also transcribes snRNA and other RNA types."
+      },
+      {
+        term: "TATA box",
+        question: "What binds the TATA box and why is it important?",
+        answer: "The TATA-binding protein of transcription factor TFIID binds the TATA box and helps determine the transcription start site."
+      },
+      {
+        term: "RNA processing",
+        question: "What three major changes occur to many eukaryotic pre-mRNAs?",
+        answer: "A 5 prime cap is added, a 3 prime poly-A tail is added, and introns are removed while exons are joined."
+      },
+      {
+        term: "Spliceosome",
+        question: "What does the spliceosome do?",
+        answer: "The spliceosome removes introns from pre-mRNA and joins exons. snRNPs are important components of spliceosomes."
+      },
+      {
+        term: "RNA editing",
+        question: "What are two types of RNA editing described in the lesson?",
+        answer: "Insertion or deletion editing changes the number of bases. Substitution editing changes the identity of individual nucleotide bases."
+      }
+    ]
+  };
+
+  const state = {
+    currentTopic: "overview",
+    flashIndex: {},
+    flipped: {},
+    reviewedCards: new Set(),
+    checksComplete: new Set(),
+    reflectionsComplete: new Set(),
+    topicsStarted: new Set()
+  };
+
+  const topicNames = ["code", "decoding", "dictionary", "transcription", "eukaryotes"];
+  const totalCards = Object.values(flashcards).reduce((sum, cards) => sum + cards.length, 0);
+  document.getElementById("cardsTotal").textContent = totalCards;
+
+  function setLiveStatus(message) {
+    document.getElementById("liveStatus").textContent = message;
+  }
+
+  function switchTab(target) {
+    document.querySelectorAll(".tab").forEach(tab => {
+      const selected = tab.dataset.target === target;
+      tab.setAttribute("aria-selected", selected ? "true" : "false");
+      tab.tabIndex = selected ? 0 : -1;
+    });
+
+    document.querySelectorAll(".panel").forEach(panel => {
+      panel.classList.toggle("active", panel.id === "panel-" + target);
+    });
+
+    state.currentTopic = target;
+    if (topicNames.includes(target)) {
+      state.topicsStarted.add(target);
+      buildFlashArea(target);
+      updateTopicStatus(target);
+    }
+    updateProgress();
+    setLiveStatus("Opened " + readableTopic(target) + " section.");
+  }
+
+  function readableTopic(topic) {
+    const map = {
+      overview: "Overview",
+      code: "Genetic Code",
+      decoding: "Deciphering the Code",
+      dictionary: "Coding Dictionary",
+      transcription: "Transcription",
+      eukaryotes: "Eukaryotes and Processing"
+    };
+    return map[topic] || topic;
+  }
+
+  document.querySelectorAll(".tab").forEach(tab => {
+    tab.addEventListener("click", () => switchTab(tab.dataset.target));
+    tab.addEventListener("keydown", event => {
+      const tabs = Array.from(document.querySelectorAll(".tab"));
+      const index = tabs.indexOf(tab);
+      let nextIndex = null;
+      if (event.key === "ArrowRight") nextIndex = (index + 1) % tabs.length;
+      if (event.key === "ArrowLeft") nextIndex = (index - 1 + tabs.length) % tabs.length;
+      if (event.key === "Home") nextIndex = 0;
+      if (event.key === "End") nextIndex = tabs.length - 1;
+      if (nextIndex !== null) {
+        event.preventDefault();
+        tabs[nextIndex].focus();
+        switchTab(tabs[nextIndex].dataset.target);
+      }
+    });
+  });
+
+  function buildFlashArea(topic) {
+    const container = document.querySelector('.flash-area[data-topic="' + topic + '"]');
+    if (!container || container.dataset.built === "true") return;
+
+    state.flashIndex[topic] = state.flashIndex[topic] || 0;
+    state.flipped[topic] = false;
+
+    container.innerHTML = `
+      <div>
+        <div class="flashcard" id="flashcard-${topic}">
+          <button type="button" aria-label="Flip flashcard" data-flip="${topic}">
+            <div class="flash-content">
+              <span class="flash-kicker" id="flash-term-${topic}"></span>
+              <p class="flash-prompt" id="flash-question-${topic}"></p>
+              <p class="flash-answer" id="flash-answer-${topic}"></p>
+              <p class="flash-hint">Select the card to reveal or hide the answer.</p>
+            </div>
+          </button>
+        </div>
+        <div class="flash-controls">
+          <button class="btn secondary" type="button" data-prev="${topic}">Previous Card</button>
+          <button class="btn secondary" type="button" data-next="${topic}">Next Card</button>
+          <button class="btn success" type="button" data-reviewed="${topic}">Mark Reviewed</button>
+        </div>
+      </div>
+      <aside class="side-progress" aria-label="${readableTopic(topic)} flashcard progress">
+        <h3>Deck Progress</h3>
+        <dl>
+          <div><dt>Current card</dt><dd id="flash-position-${topic}"></dd></div>
+          <div><dt>Cards in deck</dt><dd>${flashcards[topic].length}</dd></div>
+          <div><dt>Reviewed in deck</dt><dd id="flash-reviewed-${topic}">0</dd></div>
+        </dl>
+      </aside>
+    `;
+
+    container.querySelector('[data-flip="' + topic + '"]').addEventListener("click", () => flipCard(topic));
+    container.querySelector('[data-prev="' + topic + '"]').addEventListener("click", () => moveCard(topic, -1));
+    container.querySelector('[data-next="' + topic + '"]').addEventListener("click", () => moveCard(topic, 1));
+    container.querySelector('[data-reviewed="' + topic + '"]').addEventListener("click", () => markReviewed(topic));
+    container.dataset.built = "true";
+    renderCard(topic);
+  }
+
+  function renderCard(topic) {
+    const index = state.flashIndex[topic] || 0;
+    const card = flashcards[topic][index];
+    const cardEl = document.getElementById("flashcard-" + topic);
+    cardEl.classList.toggle("flipped", !!state.flipped[topic]);
+    document.getElementById("flash-term-" + topic).textContent = card.term;
+    document.getElementById("flash-question-" + topic).textContent = card.question;
+    document.getElementById("flash-answer-" + topic).textContent = card.answer;
+    document.getElementById("flash-position-" + topic).textContent = String(index + 1) + " of " + flashcards[topic].length;
+    document.getElementById("flash-reviewed-" + topic).textContent = countReviewedForTopic(topic);
+  }
+
+  function flipCard(topic) {
+    state.flipped[topic] = !state.flipped[topic];
+    renderCard(topic);
+    setLiveStatus(state.flipped[topic] ? "Answer revealed." : "Question shown.");
+  }
+
+  function moveCard(topic, direction) {
+    const length = flashcards[topic].length;
+    state.flashIndex[topic] = (state.flashIndex[topic] + direction + length) % length;
+    state.flipped[topic] = false;
+    renderCard(topic);
+    setLiveStatus("Moved to card " + (state.flashIndex[topic] + 1) + ".");
+  }
+
+  function markReviewed(topic) {
+    const key = topic + "-" + state.flashIndex[topic];
+    state.reviewedCards.add(key);
+    renderCard(topic);
+    updateTopicStatus(topic);
+    updateProgress();
+    setLiveStatus("Card marked reviewed.");
+  }
+
+  function countReviewedForTopic(topic) {
+    return flashcards[topic].filter((_, index) => state.reviewedCards.has(topic + "-" + index)).length;
+  }
+
+  function updateTopicStatus(topic) {
+    const status = document.getElementById("status-" + topic);
+    if (!status) return;
+    const reviewed = countReviewedForTopic(topic);
+    const total = flashcards[topic].length;
+    if (reviewed === 0) {
+      status.textContent = "Not started";
+    } else if (reviewed < total) {
+      status.textContent = reviewed + " of " + total + " reviewed";
+    } else {
+      status.textContent = "Flashcards complete";
+    }
+  }
+
+  function checkActivity(card) {
+    const topic = card.dataset.check;
+    const selects = Array.from(card.querySelectorAll("select"));
+    let correct = 0;
+
+    selects.forEach(select => {
+      select.classList.remove("correct", "incorrect");
+      if (select.value === select.dataset.answer) {
+        correct += 1;
+        select.classList.add("correct");
+      } else if (select.value !== "") {
+        select.classList.add("incorrect");
+      }
+    });
+
+    const feedback = card.querySelector("[data-feedback]");
+    feedback.classList.remove("good", "needs-work");
+
+    if (correct === selects.length) {
+      feedback.classList.add("good");
+      feedback.textContent = "Correct. All answers match the lesson content.";
+      state.checksComplete.add(topic);
+    } else {
+      feedback.classList.add("needs-work");
+      feedback.textContent = correct + " of " + selects.length + " correct. Review the items marked with a stronger border and try again.";
+    }
+
+    updateProgress();
+    setLiveStatus(feedback.textContent);
+  }
+
+  function resetActivity(card) {
+    card.querySelectorAll("select").forEach(select => {
+      select.value = "";
+      select.classList.remove("correct", "incorrect");
+    });
+    const feedback = card.querySelector("[data-feedback]");
+    feedback.classList.remove("good", "needs-work");
+    feedback.textContent = "Choose answers, then check your work.";
+    setLiveStatus("Activity reset.");
+  }
+
+  document.querySelectorAll("[data-check]").forEach(card => {
+    card.querySelector("[data-check-button]").addEventListener("click", () => checkActivity(card));
+    card.querySelector("[data-reset-button]").addEventListener("click", () => resetActivity(card));
+  });
+
+  document.querySelectorAll("[data-reflection]").forEach(card => {
+    const topic = card.dataset.reflection;
+    const answer = card.querySelector(".model-answer");
+    const reveal = card.querySelector("[data-reveal-button]");
+    const hide = card.querySelector("[data-hide-button]");
+
+    hide.style.display = "none";
+
+    reveal.addEventListener("click", () => {
+      answer.classList.add("show");
+      reveal.setAttribute("aria-expanded", "true");
+      hide.style.display = "inline-block";
+      state.reflectionsComplete.add(topic);
+      updateProgress();
+      setLiveStatus("Model answer revealed.");
+    });
+
+    hide.addEventListener("click", () => {
+      answer.classList.remove("show");
+      reveal.setAttribute("aria-expanded", "false");
+      hide.style.display = "none";
+      setLiveStatus("Model answer hidden.");
+    });
+  });
+
+  function updateProgress() {
+    const reviewed = state.reviewedCards.size;
+    const checks = state.checksComplete.size;
+    const reflections = state.reflectionsComplete.size;
+    const topics = state.topicsStarted.size;
+
+    document.getElementById("cardsReviewed").textContent = reviewed;
+    document.getElementById("checksComplete").textContent = checks;
+    document.getElementById("reflectionsComplete").textContent = reflections;
+    document.getElementById("topicsStarted").textContent = topics;
+
+    const totalUnits = totalCards + 5 + 5 + 5;
+    const completedUnits = reviewed + checks + reflections + topics;
+    const percent = Math.round((completedUnits / totalUnits) * 100);
+
+    document.getElementById("overallProgressFill").style.width = percent + "%";
+    document.getElementById("overallProgressText").textContent = percent + " percent complete";
+    document.getElementById("overallProgressBar").setAttribute("aria-valuenow", percent);
+  }
+
+  topicNames.forEach(topic => {
+    state.flashIndex[topic] = 0;
+    state.flipped[topic] = false;
+  });
+
+  updateProgress();
+</script>
+</body>
+</html>

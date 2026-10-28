@@ -1,0 +1,391 @@
+/*
+ * Respiratory Review Bowling
+ * Plain JavaScript. No libraries, account, storage, or gradebook connection.
+ * Load this file after your page's body exists, or use a script tag with defer.
+ * Optional: add <div id="bowling-game"></div> to choose its location.
+ * Put the podcast beside this JavaScript file, or change AUDIO_URL below.
+ */
+(() => {
+  'use strict';
+
+  const AUDIO_URL = 'How_Lungs_Deliver_Oxygen_to_Blood.m4a';
+  // Resolve the audio relative to this script, even on a nested hosting page.
+  const SCRIPT_URL = document.currentScript?.src || document.baseURI;
+  const QUESTIONS = [{"id":1,"topic":"Respiratory functions","question":"Which statement describes the main gas-exchange function of the respiratory system?","options":[{"text":"Oxygen enters the blood and carbon dioxide leaves it.","explanation":"Alveoli allow oxygen to enter pulmonary blood and carbon dioxide to leave the blood."},{"text":"Carbon dioxide enters the blood and oxygen leaves it in the lungs.","explanation":"This reverses the normal directions of gas movement at the lungs."},{"text":"The lungs produce the oxygen used by cells.","explanation":"The lungs take in oxygen from inhaled air. They do not produce oxygen."},{"text":"The lungs make red blood cells to carry gases.","explanation":"The respiratory system exchanges gases. It does not make red blood cells."}],"correctIndex":0},{"id":2,"topic":"System organization","question":"Which structure is part of the upper respiratory system in these notes?","options":[{"text":"Trachea","explanation":"The trachea belongs to the lower respiratory system."},{"text":"Pharynx","explanation":"The notes place the nose, nasal cavity, sinuses, and pharynx in the upper respiratory system."},{"text":"Bronchioles","explanation":"Bronchioles are lower respiratory airways within the lungs."},{"text":"Alveoli","explanation":"Alveoli are gas-exchange structures in the lower respiratory system."}],"correctIndex":1},{"id":3,"topic":"Respiratory mucosa","question":"Which epithelium lines most larger respiratory airways?","options":[{"text":"Simple squamous epithelium","explanation":"Thin simple squamous epithelium lines alveoli to support diffusion."},{"text":"Cuboidal epithelium","explanation":"Cuboidal epithelium is characteristic of smaller bronchioles in the notes."},{"text":"Pseudostratified ciliated columnar epithelium","explanation":"Most larger airways have this ciliated epithelium and mucus-producing cells for airway protection."},{"text":"Stratified squamous epithelium","explanation":"The lower pharynx uses stratified squamous epithelium for protection against abrasion."}],"correctIndex":2},{"id":4,"topic":"Airway defenses","question":"What do cilia do in the mucociliary escalator?","options":[{"text":"Secrete surfactant into alveoli","explanation":"Type II pneumocytes secrete surfactant. Cilia move mucus."},{"text":"Carry oxygen through the bloodstream","explanation":"Blood transports oxygen, mostly attached to hemoglobin. Cilia remain on airway cells."},{"text":"Engulf particles on alveolar surfaces","explanation":"Alveolar macrophages engulf particles. Cilia move trapped material in the airways."},{"text":"Move mucus and trapped particles toward the pharynx","explanation":"Cilia carry mucus toward the pharynx, where it can be swallowed."}],"correctIndex":3},{"id":5,"topic":"Nasal cavity","question":"How do the nasal conchae help condition inhaled air?","options":[{"text":"Create turbulence that brings air against warm, moist mucosa","explanation":"The conchae increase contact between inhaled air and mucosa, helping trap particles, warm air, and humidify it."},{"text":"Keep air away from the nasal mucosa","explanation":"The conchae increase air contact with the mucosa rather than preventing it."},{"text":"Exchange oxygen directly with pulmonary capillaries","explanation":"Pulmonary gas exchange occurs at alveoli, not at the nasal conchae."},{"text":"Vibrate to create the voice","explanation":"The vocal folds vibrate during phonation. The conchae help condition air."}],"correctIndex":0},{"id":6,"topic":"Pharynx","question":"Which region of the pharynx normally carries air only?","options":[{"text":"Oropharynx","explanation":"The oropharynx is a shared passage for air, food, and liquids."},{"text":"Nasopharynx","explanation":"The nasopharynx lies behind the nasal cavity and above the soft palate. It normally carries air only."},{"text":"Laryngopharynx","explanation":"The laryngopharynx carries air, food, and liquids toward their respective passages."},{"text":"All three regions carry only air.","explanation":"Only the nasopharynx normally carries air alone. The lower two regions also carry swallowed material."}],"correctIndex":1},{"id":7,"topic":"Larynx","question":"Which structure folds over the laryngeal opening during swallowing?","options":[{"text":"Thyroid cartilage","explanation":"The thyroid cartilage forms the prominent anterior wall of the larynx."},{"text":"Cricoid cartilage","explanation":"The cricoid cartilage forms a complete ring at the base of the larynx."},{"text":"Epiglottis","explanation":"The elastic epiglottis folds over the opening as the larynx elevates during swallowing."},{"text":"Carina","explanation":"The carina is the ridge where the trachea divides into the main bronchi."}],"correctIndex":2},{"id":8,"topic":"Sound production","question":"What directly produces sound during phonation?","options":[{"text":"The tongue pumping air into the lungs","explanation":"The tongue helps articulate words. Respiratory muscles move air into the lungs."},{"text":"The nasal conchae vibrating against each other","explanation":"Conchae help condition inhaled air. Vocal-fold vibration produces sound."},{"text":"Surfactant causing alveoli to vibrate","explanation":"Surfactant lowers alveolar surface tension. It does not generate the voice."},{"text":"Exhaled air vibrating the vocal folds","explanation":"Air leaving the lungs vibrates the vocal folds. Changing fold tension changes pitch."}],"correctIndex":3},{"id":9,"topic":"Trachea","question":"What is the main function of the trachea’s C-shaped cartilage rings?","options":[{"text":"Keep the airway open","explanation":"Cartilage supports the trachea. The posterior gaps also allow the esophagus to expand during swallowing."},{"text":"Produce mucus","explanation":"Mucus-producing cells make mucus. Cartilage provides structural support."},{"text":"Exchange gases with the blood","explanation":"Gas exchange occurs across the thin alveolar blood–air barrier, not through tracheal cartilage."},{"text":"Close the trachea permanently after inhalation","explanation":"The rings help maintain an open airway so air can move in both directions."}],"correctIndex":0},{"id":10,"topic":"Bronchial tree","question":"Which bronchi supply individual lung lobes?","options":[{"text":"Main bronchi","explanation":"The right and left main bronchi enter their respective lungs before branching into lobar bronchi."},{"text":"Lobar bronchi","explanation":"Each lobar bronchus supplies a lung lobe."},{"text":"Segmental bronchi","explanation":"Segmental bronchi supply bronchopulmonary segments, which are subdivisions within lobes."},{"text":"Terminal bronchioles","explanation":"Terminal bronchioles are smaller airways at the end of the conducting portion, not the bronchi serving whole lobes."}],"correctIndex":1},{"id":11,"topic":"Bronchioles","question":"Which statement describes bronchiole walls?","options":[{"text":"They contain cartilage but no smooth muscle.","explanation":"This reverses their structure. Bronchioles contain smooth muscle and lack cartilage."},{"text":"They are supported by complete bony rings.","explanation":"Bronchiole walls do not contain bony rings. Their smooth muscle helps regulate airflow."},{"text":"They contain smooth muscle but no cartilage.","explanation":"Bronchiolar smooth muscle controls airway diameter. Bronchioles lack cartilage."},{"text":"They consist entirely of gas-exchange cells.","explanation":"Bronchioles are airways with smooth muscle. Thin alveolar cells form the main gas-exchange surfaces."}],"correctIndex":2},{"id":12,"topic":"Airway resistance","question":"What happens to airflow resistance during bronchodilation?","options":[{"text":"It increases as the airway lumen widens.","explanation":"Widening decreases resistance. Narrowing increases it."},{"text":"It decreases because the airway lumen narrows.","explanation":"A narrower lumen increases resistance rather than decreasing it."},{"text":"It becomes unrelated to airway diameter.","explanation":"Airway diameter strongly affects resistance, including during bronchodilation."},{"text":"It decreases as the airway lumen widens.","explanation":"A wider lumen offers less resistance to airflow."}],"correctIndex":3},{"id":13,"topic":"Gas-exchange passages","question":"Which sequence follows airflow beyond the terminal bronchioles?","options":[{"text":"Respiratory bronchioles → alveolar ducts → alveolar sacs","explanation":"Terminal bronchioles lead into respiratory bronchioles, followed by alveolar ducts and sacs."},{"text":"Alveolar sacs → alveolar ducts → respiratory bronchioles","explanation":"This reverses the direction of airflow toward the exchange sacs."},{"text":"Main bronchi → trachea → larynx","explanation":"These structures lie upstream of terminal bronchioles, toward the entrance of the airway."},{"text":"Segmental bronchi → lobar bronchi → main bronchi","explanation":"These larger bronchi lie upstream of terminal bronchioles. The order also moves toward the trachea."}],"correctIndex":0},{"id":14,"topic":"Alveolar cells","question":"Which cells form most of the thin alveolar gas-exchange surface?","options":[{"text":"Type II pneumocytes","explanation":"Type II pneumocytes secrete surfactant rather than forming most of the thin exchange surface."},{"text":"Type I pneumocytes","explanation":"Type I pneumocytes are thin squamous cells that form most of the alveolar exchange surface."},{"text":"Alveolar macrophages","explanation":"Macrophages remove debris from alveoli. They do not form the exchange lining."},{"text":"Ciliated columnar cells","explanation":"These cells characterize larger conducting airways rather than the thin alveolar surface."}],"correctIndex":1},{"id":15,"topic":"Surfactant","question":"What is the main function of pulmonary surfactant?","options":[{"text":"Increase surface tension so alveoli collapse more easily","explanation":"Surfactant lowers surface tension and helps prevent collapse."},{"text":"Thicken the blood–air barrier","explanation":"Gas exchange benefits from a thin barrier. Surfactant acts on surface tension rather than thickening the barrier."},{"text":"Lower surface tension and help keep alveoli open","explanation":"Surfactant from type II pneumocytes reduces surface tension, making alveoli easier to inflate and less likely to collapse."},{"text":"Carry oxygen on hemoglobin","explanation":"Hemoglobin transports oxygen in blood. Surfactant acts at the alveolar surface."}],"correctIndex":2},{"id":16,"topic":"Alveolar defenses","question":"Which cells engulf debris that reaches the alveoli?","options":[{"text":"Type I pneumocytes","explanation":"Type I pneumocytes form thin exchange surfaces. Macrophages provide the debris-removal function."},{"text":"Type II pneumocytes","explanation":"Type II pneumocytes secrete surfactant. Macrophages engulf debris."},{"text":"Red blood cells","explanation":"Red blood cells transport respiratory gases within blood vessels rather than cleaning alveolar air spaces."},{"text":"Alveolar macrophages","explanation":"Alveolar macrophages patrol exchange surfaces and engulf particles and debris."}],"correctIndex":3},{"id":17,"topic":"Blood–air barrier","question":"Which structures form the blood–air barrier described in the notes?","options":[{"text":"Alveolar epithelium, fused basement membranes, and capillary endothelium","explanation":"Gases cross these closely associated layers between alveolar air and capillary blood."},{"text":"Pleural fluid, parietal pleura, and ribs","explanation":"These structures relate to lung movement and the thoracic wall, not the alveolar exchange barrier."},{"text":"Tracheal cartilage, mucus, and vocal folds","explanation":"These structures support or protect conducting airways and produce sound. They do not form the blood–air barrier."},{"text":"Diaphragm, intercostal muscles, and sternum","explanation":"These structures help change chest volume during ventilation rather than forming a gas-diffusion barrier."}],"correctIndex":0},{"id":18,"topic":"Lung anatomy","question":"How many lobes do the right and left lungs normally have?","options":[{"text":"Right: two; left: three","explanation":"This reverses the normal lobe counts."},{"text":"Right: three; left: two","explanation":"The right lung has superior, middle, and inferior lobes. The left has superior and inferior lobes."},{"text":"Right: three; left: three","explanation":"The left lung has two lobes, not three."},{"text":"Right: two; left: two","explanation":"The right lung has three lobes, including a middle lobe."}],"correctIndex":1},{"id":19,"topic":"Pleura","question":"Which pleural layer directly covers the surface of a lung?","options":[{"text":"Parietal pleura","explanation":"Parietal pleura lines the thoracic wall rather than directly covering the lung surface."},{"text":"Alveolar epithelium","explanation":"Alveolar epithelium lines individual air pockets inside the lungs. It is not a pleural layer."},{"text":"Visceral pleura","explanation":"Visceral pleura covers the lung surface. Pleural fluid reduces friction between the pleural layers."},{"text":"Respiratory mucosa","explanation":"Respiratory mucosa lines airways. It does not form the covering on the external lung surface."}],"correctIndex":2},{"id":20,"topic":"Pulmonary circulation","question":"What do the pulmonary arteries carry to the lungs?","options":[{"text":"Oxygenated blood returning from the lungs to the heart","explanation":"Pulmonary veins return oxygenated blood to the heart."},{"text":"Air traveling from the trachea to the alveoli","explanation":"Bronchi and bronchioles carry air. Arteries carry blood."},{"text":"Pleural fluid traveling between the pleural layers","explanation":"Pleural fluid occupies the pleural cavity. Pulmonary arteries supply blood to the lungs."},{"text":"Deoxygenated blood headed toward alveolar capillaries","explanation":"Pulmonary arteries bring deoxygenated blood to lung capillaries for gas exchange."}],"correctIndex":3},{"id":21,"topic":"Bronchial circulation","question":"What is the main role of bronchial circulation?","options":[{"text":"Nourish conducting airways and supporting tissues","explanation":"Systemic bronchial arteries supply the conducting airways and supporting lung tissues."},{"text":"Deliver inhaled air to the alveoli","explanation":"The bronchial tree delivers air. Bronchial circulation delivers blood to tissues."},{"text":"Replace the pulmonary circuit as the main route for alveolar gas exchange","explanation":"The pulmonary circuit supplies alveolar capillaries for gas exchange. Bronchial circulation nourishes tissues."},{"text":"Carry pleural fluid into the nasal cavity","explanation":"Bronchial circulation is a blood supply and does not carry pleural fluid into the nose."}],"correctIndex":0},{"id":22,"topic":"Ventilation","question":"What is pulmonary ventilation?","options":[{"text":"Movement of oxygen from systemic blood into tissues","explanation":"This is tissue gas exchange, also called internal respiration."},{"text":"Movement of air between the atmosphere and alveoli","explanation":"Ventilation is the mechanical movement of air into and out of the lungs."},{"text":"Transport of gases through the bloodstream","explanation":"Blood transport connects the lungs and tissues. Ventilation moves air."},{"text":"Use of oxygen for ATP production inside cells","explanation":"This describes cellular respiration rather than pulmonary ventilation."}],"correctIndex":1},{"id":23,"topic":"Cellular respiration","question":"Where does cellular respiration occur?","options":[{"text":"Between the atmosphere and the nasal cavity only","explanation":"Air moving into the respiratory system is part of ventilation, not cellular respiration."},{"text":"Only across the pleural membranes","explanation":"Pleural membranes support lung movement. Cellular respiration occurs within cells."},{"text":"Inside cells, where oxygen supports ATP production","explanation":"Cells use oxygen in aerobic metabolism and produce carbon dioxide."},{"text":"Only in the space between alveoli and blood","explanation":"Exchange between alveoli and blood is pulmonary gas exchange, not cellular respiration."}],"correctIndex":2},{"id":24,"topic":"Boyle’s law","question":"According to Boyle’s law, what happens to gas pressure when volume increases at constant temperature for a fixed amount of gas?","options":[{"text":"Pressure increases.","explanation":"An increase in volume lowers pressure under Boyle’s law."},{"text":"Pressure must remain unchanged.","explanation":"With a fixed amount of gas at constant temperature, changing volume changes pressure."},{"text":"Pressure always becomes zero.","explanation":"Increasing volume lowers pressure but does not automatically reduce it to zero."},{"text":"Pressure decreases.","explanation":"Pressure and volume vary inversely under the stated conditions."}],"correctIndex":3},{"id":25,"topic":"Inhalation","question":"What happens to the diaphragm during a normal inhalation?","options":[{"text":"It contracts and flattens.","explanation":"Diaphragm contraction increases thoracic volume, helping lower intrapulmonary pressure and draw air in."},{"text":"It relaxes as thoracic volume decreases.","explanation":"Relaxation and decreasing thoracic volume characterize quiet exhalation."},{"text":"It contracts to decrease lung volume.","explanation":"During inhalation, diaphragm contraction increases thoracic and lung volume."},{"text":"It remains inactive while air enters.","explanation":"Quiet inhalation requires respiratory muscle contraction, including the diaphragm."}],"correctIndex":0},{"id":26,"topic":"Exhalation","question":"What normally drives quiet exhalation?","options":[{"text":"Strong abdominal muscle contraction on every resting breath","explanation":"Abdominal muscles help with forced exhalation. Quiet exhalation is mostly passive."},{"text":"Elastic recoil after inspiratory muscles relax","explanation":"Quiet exhalation is mostly passive. Relaxation allows elastic recoil to reduce lung volume and push air out."},{"text":"Diaphragm contraction that increases thoracic volume","explanation":"That action supports inhalation rather than quiet exhalation."},{"text":"Intrapulmonary pressure falling below atmospheric pressure","explanation":"Pressure below atmospheric pressure draws air in. Exhalation occurs when intrapulmonary pressure rises above atmospheric pressure."}],"correctIndex":1},{"id":27,"topic":"Respiratory pressures","question":"Where is intrapleural pressure measured?","options":[{"text":"Inside the alveoli","explanation":"Pressure inside alveoli is intrapulmonary pressure."},{"text":"Inside a pulmonary artery","explanation":"This would be a blood-vessel pressure, not intrapleural pressure."},{"text":"In the space between the pleural layers","explanation":"Intrapleural pressure is the pressure in the pleural cavity between visceral and parietal pleura."},{"text":"In the air outside the body","explanation":"Air pressure outside the body is atmospheric pressure."}],"correctIndex":2},{"id":28,"topic":"Lung compliance","question":"What does lung compliance describe?","options":[{"text":"The number of breaths taken per minute","explanation":"Breaths per minute is respiratory rate."},{"text":"The opposition to air moving through airways","explanation":"Opposition to airflow is airway resistance."},{"text":"The percentage of hemoglobin sites carrying oxygen","explanation":"That percentage is hemoglobin oxygen saturation."},{"text":"How easily the lungs expand","explanation":"Compliance describes ease of expansion. Low compliance means more effort is needed to inflate the lungs."}],"correctIndex":3},{"id":29,"topic":"Pneumothorax","question":"What is a pneumothorax?","options":[{"text":"Air entering the pleural cavity","explanation":"Air in the pleural cavity disrupts the pressure relationship that helps keep a lung expanded and can cause collapse."},{"text":"The normal presence of air inside alveoli","explanation":"Alveolar air is normal. Pneumothorax involves air in the pleural cavity."},{"text":"An increase in surfactant secretion","explanation":"Pneumothorax refers to pleural air, not a change in surfactant secretion."},{"text":"A blockage of a pulmonary artery branch","explanation":"A blocked pulmonary artery branch is a pulmonary embolism."}],"correctIndex":0},{"id":30,"topic":"Tidal volume","question":"What is tidal volume?","options":[{"text":"The air left after maximal exhalation","explanation":"The air left after maximal exhalation is residual volume."},{"text":"The amount of air moved in one ordinary breath","explanation":"Tidal volume measures the air inhaled or exhaled during a normal breath."},{"text":"The extra air inhaled beyond a normal inspiration","explanation":"That extra air is inspiratory reserve volume."},{"text":"The total air moved in one minute","explanation":"Air moved per minute is minute ventilation, which depends on rate and tidal volume."}],"correctIndex":1},{"id":31,"topic":"Minute ventilation","question":"At 12 breaths/min and a tidal volume of 500 mL, what is minute ventilation?","options":[{"text":"4,200 mL/min","explanation":"This is alveolar ventilation when 150 mL of dead space per breath is subtracted. Minute ventilation uses the full tidal volume."},{"text":"500 mL/min","explanation":"500 mL is the volume of one breath in this example. Multiply by 12 breaths/min."},{"text":"6,000 mL/min","explanation":"Minute ventilation = respiratory rate × tidal volume = 12 × 500 = 6,000 mL/min."},{"text":"150 mL/min","explanation":"150 mL is the example dead-space volume per breath, not minute ventilation."}],"correctIndex":2},{"id":32,"topic":"Alveolar ventilation","question":"At 12 breaths/min, a tidal volume of 500 mL, and dead space of 150 mL per breath, what is alveolar ventilation?","options":[{"text":"6,000 mL/min","explanation":"This is minute ventilation. Alveolar ventilation subtracts the dead space from each breath first."},{"text":"1,800 mL/min","explanation":"12 × 150 calculates ventilation of the dead space, not fresh air delivered to alveoli."},{"text":"350 mL/min","explanation":"350 mL reaches exchange surfaces per breath in this example. Multiply by the respiratory rate to obtain mL/min."},{"text":"4,200 mL/min","explanation":"Alveolar ventilation = 12 × (500 − 150) = 12 × 350 = 4,200 mL/min."}],"correctIndex":3},{"id":33,"topic":"Inspiratory reserve volume","question":"What is inspiratory reserve volume (IRV)?","options":[{"text":"Extra air that can be inhaled beyond a normal inspiration","explanation":"IRV is the additional air inhaled after an ordinary inhalation."},{"text":"Air moved during one ordinary breath","explanation":"That is tidal volume."},{"text":"Extra air exhaled after a normal expiration","explanation":"That is expiratory reserve volume."},{"text":"Air remaining after maximal exhalation","explanation":"That is residual volume."}],"correctIndex":0},{"id":34,"topic":"Residual volume","question":"Which lung volume cannot be measured by simple spirometry alone?","options":[{"text":"Tidal volume","explanation":"Tidal volume moves in and out during ordinary breaths and can be measured by spirometry."},{"text":"Residual volume","explanation":"Residual volume remains inside the lungs after maximal exhalation, so a method measuring only air moving in and out cannot measure it directly."},{"text":"Inspiratory reserve volume","explanation":"IRV is additional inhaled air and can be measured by spirometry."},{"text":"Expiratory reserve volume","explanation":"ERV is additional exhaled air and can be measured by spirometry."}],"correctIndex":1},{"id":35,"topic":"Vital capacity","question":"Which formula gives vital capacity (VC)?","options":[{"text":"TV + IRV","explanation":"This is inspiratory capacity."},{"text":"ERV + RV","explanation":"This is functional residual capacity."},{"text":"IRV + TV + ERV","explanation":"Vital capacity combines inspiratory reserve, tidal, and expiratory reserve volumes to represent maximum movable air."},{"text":"VC + RV","explanation":"Adding residual volume to vital capacity gives total lung capacity."}],"correctIndex":2},{"id":36,"topic":"Partial pressure","question":"What is the partial pressure of a gas?","options":[{"text":"The total pressure of every gas in a mixture combined","explanation":"That is total pressure. Partial pressure is one gas’s contribution."},{"text":"The amount of air inhaled in one ordinary breath","explanation":"That is tidal volume, a volume rather than a pressure."},{"text":"The resistance caused by narrowing bronchioles","explanation":"That is airway resistance, not a gas’s contribution to total pressure."},{"text":"The pressure contributed by that gas within a gas mixture","explanation":"Dalton’s law describes total pressure as the combined contributions of individual gases."}],"correctIndex":3},{"id":37,"topic":"Henry’s law","question":"At the same temperature, what happens when the partial pressure of a gas above a liquid increases?","options":[{"text":"More of that gas dissolves in the liquid.","explanation":"Henry’s law relates higher gas partial pressure to a greater amount of that gas dissolving in a liquid."},{"text":"Less of that gas dissolves in the liquid.","explanation":"This reverses the relationship described by Henry’s law."},{"text":"The gas becomes unable to dissolve.","explanation":"Increasing partial pressure promotes dissolution rather than preventing it."},{"text":"All gases become equally soluble.","explanation":"Gases differ in solubility. The notes state that carbon dioxide is much more soluble than oxygen."}],"correctIndex":0},{"id":38,"topic":"Diffusion efficiency","question":"Which change helps gases diffuse more quickly across the blood–air barrier?","options":[{"text":"A thicker diffusion barrier","explanation":"A thicker barrier increases diffusion distance and can reduce gas exchange."},{"text":"A shorter diffusion distance","explanation":"A thinner barrier shortens the distance gases must cross and supports faster diffusion."},{"text":"A smaller alveolar surface area","explanation":"Less surface area provides less space for exchange."},{"text":"A smaller partial-pressure gradient","explanation":"A larger partial-pressure gradient speeds diffusion. A smaller gradient reduces the driving force."}],"correctIndex":1},{"id":39,"topic":"Pulmonary gas exchange","question":"In normal pulmonary gas exchange, which way does oxygen move?","options":[{"text":"From pulmonary capillary blood into alveoli","explanation":"This reverses the normal oxygen gradient at ventilated alveoli."},{"text":"From tissue cells directly into the nasal cavity","explanation":"Tissues receive oxygen from systemic blood. They do not exchange it directly with the nasal cavity."},{"text":"From alveoli into pulmonary capillary blood","explanation":"Alveolar oxygen partial pressure is higher than that of arriving blood, so oxygen diffuses into the blood."},{"text":"From the pleural cavity into the trachea","explanation":"The normal pleural cavity contains a thin layer of fluid. Pulmonary gas exchange occurs between alveoli and capillaries."}],"correctIndex":2},{"id":40,"topic":"Tissue gas exchange","question":"During normal tissue gas exchange, which way does carbon dioxide move?","options":[{"text":"From systemic capillary blood into tissues","explanation":"This reverses the usual carbon dioxide gradient at tissues."},{"text":"From alveoli directly into tissue cells","explanation":"Blood connects the lungs and tissues. Alveoli do not directly exchange gases with distant tissue cells."},{"text":"From the nasal cavity directly into pulmonary veins","explanation":"Inhaled gases reach alveoli through airways. Tissue carbon dioxide enters systemic capillaries."},{"text":"From tissues into systemic capillary blood","explanation":"Cells produce carbon dioxide, maintaining a gradient that moves it from tissues into blood."}],"correctIndex":3},{"id":41,"topic":"Oxygen transport","question":"How is most oxygen transported in the blood?","options":[{"text":"Reversibly bound to iron in hemoglobin","explanation":"Most oxygen binds to hemoglobin in red blood cells. Only about 1.5% dissolves in plasma in the notes."},{"text":"As bicarbonate ions in plasma","explanation":"Bicarbonate is the main transport form of carbon dioxide, not oxygen."},{"text":"Dissolved freely in plasma","explanation":"Only a small fraction of oxygen dissolves in plasma. Most binds to hemoglobin."},{"text":"Bound to surfactant in pulmonary veins","explanation":"Surfactant acts at alveolar surfaces to lower surface tension. Hemoglobin carries most blood oxygen."}],"correctIndex":0},{"id":42,"topic":"Bohr effect","question":"What happens to oxygen unloading from hemoglobin when pH decreases?","options":[{"text":"Hemoglobin holds oxygen more tightly at the same oxygen partial pressure.","explanation":"Higher pH favors tighter oxygen binding. Lower pH promotes release."},{"text":"Hemoglobin releases more oxygen at the same oxygen partial pressure.","explanation":"Lower pH shifts the oxygen–hemoglobin curve to the right and promotes oxygen unloading. This is the Bohr effect."},{"text":"The oxygen–hemoglobin curve shifts left.","explanation":"Lower pH shifts the curve right. Higher pH shifts it left."},{"text":"Hemoglobin permanently loses all ability to bind oxygen.","explanation":"The Bohr effect changes hemoglobin’s affinity reversibly. It does not permanently eliminate oxygen binding."}],"correctIndex":1},{"id":43,"topic":"Fetal hemoglobin","question":"How does fetal hemoglobin compare with adult hemoglobin at the same oxygen partial pressure?","options":[{"text":"Fetal hemoglobin has a lower oxygen affinity.","explanation":"Fetal hemoglobin has higher affinity, shown by a curve to the left of the adult curve."},{"text":"Fetal hemoglobin cannot bind oxygen.","explanation":"Fetal hemoglobin carries oxygen and binds it more tightly than adult hemoglobin at the same oxygen partial pressure."},{"text":"Fetal hemoglobin has a higher oxygen affinity.","explanation":"Its higher affinity helps fetal blood obtain oxygen across the placenta from maternal blood."},{"text":"Fetal hemoglobin carries oxygen only as bicarbonate.","explanation":"Hemoglobin binds oxygen. Bicarbonate is a transport form of carbon dioxide."}],"correctIndex":2},{"id":44,"topic":"Carbon dioxide transport","question":"In what form does most carbon dioxide travel in the blood?","options":[{"text":"Dissolved carbon dioxide in plasma","explanation":"Only about 7% travels dissolved in plasma in the notes."},{"text":"Carbon dioxide bound to hemoglobin","explanation":"About 23% binds to hemoglobin in the notes. This is less than the fraction carried as bicarbonate."},{"text":"Oxygen bound to hemoglobin","explanation":"Oxygen bound to hemoglobin is an oxygen transport form, not a carbon dioxide transport form."},{"text":"Bicarbonate ions (HCO₃⁻)","explanation":"The notes state that about 70% of carbon dioxide travels as bicarbonate."}],"correctIndex":3},{"id":45,"topic":"Carbonic anhydrase","question":"Which enzyme speeds the reaction between carbon dioxide and water inside red blood cells?","options":[{"text":"Carbonic anhydrase","explanation":"Carbonic anhydrase speeds the reversible reaction leading from carbon dioxide and water to carbonic acid, hydrogen ions, and bicarbonate."},{"text":"Hemoglobin","explanation":"Hemoglobin carries gases and buffers hydrogen ions. Carbonic anhydrase is the enzyme that speeds this reaction."},{"text":"Surfactant","explanation":"Surfactant lowers alveolar surface tension. It is not the red blood cell enzyme for this reaction."},{"text":"2,3-BPG","explanation":"2,3-BPG lowers hemoglobin’s oxygen affinity. It is not the enzyme catalyzing the carbon dioxide–water reaction."}],"correctIndex":0},{"id":46,"topic":"Ventilation–perfusion matching","question":"What does perfusion (Q) mean in ventilation–perfusion matching?","options":[{"text":"Airflow reaching the alveoli","explanation":"Airflow reaching alveoli is ventilation (V), not perfusion (Q)."},{"text":"Blood flow through capillaries serving the alveoli","explanation":"Perfusion is blood flow. Effective exchange requires airflow and blood flow to reach the same exchange surfaces."},{"text":"The amount of surfactant secreted per breath","explanation":"Surfactant supports alveolar inflation. Perfusion refers to capillary blood flow."},{"text":"Movement of the vocal folds during speech","explanation":"Vocal-fold movement supports phonation. Perfusion describes blood flow at exchange surfaces."}],"correctIndex":1},{"id":47,"topic":"Brainstem control","question":"Which brainstem region establishes the basic breathing rhythm?","options":[{"text":"Pons","explanation":"The pons adjusts breathing rate and depth. The notes identify the medulla as establishing the basic rhythm."},{"text":"Cerebral cortex","explanation":"The cerebral cortex provides temporary voluntary control, such as during speaking or breath holding."},{"text":"Medulla","explanation":"The medulla establishes the basic rhythm. The pre-Bötzinger complex is important for rhythm generation."},{"text":"Hypothalamus","explanation":"Hypothalamic signals link breathing to emotion and temperature. The medulla generates the basic rhythm."}],"correctIndex":2},{"id":48,"topic":"Chemoreceptors","question":"What do central chemoreceptors mainly respond to?","options":[{"text":"Low arterial oxygen directly","explanation":"Low arterial oxygen is a signal detected by peripheral chemoreceptors in the carotid and aortic bodies."},{"text":"Stretching of the vocal folds","explanation":"Vocal-fold stretch is not the chemical signal monitored by central chemoreceptors."},{"text":"The amount of mucus in the nasal cavity","explanation":"Central chemoreceptors monitor a chemical change in cerebrospinal fluid rather than nasal mucus."},{"text":"A carbon dioxide–related decrease in cerebrospinal fluid pH","explanation":"Carbon dioxide crosses into cerebrospinal fluid and changes its pH. Central chemoreceptors respond mainly to that pH change."}],"correctIndex":3},{"id":49,"topic":"Respiration at birth","question":"Which structure handles gas exchange for the fetus before birth?","options":[{"text":"Placenta","explanation":"Before birth, the lungs contain fluid and gas exchange occurs through the placenta."},{"text":"Air-filled fetal alveoli","explanation":"The notes describe fluid-filled lungs before birth. The placenta handles gas exchange."},{"text":"Fetal nasal conchae","explanation":"Nasal conchae condition inhaled air. They do not provide fetal gas exchange."},{"text":"Fetal pleural cavity","explanation":"The pleural cavity supports lung movement. It is not the fetal gas-exchange organ."}],"correctIndex":0},{"id":50,"topic":"Aging","question":"Which respiratory change commonly occurs with aging?","options":[{"text":"Increased chest-wall mobility and respiratory reserve","explanation":"The notes describe declines in both chest-wall mobility and respiratory reserve."},{"text":"Reduced elastic recoil and declining vital capacity","explanation":"The notes describe reduced recoil, chest-wall mobility, and respiratory reserve, with vital capacity tending to decline."},{"text":"A steady increase in vital capacity","explanation":"Vital capacity tends to decline with aging."},{"text":"Development of additional lung lobes","explanation":"Aging affects lung function and tissue mechanics. It does not add lung lobes."}],"correctIndex":1}];
+
+  function start() {
+    let root = document.getElementById('bowling-game');
+    if (!root) {
+      root = document.createElement('div');
+      root.id = 'bowling-game';
+      document.body.appendChild(root);
+    }
+    // Loading the script twice should not create two games.
+    if (root.dataset.bowlingLoaded) return;
+    root.dataset.bowlingLoaded = 'true';
+    // Isolate the game's styles from an existing host page.
+    const ui = root.attachShadow({mode: 'open'});
+    ui.innerHTML = `
+      <style>
+        :host{display:block;max-width:1300px;margin:0 auto;color:#173c42;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.5;color-scheme:light}
+        *{box-sizing:border-box}button,input,audio{font:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.5}
+        button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:3px solid #de8b27;outline-offset:4px}
+        .shell{background:#f7f7ef;border:1px solid #dce4dc;border-radius:16px;padding:clamp(15px,3vw,30px)}
+        header{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:20px}
+        h1{font-size:clamp(24px,4vw,34px);line-height:1.15;margin:4px 0 8px;letter-spacing:-.03em}h2{font-size:20px;line-height:1.45;margin:6px 0 18px}
+        p{margin:6px 0}.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#58746c;font-weight:700}
+        .muted{color:#526b6d;font-size:14px}.progress-wrap{min-width:180px}.progress-text{font-weight:700;margin-bottom:7px}progress{width:100%;height:12px;accent-color:#237d78}
+        .layout{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(300px,1fr);gap:20px;align-items:start}
+        .lane,.question-card{background:#fff;border:1px solid #dce4dc;border-radius:12px;overflow:hidden}.question-card{padding:24px}
+        canvas{display:block;width:100%;height:auto;aspect-ratio:960/500;background:#e8f3ef}
+        .lane-caption{padding:10px 18px;color:#526b6d;font-size:13px;border-bottom:1px solid #e4ebe5}
+        .controls{padding:18px;display:grid;grid-template-columns:1fr 1fr;gap:18px}.control label{display:flex;justify-content:space-between;font-size:14px;font-weight:650;gap:8px}
+        .control input{display:block;width:100%;margin:12px 0 0;accent-color:#237d78}.control output{color:#237d78;white-space:nowrap;font-variant-numeric:tabular-nums}
+        .throw{grid-column:1/-1;background:#237d78;color:#fff;border:0;border-radius:8px;padding:13px 18px;font-weight:700}
+        .status{padding:0 18px 17px;min-height:50px;font-size:14px}.answers{display:grid;gap:10px}.answer{display:flex;text-align:left;align-items:start;gap:12px;border:1px solid #cad9d4;border-radius:8px;padding:12px;background:#fff;color:#173c42;line-height:1.45}
+        .answer:hover:not(:disabled){background:#eff7f3;border-color:#237d78}.answer:disabled{opacity:1}.letter{flex:0 0 27px;height:27px;display:grid;place-items:center;background:#edf3ef;border-radius:5px;font-size:13px;font-weight:750}
+        .answer.correct{border:2px solid #237d78;background:#edf7f1}.answer.incorrect{border:2px solid #b36526;background:#fff5e9}
+        .feedback{margin-top:17px;padding:14px;background:#edf4ef;border-radius:8px;font-size:14px}.feedback.wrong{background:#fff4e6}.feedback strong{display:block;margin-bottom:4px}
+        .next{width:100%;margin-top:16px;border:0;border-radius:8px;padding:12px;background:#173c42;color:#fff;font-weight:650}
+        .audio{margin-top:20px;padding:18px;border:1px solid #dce4dc;border-radius:12px;background:#fff;display:flex;gap:15px;align-items:center;flex-wrap:wrap}.audio-label{flex:1;min-width:190px}.audio audio{max-width:100%;width:350px;height:40px}.audio-note{flex-basis:100%;font-size:13px;color:#526b6d;margin:0}
+        details{font-size:14px;margin-top:18px;color:#526b6d}summary{cursor:pointer}.reset{background:transparent;border:0;color:#526b6d;text-decoration:underline;padding:8px 0;font-size:13px;margin-top:12px}.restart-box{margin-top:10px;padding:12px;background:#fff4e6;border-radius:6px}.restart-box button{padding:8px 12px;border:1px solid #9cafaa;border-radius:5px;background:#fff;color:#173c42;margin:5px 8px 0 0}
+        .complete{padding:15px 0}.complete h2{font-size:28px;color:#237d78}.complete button{margin-top:20px}.hidden{display:none!important}
+        @media(max-width:800px){.layout{grid-template-columns:1fr}.question-card{padding:20px}header{gap:12px}.progress-wrap{width:100%}.shell{border-radius:8px}.audio audio{width:100%}}
+        @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+      </style>
+      <section class="shell" aria-label="Respiratory Review Bowling game">
+        <header><div><p class="eyebrow">Anatomy &amp; Physiology II · Chapter 23</p><h1>Respiratory Review Bowling</h1><p class="muted">Answer. Aim. Let it roll through the air.</p></div>
+          <div class="progress-wrap"><div class="progress-text" id="progress-text">0 / 50 questions correct</div><progress id="progress" max="50" value="0" aria-label="Questions answered correctly"></progress></div>
+        </header>
+        <div class="layout">
+          <section class="lane" aria-label="Bowling lane and throwing controls">
+            <canvas id="scene" width="960" height="500" role="img" aria-label="A bowler tosses a bowling ball toward a single pin on a raised platform. Adjust the angle and power below."></canvas>
+            <div class="lane-caption" id="target-description"></div>
+            <div class="controls">
+              <div class="control"><label for="angle">Angle <output id="angle-value" for="angle">45°</output></label><input id="angle" type="range" min="10" max="80" step="1" value="45" aria-label="Throw angle in degrees"></div>
+              <div class="control"><label for="power">Power <output id="power-value" for="power">65%</output></label><input id="power" type="range" min="15" max="100" step="1" value="65" aria-label="Throw power in percent"></div>
+              <button type="button" class="throw" id="throw" disabled>Answer correctly to unlock a throw</button>
+            </div>
+            <p class="status" id="status" role="status" aria-live="polite">Choose an answer to begin. A bowling miss never erases a correct answer.</p>
+          </section>
+          <section class="question-card" aria-label="Review question"><div id="question-area"></div>
+            <button type="button" class="next hidden" id="next">Next question</button>
+            <button type="button" class="reset" id="reset">Start a new game</button>
+            <div class="restart-box hidden" id="restart-box"><p>Start over with all 50 questions?</p><button type="button" id="confirm-reset">Start over</button><button type="button" id="cancel-reset">Keep playing</button></div>
+          </section>
+        </div>
+        <section class="audio" aria-label="Background podcast"><div class="audio-label"><strong>How Lungs Deliver Oxygen to Blood</strong><p class="muted">Optional listening while you play</p></div>
+          <audio id="podcast" controls loop preload="none" aria-label="Respiratory system podcast"></audio>
+          <p class="audio-note" id="audio-note">Press play to listen. Use the player to pause, seek, or adjust volume.</p>
+        </section>
+        <details><summary>How to play</summary><p>Every attempt starts with a question. A correct answer unlocks one throw. Set the angle and power, then throw the bowling ball at the pin. Higher angles send the ball upward more steeply. More power sends it faster.</p><p>If you answer incorrectly, read the explanation and continue. That question stays in the pool and will return. Correctly answered questions leave the pool. Complete all 50 to finish, regardless of how many pins you hit.</p><p>Questions and answer choices are shuffled. This game does not save progress or send scores anywhere. Use the sliders with a mouse, touch, or keyboard arrow keys.</p></details>
+      </section>`;
+
+    const el = id => ui.getElementById(id);
+    const canvas = el('scene');
+    const ctx = canvas.getContext('2d');
+    const reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const W = 960, H = 500, G = 390, R = 13;
+    const origin = {x: 145, y: 365};
+    const groundY = 444;
+    const podcast = el('podcast');
+    podcast.src = new URL(AUDIO_URL, SCRIPT_URL).href;
+    podcast.volume = 0.35;
+    podcast.addEventListener('error', () => {
+      el('audio-note').textContent = 'Podcast not found. The game still works. Add the audio file beside game.js, or update AUDIO_URL in the JavaScript.';
+    });
+
+    let queue, mastered, current, phase, target, ball, trail, result, animationId;
+    let pinAngle = 0, lastTime = 0, accumulator = 0, armAngle = 0;
+
+    function shuffle(items) {
+      const copy = [...items];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function setStatus(text) { el('status').textContent = text; }
+    function updateProgress() {
+      el('progress').value = mastered.size;
+      el('progress-text').textContent = `${mastered.size} / ${QUESTIONS.length} questions correct`;
+    }
+
+    function newTarget() {
+      // These ranges are reachable with the available angle and power settings.
+      target = {x: 490 + Math.random() * 370, y: 225 + Math.random() * 175};
+      pinAngle = 0;
+      const distance = Math.round((target.x - origin.x) / 10);
+      const height = Math.round((groundY - target.y) / 10);
+      el('target-description').textContent = `Target: ${distance} game units away · Platform: ${height} game units high`;
+    }
+
+    function updateControls() {
+      const ready = phase === 'ready';
+      const inFlight = phase === 'flying';
+      el('throw').disabled = !ready;
+      el('throw').textContent = ready ? 'Throw bowling ball' : inFlight ? 'Ball in the air…' : 'Answer correctly to unlock a throw';
+      el('angle').disabled = inFlight || phase === 'complete';
+      el('power').disabled = inFlight || phase === 'complete';
+      el('angle-value').textContent = `${el('angle').value}°`;
+      el('power-value').textContent = `${el('power').value}%`;
+    }
+
+    function showQuestion() {
+      if (!queue.length) return finish();
+      phase = 'question';
+      current = queue.shift();
+      ball = null;
+      trail = [];
+      result = null;
+      armAngle = 0;
+      newTarget();
+      el('next').classList.add('hidden');
+      el('question-area').replaceChildren();
+      const topic = document.createElement('p');
+      topic.className = 'eyebrow';
+      topic.textContent = current.topic;
+      const heading = document.createElement('h2');
+      heading.id = 'question-heading';
+      heading.tabIndex = -1;
+      heading.textContent = current.question;
+      const answers = document.createElement('div');
+      answers.className = 'answers';
+      answers.setAttribute('role', 'group');
+      answers.setAttribute('aria-labelledby', 'question-heading');
+      shuffle(current.options.map((option, i) => ({...option, correct: i === current.correctIndex}))).forEach((option, i) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'answer';
+        const letter = document.createElement('span');
+        letter.className = 'letter';
+        letter.textContent = 'ABCD'[i];
+        const text = document.createElement('span');
+        text.textContent = option.text;
+        button.append(letter, text);
+        button.addEventListener('click', () => answer(option, button));
+        answers.appendChild(button);
+      });
+      el('question-area').append(topic, heading, answers);
+      updateControls();
+      setStatus('Answer the question to unlock one throw. You can adjust your aim first.');
+      draw();
+    }
+
+    function answer(option, button) {
+      if (phase !== 'question') return;
+      ui.querySelectorAll('.answer').forEach(b => b.disabled = true);
+      button.classList.add(option.correct ? 'correct' : 'incorrect');
+      const feedback = document.createElement('div');
+      feedback.className = `feedback${option.correct ? '' : ' wrong'}`;
+      feedback.setAttribute('role', 'status');
+      const title = document.createElement('strong');
+      title.textContent = option.correct ? 'Correct! One throw unlocked.' : 'Not quite. This question will return.';
+      const text = document.createElement('p');
+      text.textContent = option.explanation;
+      feedback.append(title, text);
+      el('question-area').appendChild(feedback);
+      if (option.correct) {
+        mastered.add(current.id);
+        phase = 'ready';
+        updateProgress();
+        setStatus(mastered.size === QUESTIONS.length ? 'All 50 correct! Take your final throw to finish.' : 'Correct! Adjust angle and power, then throw.');
+        updateControls();
+        el('throw').focus({preventScroll: true});
+      } else {
+        phase = 'review';
+        // Put an incorrect question somewhere later in the remaining pool.
+        const position = queue.length ? 1 + Math.floor(Math.random() * queue.length) : 0;
+        queue.splice(position, 0, current);
+        el('next').textContent = queue.length === 1 ? 'Try this question again' : 'Continue to another question';
+        el('next').classList.remove('hidden');
+        setStatus('Read the explanation, then continue. Answer correctly to earn a throw.');
+        updateControls();
+        el('next').focus({preventScroll: true});
+      }
+    }
+
+    function throwBall() {
+      if (phase !== 'ready') return;
+      const angle = Number(el('angle').value) * Math.PI / 180;
+      const speed = Number(el('power').value) * 8;
+      ball = {x: origin.x, y: origin.y, vx: Math.cos(angle) * speed, vy: -Math.sin(angle) * speed, t: 0};
+      trail = [];
+      phase = 'flying';
+      armAngle = -0.55;
+      lastTime = 0;
+      accumulator = 0;
+      updateControls();
+      setStatus('Bowling ball in flight.');
+      if (reducedMotion) {
+        while (phase === 'flying') step(1 / 120);
+        draw();
+      } else {
+        animationId = requestAnimationFrame(animate);
+      }
+    }
+
+    function circleHitsPin(x, y) {
+      const closestX = Math.max(target.x - 11, Math.min(x, target.x + 11));
+      const closestY = Math.max(target.y - 54, Math.min(y, target.y));
+      return (x - closestX) ** 2 + (y - closestY) ** 2 <= R ** 2;
+    }
+
+    function step(dt) {
+      if (phase !== 'flying') return;
+      ball.t += dt;
+      ball.x = origin.x + ball.vx * ball.t;
+      ball.y = origin.y + ball.vy * ball.t + 0.5 * G * ball.t ** 2;
+      if (trail.length === 0 || Math.hypot(ball.x - trail[trail.length - 1].x, ball.y - trail[trail.length - 1].y) > 12) trail.push({x: ball.x, y: ball.y});
+      if (circleHitsPin(ball.x, ball.y)) {
+        pinAngle = 1.3;
+        settle(true, 'Pin down! Your correct answer is counted.');
+        return;
+      }
+      // Platform is a solid raised block. Check after the pin so a pin hit wins.
+      const blockLeft = target.x - 62, blockRight = target.x + 62;
+      const cx = Math.max(blockLeft, Math.min(ball.x, blockRight));
+      const cy = Math.max(target.y, Math.min(ball.y, groundY));
+      const platformHit = (ball.x - cx) ** 2 + (ball.y - cy) ** 2 <= R ** 2;
+      if (platformHit || ball.y + R >= groundY || ball.x > W + R || ball.t > 7) {
+        const hint = platformHit ? 'The ball reached the platform. Try aiming higher next time.' : ball.x < target.x ? 'A little short. Try more power next time.' : 'Past the pin. Try less power or a different angle next time.';
+        settle(false, `${hint} Your correct answer still counts.`);
+      }
+    }
+
+    function settle(hit, message) {
+      result = hit;
+      phase = 'result';
+      updateControls();
+      setStatus(message);
+      el('next').textContent = mastered.size === QUESTIONS.length ? 'Finish review' : 'Next question';
+      el('next').classList.remove('hidden');
+      el('next').focus({preventScroll: true});
+    }
+
+    function animate(time) {
+      if (phase !== 'flying') return;
+      if (!lastTime) lastTime = time;
+      accumulator += Math.min((time - lastTime) / 1000, 0.05);
+      lastTime = time;
+      while (accumulator >= 1 / 120 && phase === 'flying') {
+        step(1 / 120);
+        accumulator -= 1 / 120;
+      }
+      draw();
+      if (phase === 'flying') animationId = requestAnimationFrame(animate);
+    }
+
+    function finish() {
+      phase = 'complete';
+      updateControls();
+      const panel = document.createElement('div');
+      panel.className = 'complete';
+      const label = document.createElement('p');
+      label.className = 'eyebrow';
+      label.textContent = 'Review complete';
+      const heading = document.createElement('h2');
+      heading.textContent = 'All 50 questions correct!';
+      heading.tabIndex = -1;
+      const text = document.createElement('p');
+      text.textContent = 'You reviewed respiratory anatomy, breathing mechanics, gas exchange, transport, and control. Start a new game for another randomized round.';
+      panel.append(label, heading, text);
+      el('question-area').replaceChildren(panel);
+      el('next').classList.add('hidden');
+      setStatus('Review complete. You answered all 50 questions correctly.');
+      heading.focus({preventScroll: true});
+      draw();
+    }
+
+    function reset() {
+      cancelAnimationFrame(animationId);
+      queue = shuffle(QUESTIONS);
+      mastered = new Set();
+      el('restart-box').classList.add('hidden');
+      updateProgress();
+      showQuestion();
+    }
+
+    // Canvas artwork is drawn locally. There are no external image requests.
+    function line(x1, y1, x2, y2, color, width) {
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+      ctx.strokeStyle = color; ctx.lineWidth = width; ctx.lineCap = 'round'; ctx.stroke();
+    }
+    function circle(x, y, radius, color) {
+      ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill();
+    }
+    function bowlingBall(x, y, rotation = 0) {
+      ctx.save(); ctx.translate(x, y); ctx.rotate(rotation);
+      circle(0, 0, R, '#334f81');
+      circle(-3, -5, 2.1, '#bccfe6'); circle(3, -4, 2.1, '#bccfe6'); circle(0, 2, 2.3, '#bccfe6');
+      ctx.restore();
+    }
+    function drawBowler() {
+      // Side-facing bowler with an extended throwing arm and bowling shoes.
+      line(105, 395, 88, 437, '#344a54', 15);
+      line(110, 397, 131, 437, '#344a54', 15);
+      line(83, 440, 103, 440, '#d38b44', 10);
+      line(126, 440, 146, 440, '#d38b44', 10);
+      line(106, 352, 108, 399, '#237d78', 27);
+      line(98, 360, 78, 385, '#237d78', 12);
+      line(78, 385, 88, 401, '#c98d68', 9);
+      circle(106, 326, 18, '#c98d68');
+      ctx.beginPath(); ctx.arc(104, 322, 17, Math.PI, Math.PI * 1.95);ctx.strokeStyle='#344a54';ctx.lineWidth=7;ctx.stroke();
+      circle(116, 325, 1.7, '#173c42');
+      line(114, 350, 131, 357 + armAngle * 20, '#237d78', 12);
+      line(131, 357 + armAngle * 20, 145, 365 + armAngle * 30, '#c98d68', 9);
+      if (!ball) bowlingBall(origin.x, origin.y);
+    }
+    function drawPin() {
+      ctx.save(); ctx.translate(target.x, target.y); ctx.rotate(pinAngle);
+      ctx.beginPath();ctx.moveTo(-11,0);ctx.bezierCurveTo(-17,-12,-12,-24,-5,-32);ctx.lineTo(-5,-39);
+      ctx.bezierCurveTo(-14,-54,14,-59,7,-42);ctx.lineTo(5,-34);ctx.bezierCurveTo(13,-24,17,-12,11,0);ctx.closePath();
+      ctx.fillStyle='#fffdfa';ctx.fill();ctx.strokeStyle='#b4c6bf';ctx.lineWidth=2;ctx.stroke();
+      line(-5,-35,5,-35,'#d67648',3);line(-5,-30,5,-30,'#d67648',3);
+      ctx.restore();
+    }
+    function draw() {
+      ctx.clearRect(0,0,W,H);
+      const sky = ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#e2f1ee');sky.addColorStop(1,'#f8f8ed');ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
+      // Soft distant hills and a quiet indoor-lane style ground.
+      ctx.beginPath();ctx.moveTo(0,390);ctx.bezierCurveTo(200,270,290,445,480,350);ctx.bezierCurveTo(650,250,770,385,960,300);ctx.lineTo(960,444);ctx.lineTo(0,444);ctx.fillStyle='#dce9df';ctx.fill();
+      ctx.fillStyle='#ebdcc0';ctx.fillRect(0,groundY,W,H-groundY);
+      line(0,groundY,W,groundY,'#c3b291',3);
+      for(let x=20;x<W;x+=55) line(x,groundY+18,x+30,groundY+18,'#ddcba8',2);
+      ctx.fillStyle='#98b7a6';ctx.fillRect(target.x-62,target.y,124,groundY-target.y);
+      ctx.fillStyle='#6e9684';ctx.fillRect(target.x-66,target.y,132,9);
+      line(target.x-39,target.y+20,target.x-39,groundY-10,'#adc6b7',2);
+      line(target.x+39,target.y+20,target.x+39,groundY-10,'#adc6b7',2);
+      drawPin();
+      // A short aim guide shows direction without giving away the full solution.
+      if (phase === 'question' || phase === 'ready' || phase === 'review') {
+        const a = Number(el('angle').value)*Math.PI/180;
+        ctx.save();ctx.setLineDash([4,9]);line(origin.x,origin.y,origin.x+Math.cos(a)*90,origin.y-Math.sin(a)*90,'#5f8e85',2);ctx.restore();
+      }
+      trail.forEach((p,i)=>{if(i%3===0) circle(p.x,p.y,2.2,'#91aaa5');});
+      drawBowler();
+      if(ball) bowlingBall(ball.x,ball.y,ball.t*6);
+      ctx.fillStyle='#37645e';ctx.font='600 15px system-ui';ctx.fillText('THE REVIEW LANE',28,35);
+      ctx.font='14px system-ui';ctx.fillStyle='#65847c';ctx.fillText('Adjust your angle. Find your arc.',28,59);
+      if(result === true){ctx.fillStyle='#237d78';ctx.font='bold 25px system-ui';ctx.fillText('Nice bowling!',W/2-70,100);}
+      if(phase === 'complete'){ctx.fillStyle='#237d78';ctx.font='bold 25px system-ui';ctx.fillText('50 / 50 · Review complete',W/2-140,135);}
+    }
+
+    ['angle','power'].forEach(id => el(id).addEventListener('input',()=>{updateControls();draw();}));
+    el('throw').addEventListener('click',throwBall);
+    el('next').addEventListener('click',()=>{
+      if(phase !== 'review' && phase !== 'result') return;
+      showQuestion();
+      el('question-heading')?.focus({preventScroll:true});
+    });
+    el('reset').addEventListener('click',()=>el('restart-box').classList.toggle('hidden'));
+    el('cancel-reset').addEventListener('click',()=>el('restart-box').classList.add('hidden'));
+    el('confirm-reset').addEventListener('click',reset);
+    reset();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',start,{once:true});
+  else start();
+})();
